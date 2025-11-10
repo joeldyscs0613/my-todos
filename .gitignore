@@ -483,3 +483,51 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 .DS_Store
+
+# Ignore any file that has ".private" anywhere in its name
+*.private.*
+*.*.private.*
+
+# Ignore any folder named "private" anywhere in the repo
+private/
+**/private/
+
+# 🧠 JetBrains Rider & IntelliJ project files
+.idea/
+**/.idea/
+
+# User-specific workspace settings
+*.iml
+*.ipr
+*.iws
+
+# Build output and caches
+out/
+build/
+.idea_modules/
+
+# JetBrains system files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+
+# Rider-specific cache and plugin data
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/libraries
+
+# Rider HTTP request scratch files
+httpRequests/
+
+# JetBrains index and metadata
+.idea/**/contentModel.xml
+.idea/**/modules.xml
+.idea/**/vcs.xml
+
+
