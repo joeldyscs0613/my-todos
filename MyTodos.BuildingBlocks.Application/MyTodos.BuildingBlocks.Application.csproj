@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\src\MyTodos.SharedKernel\MyTodos.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="13.1.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Abstractions\Commands\" />
+      <Folder Include="Abstractions\Dtos\" />
+      <Folder Include="Abstractions\Queries\" />
+      <Folder Include="Abstractions\Specifications\" />
+      <Folder Include="Behaviors\" />
+      <Folder Include="Contracts\" />
+      <Folder Include="Extensions\" />
+    </ItemGroup>
+
+</Project>
