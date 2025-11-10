@@ -16,8 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Abstractions\Commands\" />
-      <Folder Include="Abstractions\Dtos\" />
       <Folder Include="Abstractions\Queries\" />
       <Folder Include="Abstractions\Specifications\" />
       <Folder Include="Behaviors\" />
