@@ -1,19 +1,20 @@
 using MediatR;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.BuildingBlocks.Application.Abstractions.Commands;
+namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-public abstract class ResponseCommand<TResponseDto> : IRequest<Result<TResponseDto>>
+public abstract class Query<TResponse> : IRequest<Result<TResponse>>
 {
 }
 
-public abstract class ResponseCommandHandler<TCommand, TResponseDto> : IRequestHandler<TCommand, Result<TResponseDto>>
-    where TCommand : ResponseCommand<TResponseDto>
+public abstract class QueryHandler<TQuery, TResponseDto> 
+    : IRequestHandler<TQuery, Result<TResponseDto>>
+    where TQuery : Query<TResponseDto>
 {
-    protected ResponseCommandHandler() {}
-    
-    public abstract Task<Result<TResponseDto>> Handle(TCommand request, CancellationToken ct);
+    protected QueryHandler() {}
 
+    public abstract Task<Result<TResponseDto>> Handle(TQuery request, CancellationToken ct);
+    
     protected virtual Result<TResponseDto> Success(TResponseDto response)
     {
         return Result.Success(response);
@@ -27,11 +28,6 @@ public abstract class ResponseCommandHandler<TCommand, TResponseDto> : IRequestH
     protected virtual Result<TResponseDto> NotFound(string description)
     {
         return Result.NotFound<TResponseDto>(description);
-    }
-    
-    protected virtual Result<TResponseDto> Conflict(string description)
-    {
-        return Result.Conflict<TResponseDto>(description);
     }
     
     protected virtual Result<TResponseDto> Forbidden(string description)
