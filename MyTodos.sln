@@ -11,9 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.SharedKernel.UnitTests", "tests\MyTodos.SharedKernel.UnitTests\MyTodos.SharedKernel.UnitTests.csproj", "{EDC15041-8F9D-48AF-A31E-38EA078626AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Application", "MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj", "{7D289D46-8D8E-4030-BDD6-A511F1BC3234}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Application", "src\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj", "{7D289D46-8D8E-4030-BDD6-A511F1BC3234}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Application.UnitTests", "tests\MyTodos.BuildingBlocks.Application.UnitTests\MyTodos.BuildingBlocks.Application.UnitTests.csproj", "{5F3302E1-221C-4142-8657-67E947D58A43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Application.UnitTests", "tests\BuildingBlocks\MyTodos.BuildingBlocks.Application.UnitTests\MyTodos.BuildingBlocks.Application.UnitTests.csproj", "{5F3302E1-221C-4142-8657-67E947D58A43}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{74AFE122-A74C-46D0-A590-98FFA7F62418}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{48C2E365-4921-4A59-A32C-C678F36AD11A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,7 +84,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4D348F31-1AEE-437D-8818-4B110B64524C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{EDC15041-8F9D-48AF-A31E-38EA078626AD} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
-		{7D289D46-8D8E-4030-BDD6-A511F1BC3234} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{5F3302E1-221C-4142-8657-67E947D58A43} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{74AFE122-A74C-46D0-A590-98FFA7F62418} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{7D289D46-8D8E-4030-BDD6-A511F1BC3234} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
+		{48C2E365-4921-4A59-A32C-C678F36AD11A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{5F3302E1-221C-4142-8657-67E947D58A43} = {48C2E365-4921-4A59-A32C-C678F36AD11A}
 	EndGlobalSection
 EndGlobal

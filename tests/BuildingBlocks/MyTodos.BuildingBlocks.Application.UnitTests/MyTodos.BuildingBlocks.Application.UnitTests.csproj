@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
   </ItemGroup>
 
 </Project>
