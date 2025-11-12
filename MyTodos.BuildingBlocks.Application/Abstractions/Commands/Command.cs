@@ -1,9 +1,10 @@
 using MediatR;
+using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 
-public abstract class Command : IRequest<Result>
+public abstract class Command : IRequest<Result>, ICommand
 {
 }
 

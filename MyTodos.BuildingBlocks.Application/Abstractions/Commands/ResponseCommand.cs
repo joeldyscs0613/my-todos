@@ -1,13 +1,15 @@
 using MediatR;
+using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 
-public abstract class ResponseCommand<TResponseDto> : IRequest<Result<TResponseDto>>
+public abstract class ResponseCommand<TResponseDto> : IRequest<Result<TResponseDto>>, ICommand
 {
 }
 
-public abstract class ResponseCommandHandler<TCommand, TResponseDto> : IRequestHandler<TCommand, Result<TResponseDto>>
+public abstract class ResponseCommandHandler<TCommand, TResponseDto> 
+    : IRequestHandler<TCommand, Result<TResponseDto>>
     where TCommand : ResponseCommand<TResponseDto>
 {
     protected ResponseCommandHandler() {}
