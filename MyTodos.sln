@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{48C2E365-4921-4A59-A32C-C678F36AD11A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Infrastructure.Persistence", "src\BuildingBlocks\MyTodos.BuildingBlocks.Infrastructure.Persistence\MyTodos.BuildingBlocks.Infrastructure.Persistence.csproj", "{3E7829A5-FCD5-4005-93F6-C09FA043DABA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,18 @@ Global
 		{5F3302E1-221C-4142-8657-67E947D58A43}.Release|x64.Build.0 = Release|Any CPU
 		{5F3302E1-221C-4142-8657-67E947D58A43}.Release|x86.ActiveCfg = Release|Any CPU
 		{5F3302E1-221C-4142-8657-67E947D58A43}.Release|x86.Build.0 = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|x64.Build.0 = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Debug|x86.Build.0 = Debug|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|x64.Build.0 = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +102,6 @@ Global
 		{7D289D46-8D8E-4030-BDD6-A511F1BC3234} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
 		{48C2E365-4921-4A59-A32C-C678F36AD11A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{5F3302E1-221C-4142-8657-67E947D58A43} = {48C2E365-4921-4A59-A32C-C678F36AD11A}
+		{3E7829A5-FCD5-4005-93F6-C09FA043DABA} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
 	EndGlobalSection
 EndGlobal

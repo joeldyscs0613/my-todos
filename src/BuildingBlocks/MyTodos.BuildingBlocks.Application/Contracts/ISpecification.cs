@@ -12,5 +12,4 @@ public interface ISpecification<TEntity, out TFilter>
     int TotalCount { get; }
 
     public Result<IQueryable<TEntity>> Apply(IQueryable<TEntity> query);
-    Task CountAsync(IQueryable<TEntity> query, CancellationToken cancellationToken);
 }

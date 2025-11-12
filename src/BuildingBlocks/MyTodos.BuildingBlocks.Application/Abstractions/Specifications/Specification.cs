@@ -45,25 +45,12 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
         {
             return sortResult;
         }
+        
         query = sortResult.Value;
 
         query = ApplyPaging(query);
 
         return Result.Success(query);
-    }
-    
-    public virtual async Task CountAsync(IQueryable<TEntity> query, CancellationToken ct = default)
-    {
-        query = ApplyIncludes(query);
-        
-        query = ApplyFilter(query);
-        
-        if (!string.IsNullOrWhiteSpace(Filter.SearchBy))
-        {
-            query = ApplySearchBy(query);
-        }
-        
-        TotalCount = await query.CountAsync(ct);
     }
 
     protected abstract IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query);
@@ -111,6 +98,8 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
     
     protected IQueryable<TEntity> ApplyPaging(IQueryable<TEntity> query)
     {
+        TotalCount = query.Count();
+        
         var pageNumber = Filter.PageNumber;
 
         var pageSize = PageSize > PageListConstants.MaxPageSize

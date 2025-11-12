@@ -7,8 +7,8 @@ public interface IPagedListReadRepository<TEntity, in TId, in TSpecification, in
     : IReadRepository<TEntity, TId>
     where TEntity : AggregateRoot<TId>
     where TId : IComparable
+    where TSpecification : class, ISpecification<TEntity, TFilter>
     where TFilter : Filter
 {
     Task<IReadOnlyList<TEntity>> GetPagedListAsync(TSpecification specification, CancellationToken ct);
-
 }

@@ -7,11 +7,29 @@ public interface IReadRepository<TEntity, in TId>
     where TEntity : AggregateRoot<TId>
     where TId : IComparable
 {
-    Task<IReadOnlyList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken ct);
-    
+    /// <summary>
+    /// Retrieves a list of entities matching the optional predicate.
+    /// </summary>
+    Task<IReadOnlyList<TEntity>> GetListAsync(
+        Expression<Func<TEntity, bool>>? predicate,
+        CancellationToken ct);
+
+    /// <summary>
+    /// Retrieves a single entity by its identifier.
+    /// </summary>
     Task<TEntity?> GetByIdAsync(TId id, CancellationToken ct);
-    
-    Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct);
-    
-    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> expression, CancellationToken ct);
+
+    /// <summary>
+    /// Retrieves the first entity matching the predicate, or null if none found.
+    /// </summary>
+    Task<TEntity?> GetFirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate,
+        CancellationToken ct);
+
+    /// <summary>
+    /// Checks whether any entity exists matching the predicate.
+    /// </summary>
+    Task<bool> ExistsAsync(
+        Expression<Func<TEntity, bool>> predicate, 
+        CancellationToken ct);
 }
