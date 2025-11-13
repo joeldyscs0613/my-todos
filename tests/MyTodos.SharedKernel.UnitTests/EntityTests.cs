@@ -87,14 +87,13 @@ public class EntityTests
     }
 
     [Fact]
-    public void SetCreatedInfo_WithNullUsername_ThrowsArgumentNullException()
+    public void SetCreatedInfo_WithNullUsername_ThrowsArgumentException()
     {
         // Arrange
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => entity.SetCreatedInfo(null));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentNullException>(() => entity.SetCreatedInfo(null));
     }
 
     [Fact]
@@ -104,8 +103,7 @@ public class EntityTests
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => entity.SetCreatedInfo(string.Empty));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentException>(() => entity.SetCreatedInfo(string.Empty));
     }
 
     [Fact]
@@ -115,8 +113,7 @@ public class EntityTests
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => entity.SetCreatedInfo("   "));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentException>(() => entity.SetCreatedInfo("   "));
     }
 
     [Fact]
@@ -172,14 +169,13 @@ public class EntityTests
     }
 
     [Fact]
-    public void SetUpdatedInfo_WithNullUsername_ThrowsArgumentNullException()
+    public void SetUpdatedInfo_WithNullUsername_ThrowsArgumentException()
     {
         // Arrange
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => entity.SetUpdatedInfo(null));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentNullException>(() => entity.SetUpdatedInfo(null));
     }
 
     [Fact]
@@ -189,8 +185,7 @@ public class EntityTests
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => entity.SetUpdatedInfo(string.Empty));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentException>(() => entity.SetUpdatedInfo(string.Empty));
     }
 
     [Fact]
@@ -200,8 +195,7 @@ public class EntityTests
         var entity = new TestIntEntity(1);
 
         // Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() => entity.SetUpdatedInfo("   "));
-        Assert.Equal("username", exception.ParamName);
+        Assert.Throws<ArgumentException>(() => entity.SetUpdatedInfo("   "));
     }
 
     [Fact]

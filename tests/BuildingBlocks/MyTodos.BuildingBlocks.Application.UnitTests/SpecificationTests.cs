@@ -2,8 +2,8 @@ using System.Linq.Expressions;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.BuildingBlocks.Application.Constants;
+using MyTodos.BuildingBlocks.Application.Exceptions;
 using MyTodos.SharedKernel.Abstractions;
-using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.UnitTests;
 
@@ -64,7 +64,7 @@ public class SpecificationTests
         }
 
         // Public wrappers for testing protected methods
-        public new Result<IQueryable<TestEntity>> ApplySort(IQueryable<TestEntity> query) => base.ApplySort(query);
+        public new IQueryable<TestEntity> ApplySort(IQueryable<TestEntity> query) => base.ApplySort(query);
         public new IQueryable<TestEntity> ApplyPaging(IQueryable<TestEntity> query) => base.ApplyPaging(query);
     }
 
@@ -89,8 +89,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var sortedList = result.Value.ToList();
+        var sortedList = result.ToList();
         Assert.Equal("Alice", sortedList[0].Name);
         Assert.Equal("Bob", sortedList[1].Name);
         Assert.Equal("Charlie", sortedList[2].Name);
@@ -113,8 +112,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var sortedList = result.Value.ToList();
+        var sortedList = result.ToList();
         Assert.Equal("Charlie", sortedList[0].Name);
         Assert.Equal("Bob", sortedList[1].Name);
         Assert.Equal("Alice", sortedList[2].Name);
@@ -136,14 +134,13 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var sortedList = result.Value.ToList();
+        var sortedList = result.ToList();
         Assert.Equal("Alice", sortedList[0].Name);
         Assert.Equal("Charlie", sortedList[1].Name);
     }
 
     [Fact]
-    public void ApplySort_WithInvalidSortField_ReturnsFailure()
+    public void ApplySort_WithInvalidSortField_ThrowsInvalidSortFieldException()
     {
         // Arrange
         var filter = new TestFilter { SortField = "InvalidField" };
@@ -153,12 +150,13 @@ public class SpecificationTests
             new(1) { Name = "Alice" }
         }.AsQueryable();
 
-        // Act
-        var result = specification.ApplySort(data);
-
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.Contains("InvalidField is not a valid sort field name", result.FirstError.Description);
+        // Act & Assert
+        var exception = Assert.Throws<InvalidSortFieldException>(() => specification.ApplySort(data).ToList());
+        Assert.Equal("InvalidField", exception.ProvidedField);
+        Assert.Contains("Name", exception.ValidFields);
+        Assert.Contains("Age", exception.ValidFields);
+        Assert.Contains("CreatedAt", exception.ValidFields);
+        Assert.Contains("InvalidField", exception.Message);
     }
 
     [Fact]
@@ -177,8 +175,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var list = result.Value.ToList();
+        var list = result.ToList();
         Assert.Equal("Charlie", list[0].Name);
         Assert.Equal("Alice", list[1].Name);
     }
@@ -199,8 +196,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var list = result.Value.ToList();
+        var list = result.ToList();
         Assert.Equal("Charlie", list[0].Name);
         Assert.Equal("Alice", list[1].Name);
     }
@@ -222,8 +218,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var sortedList = result.Value.ToList();
+        var sortedList = result.ToList();
         Assert.Equal(30, sortedList[0].Age);
         Assert.Equal(25, sortedList[1].Age);
         Assert.Equal(20, sortedList[2].Age);
@@ -246,8 +241,7 @@ public class SpecificationTests
         var result = specification.ApplySort(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var sortedList = result.Value.ToList();
+        var sortedList = result.ToList();
         Assert.Equal(20, sortedList[0].Age);
         Assert.Equal(25, sortedList[1].Age);
         Assert.Equal(30, sortedList[2].Age);
@@ -425,8 +419,7 @@ public class SpecificationTests
         var result = specification.Apply(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var finalList = result.Value.ToList();
+        var finalList = result.ToList();
         Assert.Equal(2, finalList.Count);
         Assert.Equal("test2", finalList[0].Name); // Age 30
         Assert.Equal("test4", finalList[1].Name); // Age 28
@@ -455,14 +448,13 @@ public class SpecificationTests
         var result = specification.Apply(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var finalList = result.Value.ToList();
+        var finalList = result.ToList();
         Assert.Equal(2, finalList.Count);
         Assert.All(finalList, item => Assert.Contains("Alice", item.Name));
     }
 
     [Fact]
-    public void Apply_WithInvalidSortField_ReturnsFailure()
+    public void Apply_WithInvalidSortField_ThrowsInvalidSortFieldException()
     {
         // Arrange
         var filter = new TestFilter
@@ -478,12 +470,10 @@ public class SpecificationTests
             new(1) { Name = "Bob" }
         }.AsQueryable();
 
-        // Act
-        var result = specification.Apply(data);
-
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.Contains("InvalidField is not a valid sort field name", result.FirstError.Description);
+        // Act & Assert
+        var exception = Assert.Throws<InvalidSortFieldException>(() => specification.Apply(data).ToList());
+        Assert.Equal("InvalidField", exception.ProvidedField);
+        Assert.Contains("InvalidField", exception.Message);
     }
 
     [Fact]
@@ -508,8 +498,7 @@ public class SpecificationTests
         var result = specification.Apply(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var finalList = result.Value.ToList();
+        var finalList = result.ToList();
         Assert.Equal(3, finalList.Count);
     }
 
@@ -534,8 +523,7 @@ public class SpecificationTests
         var result = specification.Apply(data);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        var finalList = result.Value.ToList();
+        var finalList = result.ToList();
         Assert.Equal(2, finalList.Count);
     }
 

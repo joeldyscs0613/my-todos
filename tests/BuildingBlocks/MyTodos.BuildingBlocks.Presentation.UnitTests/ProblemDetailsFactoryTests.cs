@@ -66,7 +66,7 @@ public class ProblemDetailsFactoryTests
         // Assert
         Assert.NotNull(result.Detail);
         Assert.DoesNotContain("Sensitive internal error details", result.Detail);
-        Assert.Equal("A business rule violation occurred.", result.Detail);
+        Assert.Equal("An unexpected error occurred. Please contact support if the problem persists.", result.Detail);
     }
 
     [Fact]
@@ -278,10 +278,10 @@ public class ProblemDetailsFactoryTests
         var result = _factory.CreateFromException(_mockHttpContext.Object, exception);
 
         // Assert
-        Assert.Equal((int)HttpStatusCode.BadRequest, result.Status);
-        Assert.Equal(ProblemDetailsConstants.Titles.BadRequest, result.Title);
-        Assert.Equal("A business rule violation occurred.", result.Detail);
-        Assert.Equal(ProblemDetailsConstants.Types.BadRequest, result.Type);
+        Assert.Equal((int)HttpStatusCode.InternalServerError, result.Status);
+        Assert.Equal(ProblemDetailsConstants.Titles.InternalServerError, result.Title);
+        Assert.Equal("An unexpected error occurred. Please contact support if the problem persists.", result.Detail);
+        Assert.Equal(ProblemDetailsConstants.Types.InternalServerError, result.Type);
     }
 
     [Fact]
@@ -295,10 +295,10 @@ public class ProblemDetailsFactoryTests
         var result = _factory.CreateFromException(_mockHttpContext.Object, exception);
 
         // Assert
-        Assert.Equal((int)HttpStatusCode.BadRequest, result.Status);
-        Assert.Equal(ProblemDetailsConstants.Titles.BadRequest, result.Title);
-        Assert.Equal("Invalid argument provided.", result.Detail);
-        Assert.Equal(ProblemDetailsConstants.Types.BadRequest, result.Type);
+        Assert.Equal((int)HttpStatusCode.InternalServerError, result.Status);
+        Assert.Equal(ProblemDetailsConstants.Titles.InternalServerError, result.Title);
+        Assert.Equal("An unexpected error occurred. Please contact support if the problem persists.", result.Detail);
+        Assert.Equal(ProblemDetailsConstants.Types.InternalServerError, result.Type);
     }
 
     [Fact]

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 using MyTodos.BuildingBlocks.Application.Constants;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Exceptions;
 using MyTodos.SharedKernel.Abstractions;
 using MyTodos.SharedKernel.Helpers;
 
@@ -29,7 +30,33 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
         Filter = filter;
     }
     
-    public virtual Result<IQueryable<TEntity>> Apply(IQueryable<TEntity> query)
+    public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> query)
+    {
+        query = ApplyFilteringAndSorting(query);
+
+        query = ApplyPaging(query);
+
+        return query;
+    }
+
+    public virtual IQueryable<TEntity> ApplyWithoutPagination(IQueryable<TEntity> query)
+    {
+        query = ApplyFilteringAndSorting(query);
+        
+        // TotalCount is set here for potential use in export metadata
+        TotalCount = query.Count();
+
+        return query;
+    }
+
+    /// <summary>
+    /// Applies filtering, searching, and sorting operations to the query.
+    /// This shared logic is used by both Apply() and ApplyWithoutPagination().
+    /// </summary>
+    /// <param name="query">The base queryable to apply operations to.</param>
+    /// <returns>The filtered, searched, and sorted queryable.</returns>
+    /// <exception cref="InvalidSortFieldException">Thrown when an invalid sort field is provided.</exception>
+    protected virtual IQueryable<TEntity> ApplyFilteringAndSorting(IQueryable<TEntity> query)
     {
         query = ApplyIncludes(query);
 
@@ -40,17 +67,9 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
             query = ApplySearchBy(query);
         }
 
-        var sortResult = ApplySort(query);
-        if (sortResult.IsFailure)
-        {
-            return sortResult;
-        }
-        
-        query = sortResult.Value;
+        query = ApplySort(query);
 
-        query = ApplyPaging(query);
-
-        return Result.Success(query);
+        return query;
     }
 
     protected abstract IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query);
@@ -61,11 +80,11 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
 
     protected abstract Dictionary<string, Expression<Func<TEntity, object>>> GetSortFunctions();
     
-    protected Result<IQueryable<TEntity>> ApplySort(IQueryable<TEntity> query)
+    protected IQueryable<TEntity> ApplySort(IQueryable<TEntity> query)
     {
         if (string.IsNullOrWhiteSpace(SortField))
         {
-            return Result.Success(query);
+            return query;
         }
 
         var sortField = SortField;
@@ -85,7 +104,7 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
 
             if (!sortFunctions.TryGetValue(sortField, out var func2))
             {
-                return Result.BadRequest<IQueryable<TEntity>>($"{SortField} is not a valid sort field name.");
+                throw new InvalidSortFieldException(SortField, sortFunctions.Keys);
             }
 
             query = string.Equals("desc", Filter.SortDirection, StringComparison.OrdinalIgnoreCase)
@@ -93,7 +112,7 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
                 : query.OrderBy(func2);
         }
 
-        return Result.Success(query);
+        return query;
     }
     
     protected IQueryable<TEntity> ApplyPaging(IQueryable<TEntity> query)
