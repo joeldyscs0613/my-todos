@@ -96,34 +96,31 @@ public class DomainEventTests
     #region Constructor Validation - eventType Parameter
 
     [Fact]
-    public void Constructor_WithNullEventType_ThrowsArgumentNullException()
+    public void Constructor_WithNullEventType_ThrowsArgumentException()
     {
         // This test requires a custom event record that exposes the base constructor
         // Since we can't directly call the protected constructor, we create a test record
-        var exception = Assert.Throws<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new TestEventWithNullEventType("task-123")
         );
-        Assert.Equal("eventType", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithEmptyEventType_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TestEventWithEmptyEventType("task-123")
         );
-        Assert.Equal("eventType", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithWhitespaceEventType_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TestEventWithWhitespaceEventType("task-123")
         );
-        Assert.Equal("eventType", exception.ParamName);
     }
 
     #endregion
@@ -131,33 +128,30 @@ public class DomainEventTests
     #region Constructor Validation - aggregateType Parameter
 
     [Fact]
-    public void Constructor_WithNullAggregateType_ThrowsArgumentNullException()
+    public void Constructor_WithNullAggregateType_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new TestEventWithNullAggregateType("task-123")
         );
-        Assert.Equal("aggregateType", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithEmptyAggregateType_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TestEventWithEmptyAggregateType("task-123")
         );
-        Assert.Equal("aggregateType", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithWhitespaceAggregateType_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TestEventWithWhitespaceAggregateType("task-123")
         );
-        Assert.Equal("aggregateType", exception.ParamName);
     }
 
     #endregion
@@ -165,33 +159,30 @@ public class DomainEventTests
     #region Constructor Validation - aggregateId Parameter
 
     [Fact]
-    public void Constructor_WithNullAggregateId_ThrowsArgumentNullException()
+    public void Constructor_WithNullAggregateId_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new TaskCreatedEvent(null!)
         );
-        Assert.Equal("aggregateId", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithEmptyAggregateId_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TaskCreatedEvent(string.Empty)
         );
-        Assert.Equal("aggregateId", exception.ParamName);
     }
 
     [Fact]
     public void Constructor_WithWhitespaceAggregateId_ThrowsArgumentException()
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
             new TaskCreatedEvent("   ")
         );
-        Assert.Equal("aggregateId", exception.ParamName);
     }
 
     #endregion

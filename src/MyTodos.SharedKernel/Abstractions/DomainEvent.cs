@@ -40,9 +40,9 @@ public abstract record DomainEvent
         string aggregateType,
         string aggregateId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(eventType, nameof(eventType));
-        ArgumentException.ThrowIfNullOrWhiteSpace(aggregateType, nameof(aggregateType));
-        ArgumentException.ThrowIfNullOrWhiteSpace(aggregateId, nameof(aggregateId));
+        ArgumentException.ThrowIfNullOrWhiteSpace(eventType);
+        ArgumentException.ThrowIfNullOrWhiteSpace(aggregateType);
+        ArgumentException.ThrowIfNullOrWhiteSpace(aggregateId);
 
         EventType = eventType;
         AggregateType = aggregateType;

@@ -61,7 +61,7 @@ public abstract class Entity<TId>
     /// <exception cref="ArgumentException">Thrown when username is null, empty, or whitespace.</exception>
     public void SetCreatedInfo(string username)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentException.ThrowIfNullOrWhiteSpace(username);
 
         CreatedBy = username;
         CreatedDate = DateTimeOffsetHelper.UtcNow;
@@ -74,7 +74,7 @@ public abstract class Entity<TId>
     /// <exception cref="ArgumentException">Thrown when username is null, empty, or whitespace.</exception>
     public void SetUpdatedInfo(string username)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentException.ThrowIfNullOrWhiteSpace(username);
 
         ModifiedBy = username;
         ModifiedDate = DateTimeOffsetHelper.UtcNow;

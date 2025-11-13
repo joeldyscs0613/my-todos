@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
 namespace MyTodos.SharedKernel.Abstractions;
 
 /// <summary>
@@ -61,5 +64,87 @@ public class DomainException : Exception
     public DomainException(string message, Exception innerException)
         : base(message, innerException)
     {
+    }
+
+    /// <summary>
+    /// Throws a <see cref="DomainException"/> if the specified string value is null, empty, or consists only of white-space characters.
+    /// </summary>
+    /// <param name="value">The string value to validate.</param>
+    /// <param name="message">The error message to use if validation fails. This message will be shown to end users in production.</param>
+    /// <param name="paramName">The name of the parameter being validated (automatically captured).</param>
+    /// <exception cref="DomainException">Thrown when <paramref name="value"/> is null, empty, or whitespace.</exception>
+    /// <example>
+    /// <code>
+    /// public void SetUsername(string username)
+    /// {
+    ///     DomainException.ThrowIfNullOrWhiteSpace(username, "Username cannot be empty.");
+    ///     _username = username;
+    /// }
+    /// </code>
+    /// </example>
+    public static void ThrowIfNullOrWhiteSpace(
+        [NotNull] string? value,
+        string message,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new DomainException(paramName != null ? $"{message} (Parameter: {paramName})" : message);
+        }
+    }
+
+    /// <summary>
+    /// Throws a <see cref="DomainException"/> if the specified string value is null or empty.
+    /// </summary>
+    /// <param name="value">The string value to validate.</param>
+    /// <param name="message">The error message to use if validation fails. This message will be shown to end users in production.</param>
+    /// <param name="paramName">The name of the parameter being validated (automatically captured).</param>
+    /// <exception cref="DomainException">Thrown when <paramref name="value"/> is null or empty.</exception>
+    /// <example>
+    /// <code>
+    /// public void SetEventType(string eventType)
+    /// {
+    ///     DomainException.ThrowIfNullOrEmpty(eventType, "Event type cannot be empty.");
+    ///     _eventType = eventType;
+    /// }
+    /// </code>
+    /// </example>
+    public static void ThrowIfNullOrEmpty(
+        [NotNull] string? value,
+        string message,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new DomainException(paramName != null ? $"{message} (Parameter: {paramName})" : message);
+        }
+    }
+
+    /// <summary>
+    /// Throws a <see cref="DomainException"/> if the specified value is null.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to validate.</typeparam>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="message">The error message to use if validation fails. This message will be shown to end users in production.</param>
+    /// <param name="paramName">The name of the parameter being validated (automatically captured).</param>
+    /// <exception cref="DomainException">Thrown when <paramref name="value"/> is null.</exception>
+    /// <example>
+    /// <code>
+    /// public void SetCategory(Category category)
+    /// {
+    ///     DomainException.ThrowIfNull(category, "Category cannot be null.");
+    ///     _category = category;
+    /// }
+    /// </code>
+    /// </example>
+    public static void ThrowIfNull<T>(
+        [NotNull] T? value,
+        string message,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+    {
+        if (value is null)
+        {
+            throw new DomainException(paramName != null ? $"{message} (Parameter: {paramName})" : message);
+        }
     }
 }
