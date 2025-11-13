@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
+using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Constants;
 using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.BuildingBlocks.Application.Exceptions;
@@ -31,20 +32,20 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
     {
         Filter = filter;
     }
-    
-    public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> query)
+
+    public virtual IQueryable<TEntity> Apply(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration)
     {
-        query = ApplyFilteringAndSorting(query);
+        query = ApplyFilteringAndSorting(query, queryConfiguration);
 
         query = ApplyPaging(query);
 
         return query;
     }
 
-    public virtual IQueryable<TEntity> ApplyWithoutPagination(IQueryable<TEntity> query)
+    public virtual IQueryable<TEntity> ApplyWithoutPagination(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration)
     {
-        query = ApplyFilteringAndSorting(query);
-        
+        query = ApplyFilteringAndSorting(query, queryConfiguration);
+
         // TotalCount is set here for potential use in export metadata
         TotalCount = query.Count();
 
@@ -56,11 +57,15 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
     /// This shared logic is used by both Apply() and ApplyWithoutPagination().
     /// </summary>
     /// <param name="query">The base queryable to apply operations to.</param>
+    /// <param name="queryConfiguration">
+    /// The centralized query configuration for aggregate loading.
+    /// Passed to ApplyIncludes where specification decides whether to use or override.
+    /// </param>
     /// <returns>The filtered, searched, and sorted queryable.</returns>
     /// <exception cref="InvalidSortFieldException">Thrown when an invalid sort field is provided.</exception>
-    protected virtual IQueryable<TEntity> ApplyFilteringAndSorting(IQueryable<TEntity> query)
+    protected virtual IQueryable<TEntity> ApplyFilteringAndSorting(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration)
     {
-        query = ApplyIncludes(query);
+        query = ApplyIncludes(query, queryConfiguration);
 
         query = ApplyFilter(query);
 
@@ -74,7 +79,15 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
         return query;
     }
 
-    protected abstract IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query);
+    /// <summary>
+    /// Applies eager loading includes to the query.
+    /// By default, uses centralized configuration for full aggregate loading.
+    /// Override for lightweight DTO scenarios to load only required includes.
+    /// </summary>
+    protected virtual IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration)
+    {
+        return queryConfiguration.ConfigureAggregate(query);
+    }
 
     protected abstract IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query);
 

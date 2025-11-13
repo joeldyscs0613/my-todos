@@ -29,10 +29,7 @@ public class PagedListQueryValidatorTests
     {
         public TestSpecification(TestFilter filter) : base(filter) { }
 
-        protected override IQueryable<TestEntity> ApplyIncludes(IQueryable<TestEntity> query)
-        {
-            return query;
-        }
+        // No longer need to override ApplyIncludes - base class provides default implementation
 
         protected override IQueryable<TestEntity> ApplyFilter(IQueryable<TestEntity> query)
         {

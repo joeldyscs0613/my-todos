@@ -1,4 +1,5 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
+using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
 namespace MyTodos.BuildingBlocks.Application.Contracts;
 
@@ -9,6 +10,7 @@ namespace MyTodos.BuildingBlocks.Application.Contracts;
 /// <typeparam name="TEntity">The entity type the specification applies to.</typeparam>
 /// <typeparam name="TFilter">The filter type containing query parameters.</typeparam>
 public interface ISpecification<TEntity, out TFilter>
+    where TEntity : class
     where TFilter : Filter
 {
     /// <summary>
@@ -33,34 +35,30 @@ public interface ISpecification<TEntity, out TFilter>
 
     /// <summary>
     /// Gets the list of valid sort field names for this specification.
-    /// Used for validation to ensure sort fields are valid before query execution.
     /// </summary>
     IReadOnlyList<string> ValidSortFields { get; }
 
     /// <summary>
-    /// Applies the complete specification to the query including filtering, searching,
-    /// sorting, and pagination.
+    /// Applies filtering, searching, sorting, and pagination to the query.
+    /// Uses queryConfiguration for includes by default; override for lightweight DTOs.
     /// </summary>
-    /// <param name="query">The base queryable to apply the specification to.</param>
+    /// <param name="query">The base queryable.</param>
+    /// <param name="queryConfiguration">Centralized query configuration for aggregate loading.</param>
     /// <returns>The modified queryable with all operations applied.</returns>
     /// <exception cref="BuildingBlocks.Application.Exceptions.InvalidSortFieldException">
-    /// Thrown when the specified sort field is not valid for this specification.
+    /// Thrown when the specified sort field is invalid.
     /// </exception>
-    IQueryable<TEntity> Apply(IQueryable<TEntity> query);
+    IQueryable<TEntity> Apply(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration);
 
     /// <summary>
-    /// Applies the specification to the query excluding pagination (no Skip/Take).
+    /// Applies filtering, searching, and sorting without pagination.
     /// Used for export functionality to retrieve all filtered/sorted results.
     /// </summary>
-    /// <param name="query">The base queryable to apply the specification to.</param>
-    /// <returns>The modified queryable with filters and sorting applied (pagination excluded).</returns>
+    /// <param name="query">The base queryable.</param>
+    /// <param name="queryConfiguration">Centralized query configuration for aggregate loading.</param>
+    /// <returns>The modified queryable with filters and sorting applied (no pagination).</returns>
     /// <exception cref="BuildingBlocks.Application.Exceptions.InvalidSortFieldException">
-    /// Thrown when the specified sort field is not valid for this specification.
+    /// Thrown when the specified sort field is invalid.
     /// </exception>
-    /// <remarks>
-    /// This method applies the same filtering, searching, and sorting logic as Apply(),
-    /// but skips the pagination (Skip/Take) operations. This is useful for export scenarios
-    /// where all matching results need to be returned.
-    /// </remarks>
-    IQueryable<TEntity> ApplyWithoutPagination(IQueryable<TEntity> query);
+    IQueryable<TEntity> ApplyWithoutPagination(IQueryable<TEntity> query, IEntityQueryConfiguration<TEntity> queryConfiguration);
 }

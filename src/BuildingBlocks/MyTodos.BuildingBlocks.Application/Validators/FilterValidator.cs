@@ -11,9 +11,6 @@ namespace MyTodos.BuildingBlocks.Application.Validators;
 public abstract class FilterValidator<TFilter> : AbstractValidator<TFilter>
     where TFilter : Filter
 {
-    /// <summary>
-    /// Initializes a new instance of the FilterValidator class with common validation rules.
-    /// </summary>
     protected FilterValidator()
     {
         // Validate PageNumber
@@ -42,10 +39,8 @@ public abstract class FilterValidator<TFilter> : AbstractValidator<TFilter>
     }
 
     /// <summary>
-    /// Validates that a sort direction value is either "asc" or "desc" (case-insensitive).
+    /// Validates sort direction is "asc" or "desc" (case-insensitive).
     /// </summary>
-    /// <param name="sortDirection">The sort direction to validate.</param>
-    /// <returns>True if valid, false otherwise.</returns>
     protected static bool BeValidSortDirection(string? sortDirection)
     {
         if (string.IsNullOrWhiteSpace(sortDirection))
@@ -56,14 +51,12 @@ public abstract class FilterValidator<TFilter> : AbstractValidator<TFilter>
     }
 
     /// <summary>
-    /// Gets the maximum allowed page size. Can be overridden for export scenarios.
+    /// Gets the maximum allowed page size. Override for export scenarios.
     /// </summary>
-    /// <returns>The maximum page size (default: 50).</returns>
     protected virtual int GetMaxPageSize() => PageListConstants.MaxPageSize;
 
     /// <summary>
-    /// Gets the maximum allowed search term length. Can be overridden per filter type.
+    /// Gets the maximum allowed search term length. Override per filter type.
     /// </summary>
-    /// <returns>The maximum search length (default: 200).</returns>
     protected virtual int GetMaxSearchLength() => 200;
 }
