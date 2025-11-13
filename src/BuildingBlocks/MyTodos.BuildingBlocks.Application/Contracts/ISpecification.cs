@@ -32,6 +32,12 @@ public interface ISpecification<TEntity, out TFilter>
     int TotalCount { get; }
 
     /// <summary>
+    /// Gets the list of valid sort field names for this specification.
+    /// Used for validation to ensure sort fields are valid before query execution.
+    /// </summary>
+    IReadOnlyList<string> ValidSortFields { get; }
+
+    /// <summary>
     /// Applies the complete specification to the query including filtering, searching,
     /// sorting, and pagination.
     /// </summary>

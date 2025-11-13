@@ -1,9 +1,10 @@
 using MediatR;
+using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-public abstract class Query<TResponse> : IRequest<Result<TResponse>>
+public abstract class Query<TResponse> : IQuery, IRequest<Result<TResponse>>
 {
 }
 

@@ -65,6 +65,21 @@ public abstract class PagedListQueryHandler
         return result;
     }
 
+    /// <summary>
+    /// Validates business rules for the request that require database access or complex logic.
+    /// Structural validation (pagination, sorting, filtering) is handled by FluentValidation validators.
+    /// </summary>
+    /// <param name="request">The query request to validate.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>An error if validation fails, otherwise Error.None.</returns>
+    /// <remarks>
+    /// Override this method to implement query-specific validation that requires:
+    /// - Database queries (e.g., checking if a related entity exists)
+    /// - Authorization checks beyond structural validation
+    /// - Complex business rules involving multiple entities
+    ///
+    /// For structural validation (required fields, formats, ranges), use FluentValidation validators instead.
+    /// </remarks>
     protected virtual async Task<Error> ValidateRequest(TQuery request, CancellationToken ct)
     {
         await Task.CompletedTask;

@@ -16,7 +16,7 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
     where TId : IComparable
 {
     public int TotalCount { get; protected set; }
-    
+
     public TFilter Filter { get; }
 
     public int PageNumber => Filter.PageNumber;
@@ -24,6 +24,8 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
 
     public string? SortField => Filter.SortField;
     public string? SortDirection => Filter.SortDirection;
+
+    public IReadOnlyList<string> ValidSortFields => GetSortFunctions().Keys.ToList();
     
     protected Specification(TFilter filter)
     {
