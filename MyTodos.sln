@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Infr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Presentation", "src\BuildingBlocks\MyTodos.BuildingBlocks.Presentation\MyTodos.BuildingBlocks.Presentation.csproj", "{492C4F46-60E3-49DF-AC5E-37C355E9B5AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.BuildingBlocks.Presentation.UnitTests", "tests\BuildingBlocks\MyTodos.BuildingBlocks.Presentation.UnitTests\MyTodos.BuildingBlocks.Presentation.UnitTests.csproj", "{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{492C4F46-60E3-49DF-AC5E-37C355E9B5AC}.Release|x64.Build.0 = Release|Any CPU
 		{492C4F46-60E3-49DF-AC5E-37C355E9B5AC}.Release|x86.ActiveCfg = Release|Any CPU
 		{492C4F46-60E3-49DF-AC5E-37C355E9B5AC}.Release|x86.Build.0 = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|x64.Build.0 = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Debug|x86.Build.0 = Debug|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|x64.ActiveCfg = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|x64.Build.0 = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|x86.ActiveCfg = Release|Any CPU
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,5 +132,6 @@ Global
 		{48C2E365-4921-4A59-A32C-C678F36AD11A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{3E7829A5-FCD5-4005-93F6-C09FA043DABA} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
 		{492C4F46-60E3-49DF-AC5E-37C355E9B5AC} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
+		{88964220-CDF2-49A5-A2CC-BD0AFFA4374F} = {48C2E365-4921-4A59-A32C-C678F36AD11A}
 	EndGlobalSection
 EndGlobal

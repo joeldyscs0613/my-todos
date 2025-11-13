@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MyTodos.BuildingBlocks.Presentation.ProblemDetails;
@@ -7,66 +8,87 @@ using MyTodos.BuildingBlocks.Presentation.ProblemDetails;
 namespace MyTodos.BuildingBlocks.Presentation.Middleware;
 
 /// <summary>
-/// Global exception handler middleware that catches unhandled exceptions and converts them to Problem Details responses.
+/// Global exception handler that catches unhandled exceptions and converts them to RFC 7807 Problem Details responses.
 /// Logs exceptions that occur outside the MediatR pipeline (pipeline exceptions are already logged by LoggingBehavior).
+/// Uses the modern IExceptionHandler pattern introduced in .NET 7/8.
 /// </summary>
 public sealed class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger,
-    ProblemDetailsFactory problemDetailsFactory) : IMiddleware
+    ProblemDetailsFactory problemDetailsFactory) : IExceptionHandler
 {
-    /// <summary>
-    /// Invokes the middleware to handle exceptions in the HTTP pipeline.
-    /// </summary>
-    /// <param name="context">The HTTP context.</param>
-    /// <param name="next">The next middleware in the pipeline.</param>
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        try
-        {
-            // Execute the rest of the pipeline
-            await next(context);
-        }
-        catch (Exception ex)
-        {
-            // Log exception only if it occurred outside MediatR pipeline
-            // MediatR exceptions are already logged by LoggingBehavior
-            if (!IsMediatRException(ex))
-            {
-                logger.LogError(
-                    ex,
-                    "Unhandled exception occurred outside MediatR pipeline at {Path}",
-                    context.Request.Path);
-            }
-            else
-            {
-                // MediatR exception - already logged, just converting to response
-                logger.LogDebug(
-                    "Converting MediatR exception to Problem Details response for {Path}",
-                    context.Request.Path);
-            }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false
+    };
 
-            // Convert exception to Problem Details and send response
-            await HandleExceptionAsync(context, ex);
+    /// <summary>
+    /// Attempts to handle the exception by converting it to a Problem Details response.
+    /// </summary>
+    /// <param name="httpContext">The HTTP context for the current request.</param>
+    /// <param name="exception">The exception that occurred.</param>
+    /// <param name="cancellationToken">Cancellation token for the async operation.</param>
+    /// <returns>True if the exception was handled; otherwise, false.</returns>
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext httpContext,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        // Log exception only if it occurred outside MediatR pipeline
+        // MediatR exceptions are already logged by LoggingBehavior
+        if (!IsMediatRException(exception))
+        {
+            logger.LogError(
+                exception,
+                "Unhandled exception occurred outside MediatR pipeline at {Path}",
+                httpContext.Request.Path);
         }
+        else
+        {
+            // MediatR exception - already logged, just converting to response
+            logger.LogDebug(
+                "Converting MediatR exception to Problem Details response for {Path}",
+                httpContext.Request.Path);
+        }
+
+        // Convert exception to Problem Details and send response
+        await HandleExceptionAsync(httpContext, exception, cancellationToken);
+
+        // Return true to indicate the exception was handled
+        return true;
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleExceptionAsync(
+        HttpContext context,
+        Exception exception,
+        CancellationToken cancellationToken)
     {
         // Create Problem Details response from exception
-        var problemDetails = problemDetailsFactory.CreateFromException(exception);
+        var problemDetails = problemDetailsFactory.CreateFromException(context, exception);
 
         // Set response status code and content type
         context.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
         context.Response.ContentType = "application/problem+json";
 
-        // Serialize and write Problem Details to response
-        var json = JsonSerializer.Serialize(problemDetails, new JsonSerializerOptions
+        try
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false
-        });
+            // Serialize and write Problem Details to response
+            await context.Response.WriteAsJsonAsync(problemDetails, JsonOptions, cancellationToken);
+        }
+        catch (Exception serializationException)
+        {
+            // If serialization fails, log and send a minimal error response
+            logger.LogError(
+                serializationException,
+                "Failed to serialize Problem Details response for exception: {OriginalException}",
+                exception.Message);
 
-        await context.Response.WriteAsync(json);
+            // Fallback to plain text response
+            context.Response.ContentType = "text/plain";
+            await context.Response.WriteAsync(
+                "An error occurred while processing your request.",
+                cancellationToken);
+        }
     }
 
     private static bool IsMediatRException(Exception exception)
