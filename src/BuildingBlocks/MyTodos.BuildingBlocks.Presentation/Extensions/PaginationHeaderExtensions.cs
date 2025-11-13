@@ -6,36 +6,15 @@ namespace MyTodos.BuildingBlocks.Presentation.Extensions;
 
 /// <summary>
 /// Extension methods for adding pagination metadata to HTTP response headers.
-/// Provides RESTful pagination information following RFC 8288 conventions.
 /// </summary>
 public static class PaginationHeaderExtensions
 {
     /// <summary>
-    /// Adds pagination metadata headers to the HTTP response.
-    /// Headers follow the X-Pagination-* naming convention.
+    /// Adds pagination metadata headers (X-Pagination-*) to the HTTP response.
+    /// Includes CurrentPage, PageSize, TotalPages, TotalCount, HasPrevious, HasNext, SortField, SortDirection.
     /// </summary>
     /// <param name="response">The HTTP response to add headers to.</param>
     /// <param name="metadata">Pagination metadata from a PagedList.</param>
-    /// <remarks>
-    /// <para>Headers added:</para>
-    /// <list type="bullet">
-    /// <item><description>X-Pagination-CurrentPage: Current page number (1-indexed)</description></item>
-    /// <item><description>X-Pagination-PageSize: Items per page</description></item>
-    /// <item><description>X-Pagination-TotalPages: Total number of pages</description></item>
-    /// <item><description>X-Pagination-TotalCount: Total number of items</description></item>
-    /// <item><description>X-Pagination-HasPrevious: Whether a previous page exists (true/false)</description></item>
-    /// <item><description>X-Pagination-HasNext: Whether a next page exists (true/false)</description></item>
-    /// <item><description>X-Pagination-SortField: Sort field name (optional)</description></item>
-    /// <item><description>X-Pagination-SortDirection: Sort direction (optional)</description></item>
-    /// </list>
-    /// </remarks>
-    /// <example>
-    /// <code>
-    /// var pagedResult = await Mediator.Send(new GetTodosQuery(filter));
-    /// Response.AddPaginationHeaders(pagedResult.Metadata);
-    /// return Ok(pagedResult);
-    /// </code>
-    /// </example>
     public static void AddPaginationHeaders(this HttpResponse response, PagedListMetadata metadata)
     {
         ArgumentNullException.ThrowIfNull(response);
@@ -73,19 +52,11 @@ public static class PaginationHeaderExtensions
     }
 
     /// <summary>
-    /// Adds pagination metadata headers from a PagedList directly.
-    /// Convenience method that extracts metadata and adds headers.
+    /// Adds pagination metadata headers from a PagedList. Extracts and adds metadata.
     /// </summary>
     /// <typeparam name="T">Type of items in the paged list.</typeparam>
     /// <param name="response">The HTTP response to add headers to.</param>
     /// <param name="pagedList">The paged list containing metadata.</param>
-    /// <example>
-    /// <code>
-    /// var pagedResult = await Mediator.Send(new GetTodosQuery(filter));
-    /// Response.AddPaginationHeaders(pagedResult);
-    /// return Ok(pagedResult);
-    /// </code>
-    /// </example>
     public static void AddPaginationHeaders<T>(this HttpResponse response, PagedList<T> pagedList)
     {
         ArgumentNullException.ThrowIfNull(pagedList);

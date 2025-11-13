@@ -1,3 +1,4 @@
+using MyTodos.SharedKernel.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.SharedKernel.Abstractions;
@@ -7,7 +8,7 @@ namespace MyTodos.SharedKernel.Abstractions;
 /// Entities have a unique identity and audit trail properties.
 /// </summary>
 /// <typeparam name="TId">The type of the entity's identifier.</typeparam>
-public abstract class Entity<TId>
+public abstract class Entity<TId> : IEntity
     where TId : IComparable
 {
     /// <summary>

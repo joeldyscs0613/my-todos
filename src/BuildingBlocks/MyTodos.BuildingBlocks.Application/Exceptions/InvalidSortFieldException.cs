@@ -4,44 +4,8 @@ namespace MyTodos.BuildingBlocks.Application.Exceptions;
 
 /// <summary>
 /// Exception thrown when an invalid sort field is provided to a specification.
-/// This represents a validation error for user-provided sort field names that don't match
-/// the specification's defined sortable fields.
+/// Mapped to 400 Bad Request by global exception handler.
 /// </summary>
-/// <remarks>
-/// <para><strong>Usage Context:</strong></para>
-/// <para>
-/// This exception is thrown during specification application when the provided sort field
-/// doesn't exist in the specification's GetSortFunctions() dictionary. It serves as a safety
-/// net for invalid user input that wasn't caught by earlier validation layers.
-/// </para>
-/// <para><strong>Error Handling:</strong></para>
-/// <para>
-/// The global exception handler maps this to a 400 Bad Request response. The exception message
-/// (including the invalid field and list of valid fields) is safe to expose to end users in
-/// production since it's developer-controlled and helps users correct their requests.
-/// </para>
-/// <para><strong>Design Decision:</strong></para>
-/// <para>
-/// This inherits from DomainException (not ArgumentException) because determining which fields
-/// are sortable is domain knowledge encapsulated in specifications. The valid sort fields
-/// represent domain concepts (e.g., "DueDate", "Priority", "Title") rather than technical
-/// implementation details.
-/// </para>
-/// </remarks>
-/// <example>
-/// <code>
-/// // In Specification.ApplySort():
-/// if (!sortFunctions.TryGetValue(sortField, out var sortExpression))
-/// {
-///     throw new InvalidSortFieldException(
-///         providedField: "invalidField",
-///         validFields: new[] { "Title", "DueDate", "Priority" });
-/// }
-///
-/// // Results in 400 Bad Request with message:
-/// // "Sort field 'invalidField' is not valid. Valid fields: Title, DueDate, Priority"
-/// </code>
-/// </example>
 public class InvalidSortFieldException : DomainException
 {
     /// <summary>

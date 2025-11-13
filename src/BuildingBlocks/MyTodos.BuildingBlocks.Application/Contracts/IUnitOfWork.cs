@@ -1,8 +1,6 @@
 namespace MyTodos.BuildingBlocks.Application.Contracts;
 
-public interface IUnitOfWork
+public interface IUnitOfWork : IAsyncDisposable
 {
-    public int Commit();
     public Task<int> CommitAsync(CancellationToken ct = default);
-    public void Dispose();
 }

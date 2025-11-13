@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
+using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.BuildingBlocks.Application.Constants;
 using MyTodos.BuildingBlocks.Application.Exceptions;
@@ -10,6 +11,15 @@ namespace MyTodos.BuildingBlocks.Application.UnitTests;
 public class SpecificationTests
 {
     #region Test Helper Classes
+
+    // Mock query configuration for tests - doesn't add any includes
+    private class TestEntityQueryConfiguration : IEntityQueryConfiguration<TestEntity>
+    {
+        public IQueryable<TestEntity> ConfigureAggregate(IQueryable<TestEntity> query)
+        {
+            return query; // No includes needed for test entities
+        }
+    }
 
     public class TestEntity : Entity<int>
     {
@@ -33,7 +43,7 @@ public class SpecificationTests
         {
         }
 
-        protected override IQueryable<TestEntity> ApplyIncludes(IQueryable<TestEntity> query) => query;
+        // No longer need to override ApplyIncludes - base class provides default implementation
 
         protected override IQueryable<TestEntity> ApplyFilter(IQueryable<TestEntity> query)
         {
@@ -416,7 +426,7 @@ public class SpecificationTests
         }.AsQueryable();
 
         // Act
-        var result = specification.Apply(data);
+        var result = specification.Apply(data, new TestEntityQueryConfiguration());
 
         // Assert
         var finalList = result.ToList();
@@ -445,7 +455,7 @@ public class SpecificationTests
         }.AsQueryable();
 
         // Act
-        var result = specification.Apply(data);
+        var result = specification.Apply(data, new TestEntityQueryConfiguration());
 
         // Assert
         var finalList = result.ToList();
@@ -471,7 +481,7 @@ public class SpecificationTests
         }.AsQueryable();
 
         // Act & Assert
-        var exception = Assert.Throws<InvalidSortFieldException>(() => specification.Apply(data).ToList());
+        var exception = Assert.Throws<InvalidSortFieldException>(() => specification.Apply(data, new TestEntityQueryConfiguration()).ToList());
         Assert.Equal("InvalidField", exception.ProvidedField);
         Assert.Contains("InvalidField", exception.Message);
     }
@@ -495,7 +505,7 @@ public class SpecificationTests
         }.AsQueryable();
 
         // Act
-        var result = specification.Apply(data);
+        var result = specification.Apply(data, new TestEntityQueryConfiguration());
 
         // Assert
         var finalList = result.ToList();
@@ -520,7 +530,7 @@ public class SpecificationTests
         }.AsQueryable();
 
         // Act
-        var result = specification.Apply(data);
+        var result = specification.Apply(data, new TestEntityQueryConfiguration());
 
         // Assert
         var finalList = result.ToList();
