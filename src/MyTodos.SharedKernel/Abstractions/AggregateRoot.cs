@@ -1,3 +1,5 @@
+using MyTodos.SharedKernel.Contracts;
+
 namespace MyTodos.SharedKernel.Abstractions;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace MyTodos.SharedKernel.Abstractions;
 /// Aggregate roots are entities that serve as entry points to an aggregate and manage domain events.
 /// </summary>
 /// <typeparam name="TId">The type of the aggregate root's identifier.</typeparam>
-public abstract class AggregateRoot<TId> : Entity<TId>
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : IComparable
 {
     private readonly List<DomainEvent> _domainEvents = new();
