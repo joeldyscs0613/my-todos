@@ -20,8 +20,8 @@ public abstract class ReadEfRepository<TEntity, TId, TDbContext> : IReadReposito
 
     protected ReadEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration)
     {
-        Context = context;
-        QueryConfiguration = queryConfiguration;
+        Context = context ?? throw new ArgumentNullException(nameof(context));
+        QueryConfiguration = queryConfiguration  ?? throw new ArgumentNullException(nameof(queryConfiguration));
     }
     
     /// <summary>

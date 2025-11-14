@@ -28,9 +28,9 @@ public abstract class WriteEfRepository<TEntity, TId, TDbContext> : IWriteReposi
 
     protected WriteEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration)
     {
-        Context = context;
+        Context = context  ?? throw new ArgumentNullException(nameof(context));
         Set = Context.Set<TEntity>();
-        QueryConfiguration = queryConfiguration;
+        QueryConfiguration = queryConfiguration  ?? throw new ArgumentNullException(nameof(queryConfiguration));;
     }
 
     /// <summary>
