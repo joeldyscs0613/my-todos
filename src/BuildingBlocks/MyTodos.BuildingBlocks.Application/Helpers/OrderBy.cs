@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Specifications;
 
 namespace MyTodos.BuildingBlocks.Application.Helpers;
 

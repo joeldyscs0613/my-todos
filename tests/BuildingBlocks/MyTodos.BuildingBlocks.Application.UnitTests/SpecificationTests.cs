@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
-using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.BuildingBlocks.Application.Constants;
+using MyTodos.BuildingBlocks.Application.Contracts.Queries;
 using MyTodos.BuildingBlocks.Application.Exceptions;
 using MyTodos.SharedKernel.Abstractions;
 

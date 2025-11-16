@@ -1,5 +1,6 @@
 using MediatR;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Queries;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;

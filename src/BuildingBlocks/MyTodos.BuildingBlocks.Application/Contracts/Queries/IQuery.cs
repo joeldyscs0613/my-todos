@@ -1,4 +1,4 @@
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Queries;
 
 /// <summary>
 /// Marker interface for queries in the CQRS pattern.

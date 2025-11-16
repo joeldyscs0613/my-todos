@@ -1,3 +1,4 @@
+using MyTodos.SharedKernel.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.SharedKernel.Abstractions;
@@ -6,7 +7,7 @@ namespace MyTodos.SharedKernel.Abstractions;
 /// Base record for domain events that represent significant occurrences in the domain.
 /// Domain events are immutable and compared by value.
 /// </summary>
-public abstract record DomainEvent
+public abstract record DomainEvent : IDomainEvent
 {
     /// <summary>
     /// Gets the type of the event (e.g., "TaskCreated", "TaskCompleted").

@@ -27,12 +27,12 @@ public sealed class GlobalExceptionHandler(
     /// </summary>
     /// <param name="httpContext">The HTTP context for the current request.</param>
     /// <param name="exception">The exception that occurred.</param>
-    /// <param name="cancellationToken">Cancellation token for the async operation.</param>
+    /// <param name="ct">Cancellation token for the async operation.</param>
     /// <returns>True if the exception was handled; otherwise, false.</returns>
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         // Log exception only if it occurred outside MediatR pipeline
         // MediatR exceptions are already logged by LoggingBehavior
@@ -52,7 +52,7 @@ public sealed class GlobalExceptionHandler(
         }
 
         // Convert exception to Problem Details and send response
-        await HandleExceptionAsync(httpContext, exception, cancellationToken);
+        await HandleExceptionAsync(httpContext, exception, ct);
 
         // Return true to indicate the exception was handled
         return true;
@@ -61,7 +61,7 @@ public sealed class GlobalExceptionHandler(
     private async Task HandleExceptionAsync(
         HttpContext context,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         // Create Problem Details response from exception
         var problemDetails = problemDetailsFactory.CreateFromException(context, exception);
@@ -73,7 +73,7 @@ public sealed class GlobalExceptionHandler(
         try
         {
             // Serialize and write Problem Details to response
-            await context.Response.WriteAsJsonAsync(problemDetails, JsonOptions, cancellationToken);
+            await context.Response.WriteAsJsonAsync(problemDetails, JsonOptions, ct);
         }
         catch (Exception serializationException)
         {
@@ -85,9 +85,7 @@ public sealed class GlobalExceptionHandler(
 
             // Fallback to plain text response
             context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync(
-                "An error occurred while processing your request.",
-                cancellationToken);
+            await context.Response.WriteAsync("An error occurred while processing your request.", ct);
         }
     }
 

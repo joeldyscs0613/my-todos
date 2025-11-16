@@ -1,6 +1,6 @@
 using MyTodos.SharedKernel.Abstractions;
 
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 
 /// <summary>
 /// Write repository for CQRS pattern. Includes GetByIdAsync for loading aggregates with change tracking.

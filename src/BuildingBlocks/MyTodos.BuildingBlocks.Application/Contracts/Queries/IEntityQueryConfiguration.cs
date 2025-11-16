@@ -1,4 +1,4 @@
-namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Queries;
 
 /// <summary>
 /// Configures queries to load complete aggregates with consistent includes and filters.

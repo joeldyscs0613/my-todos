@@ -1,6 +1,5 @@
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using MyTodos.BuildingBlocks.Application.Behaviors;
+using MyTodos.BuildingBlocks.Application;
 
 namespace MyTodos.Services.TodoService.Application;
 
@@ -10,19 +9,10 @@ public static class DependencyInjection
     {
         var assembly = typeof(DependencyInjection).Assembly;
 
-        // Register MediatR with all handlers from this assembly
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(assembly);
+        // BuildingBlocks handles MediatR, validators, and behaviors
+        services.AddBuildingBlocksApplication(assembly);
 
-            // Add pipeline behaviors (order matters - executed in registration order)
-            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
-            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
-        });
-
-        // Register all FluentValidation validators from this assembly
-        services.AddValidatorsFromAssembly(assembly);
+        // Future: Register TodoService-specific application services here
 
         return services;
     }

@@ -1,6 +1,7 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Helpers;
 using MyTodos.SharedKernel.Abstractions;
 using MyTodos.SharedKernel.Helpers;

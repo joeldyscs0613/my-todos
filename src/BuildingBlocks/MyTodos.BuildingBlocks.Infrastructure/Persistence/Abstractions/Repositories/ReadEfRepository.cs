@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.BuildingBlocks.Application.Contracts.Queries;
 using MyTodos.SharedKernel.Abstractions;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;

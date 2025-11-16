@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.DomainEvents;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 using MyTodos.BuildingBlocks.Infrastructure.UnitTests.Messaging.DomainEvents;
 using MyTodos.SharedKernel.Abstractions;
@@ -46,10 +48,10 @@ public class UnitOfWorkTests : IDisposable
 
         _context.TestAggregates.Add(aggregate);
 
-        List<DomainEvent> dispatchedEvents = null!;
+        List<IDomainEvent> dispatchedEvents = null!;
         _domainEventDispatcherMock
-            .Setup(x => x.DispatchAsync(It.IsAny<IEnumerable<DomainEvent>>(), It.IsAny<CancellationToken>()))
-            .Callback<IEnumerable<DomainEvent>, CancellationToken>((events, _) =>
+            .Setup(x => x.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()))
+            .Callback<IEnumerable<IDomainEvent>, CancellationToken>((events, _) =>
             {
                 dispatchedEvents = events.ToList();
             });
@@ -94,7 +96,7 @@ public class UnitOfWorkTests : IDisposable
         // Verify that DispatchAsync was called exactly once
         // The implementation guarantees events are dispatched after SaveChanges
         _domainEventDispatcherMock.Verify(
-            x => x.DispatchAsync(It.IsAny<IEnumerable<DomainEvent>>(), It.IsAny<CancellationToken>()),
+            x => x.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -110,7 +112,7 @@ public class UnitOfWorkTests : IDisposable
 
         // Assert
         _domainEventDispatcherMock.Verify(
-            x => x.DispatchAsync(It.Is<IEnumerable<DomainEvent>>(e => !e.Any()), It.IsAny<CancellationToken>()),
+            x => x.DispatchAsync(It.Is<IEnumerable<IDomainEvent>>(e => !e.Any()), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -127,10 +129,10 @@ public class UnitOfWorkTests : IDisposable
         _context.TestAggregates.Add(aggregate1);
         _context.TestAggregates.Add(aggregate2);
 
-        List<DomainEvent> dispatchedEvents = null!;
+        List<IDomainEvent> dispatchedEvents = null!;
         _domainEventDispatcherMock
-            .Setup(x => x.DispatchAsync(It.IsAny<IEnumerable<DomainEvent>>(), It.IsAny<CancellationToken>()))
-            .Callback<IEnumerable<DomainEvent>, CancellationToken>((events, _) =>
+            .Setup(x => x.DispatchAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()))
+            .Callback<IEnumerable<IDomainEvent>, CancellationToken>((events, _) =>
             {
                 dispatchedEvents = events.ToList();
             });
@@ -140,8 +142,8 @@ public class UnitOfWorkTests : IDisposable
 
         // Assert
         Assert.Equal(2, dispatchedEvents.Count);
-        Assert.Contains(dispatchedEvents, e => e.AggregateId == "1");
-        Assert.Contains(dispatchedEvents, e => e.AggregateId == "2");
+        Assert.Contains(dispatchedEvents, e => ((DomainEvent)e).AggregateId == "1");
+        Assert.Contains(dispatchedEvents, e => ((DomainEvent)e).AggregateId == "2");
     }
 
     [Fact]

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using MyTodos.SharedKernel.Abstractions;
 
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 
 /// <summary>
 /// Read-only repository for querying aggregate roots without modifying state.

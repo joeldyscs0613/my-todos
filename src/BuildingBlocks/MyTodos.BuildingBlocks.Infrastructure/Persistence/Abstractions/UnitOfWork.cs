@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.DomainEvents;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.SharedKernel.Abstractions;
 using MyTodos.SharedKernel.Contracts;
 

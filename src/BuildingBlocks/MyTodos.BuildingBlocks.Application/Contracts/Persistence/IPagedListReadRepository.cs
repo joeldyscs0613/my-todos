@@ -1,7 +1,8 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
+using MyTodos.BuildingBlocks.Application.Contracts.Specifications;
 using MyTodos.SharedKernel.Abstractions;
 
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 
 /// <summary>
 /// Read repository with paginated query support using the Specification pattern.

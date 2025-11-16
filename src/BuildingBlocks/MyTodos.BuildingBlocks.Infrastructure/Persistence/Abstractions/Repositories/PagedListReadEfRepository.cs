@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
-using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.BuildingBlocks.Application.Contracts.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Specifications;
 using MyTodos.SharedKernel.Abstractions;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;

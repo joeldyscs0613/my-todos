@@ -1,7 +1,7 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
-using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Queries;
 
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Specifications;
 
 /// <summary>
 /// Defines the contract for specifications that encapsulate query logic including

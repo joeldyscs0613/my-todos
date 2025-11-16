@@ -2,6 +2,8 @@ using MediatR;
 using Moq;
 using MyTodos.BuildingBlocks.Application.Behaviors;
 using MyTodos.BuildingBlocks.Application.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Commands;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.UnitTests;

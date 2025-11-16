@@ -1,4 +1,4 @@
-namespace MyTodos.BuildingBlocks.Application.Contracts;
+namespace MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 
 public interface IUnitOfWork : IAsyncDisposable
 {
