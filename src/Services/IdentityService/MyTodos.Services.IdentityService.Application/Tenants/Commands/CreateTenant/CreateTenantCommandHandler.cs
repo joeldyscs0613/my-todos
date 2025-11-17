@@ -2,29 +2,29 @@ using Microsoft.Extensions.Logging;
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 using MyTodos.BuildingBlocks.Application.Abstractions.Dtos;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Tenants.Commands.CreateTenant;
+namespace MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTenant;
 
 /// <summary>
 /// Handler for creating a new tenant.
 /// </summary>
 public sealed class CreateTenantCommandHandler : CreateCommandHandler<CreateTenantCommand, Guid>
 {
-    private readonly ITenantReadRepository _tenantReadRepository;
+    private readonly ITenantPagedListReadRepository _tenantPagedListReadRepository;
     private readonly ITenantWriteRepository _tenantWriteRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreateTenantCommandHandler> _logger;
 
     public CreateTenantCommandHandler(
-        ITenantReadRepository tenantReadRepository,
+        ITenantPagedListReadRepository tenantPagedListReadRepository,
         ITenantWriteRepository tenantWriteRepository,
         IUnitOfWork unitOfWork,
         ILogger<CreateTenantCommandHandler> logger)
     {
-        _tenantReadRepository = tenantReadRepository;
+        _tenantPagedListReadRepository = tenantPagedListReadRepository;
         _tenantWriteRepository = tenantWriteRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -35,7 +35,7 @@ public sealed class CreateTenantCommandHandler : CreateCommandHandler<CreateTena
         CancellationToken ct)
     {
         // Check if tenant with same name already exists
-        var existingTenant = await _tenantReadRepository.GetByNameAsync(request.Name, ct);
+        var existingTenant = await _tenantPagedListReadRepository.GetByNameAsync(request.Name, ct);
         if (existingTenant != null)
         {
             _logger.LogWarning("Tenant creation failed: Tenant with name {Name} already exists", request.Name);

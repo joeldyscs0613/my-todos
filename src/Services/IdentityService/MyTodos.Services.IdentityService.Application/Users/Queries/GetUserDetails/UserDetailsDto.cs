@@ -1,4 +1,4 @@
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Queries.GetUserDetails;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
 
 /// <summary>
 /// User details DTO.

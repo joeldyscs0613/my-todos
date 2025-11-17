@@ -2,12 +2,12 @@ using Microsoft.Extensions.Logging;
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
-using MyTodos.Services.IdentityService.Domain.UserAggregate.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.RegisterFromInvitation;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
 
 /// <summary>
 /// Handler for registering a user from an invitation.
@@ -15,9 +15,7 @@ namespace MyTodos.Services.IdentityService.Application.Features.Authentication.C
 public sealed class RegisterFromInvitationCommandHandler
     : ResponseCommandHandler<RegisterFromInvitationCommand, SignInResponseDto>
 {
-    private readonly IUserInvitationReadRepository _invitationReadRepository;
-    private readonly IUserInvitationWriteRepository _invitationWriteRepository;
-    private readonly IUserReadRepository _userReadRepository;
+    private readonly IUserPagedListReadRepository _userPagedListReadRepository;
     private readonly IUserWriteRepository _userWriteRepository;
     private readonly IPasswordHashingService _passwordHashingService;
     private readonly IJwtTokenService _jwtTokenService;
@@ -25,18 +23,14 @@ public sealed class RegisterFromInvitationCommandHandler
     private readonly ILogger<RegisterFromInvitationCommandHandler> _logger;
 
     public RegisterFromInvitationCommandHandler(
-        IUserInvitationReadRepository invitationReadRepository,
-        IUserInvitationWriteRepository invitationWriteRepository,
-        IUserReadRepository userReadRepository,
+        IUserPagedListReadRepository userPagedListReadRepository,
         IUserWriteRepository userWriteRepository,
         IPasswordHashingService passwordHashingService,
         IJwtTokenService jwtTokenService,
         IUnitOfWork unitOfWork,
         ILogger<RegisterFromInvitationCommandHandler> logger)
     {
-        _invitationReadRepository = invitationReadRepository;
-        _invitationWriteRepository = invitationWriteRepository;
-        _userReadRepository = userReadRepository;
+        _userPagedListReadRepository = userPagedListReadRepository;
         _userWriteRepository = userWriteRepository;
         _passwordHashingService = passwordHashingService;
         _jwtTokenService = jwtTokenService;
@@ -49,7 +43,7 @@ public sealed class RegisterFromInvitationCommandHandler
         CancellationToken ct)
     {
         // Find invitation by token
-        var invitation = await _invitationReadRepository.GetByTokenAsync(request.InvitationToken, ct);
+        var invitation = await _userPagedListReadRepository.GetUserInvitationByTokenAsync(request.InvitationToken, ct);
         if (invitation == null)
         {
             _logger.LogWarning("Registration failed: Invalid invitation token");
@@ -59,13 +53,14 @@ public sealed class RegisterFromInvitationCommandHandler
         // Validate invitation
         if (!invitation.IsValid())
         {
-            _logger.LogWarning("Registration failed: Invitation {InvitationId} is not valid (Status: {Status}, Expired: {IsExpired})",
+            _logger.LogWarning(
+                "Registration failed: Invitation {InvitationId} is not valid (Status: {Status}, Expired: {IsExpired})",
                 invitation.Id, invitation.Status, invitation.IsExpired());
             return BadRequest("Invalid or expired invitation");
         }
 
         // Check if user already exists with this email
-        var existingUser = await _userReadRepository.GetByEmailAsync(invitation.Email, ct);
+        var existingUser = await _userPagedListReadRepository.GetByEmailAsync(invitation.Email, ct);
         if (existingUser != null)
         {
             _logger.LogWarning("Registration failed: User already exists with email {Email}", invitation.Email);
@@ -73,7 +68,7 @@ public sealed class RegisterFromInvitationCommandHandler
         }
 
         // Check if username is already taken
-        var existingUsername = await _userReadRepository.GetByUsernameAsync(request.Username, ct);
+        var existingUsername = await _userPagedListReadRepository.GetByUsernameAsync(request.Username, ct);
         if (existingUsername != null)
         {
             _logger.LogWarning("Registration failed: Username {Username} is already taken", request.Username);
@@ -105,14 +100,14 @@ public sealed class RegisterFromInvitationCommandHandler
 
         // Save changes
         await _userWriteRepository.AddAsync(user, ct);
-        await _invitationWriteRepository.UpdateAsync(invitation, ct);
+        await _userWriteRepository.UpdateUserInvitationAsync(invitation, ct);
         await _unitOfWork.CommitAsync(ct);
 
         _logger.LogInformation("User {UserId} registered successfully from invitation {InvitationId}",
             user.Id, invitation.Id);
 
         // Get user with roles and permissions for token generation
-        var userWithPermissions = await _userReadRepository.GetByIdWithFullPermissionsAsync(user.Id, ct);
+        var userWithPermissions = await _userPagedListReadRepository.GetByIdAsync(user.Id, ct);
         if (userWithPermissions == null)
         {
             return NotFound("User not found after registration");

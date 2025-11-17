@@ -16,7 +16,8 @@ public sealed class PermissionOperationFilter : IOperationFilter
         // Get HasPermission attributes from method and controller
         var hasPermissionAttributes = context.MethodInfo
             .GetCustomAttributes<HasPermissionAttribute>()
-            .Concat(context.MethodInfo.DeclaringType?.GetCustomAttributes<HasPermissionAttribute>() ?? Enumerable.Empty<HasPermissionAttribute>())
+            .Concat(context.MethodInfo.DeclaringType?.GetCustomAttributes<HasPermissionAttribute>() 
+                    ?? Enumerable.Empty<HasPermissionAttribute>())
             .ToList();
 
         if (hasPermissionAttributes.Any())

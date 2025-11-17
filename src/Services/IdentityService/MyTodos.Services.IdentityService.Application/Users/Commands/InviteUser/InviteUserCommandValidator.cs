@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Commands.InviteUser;
+namespace MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
 
 /// <summary>
 /// Validator for InviteUserCommand.

@@ -1,6 +1,6 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 
-namespace MyTodos.Services.IdentityService.Application.Users.Queries;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 
 public sealed class UserPagedListFilter : Filter
 {
@@ -10,4 +10,6 @@ public sealed class UserPagedListFilter : Filter
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public Guid? TenantId { get; set; }
+
+    public bool? IsActive { get; set; }
 }

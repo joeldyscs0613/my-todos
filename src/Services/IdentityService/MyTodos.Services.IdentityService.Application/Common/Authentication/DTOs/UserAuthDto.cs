@@ -1,4 +1,4 @@
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
 
 /// <summary>
 /// User authentication data transfer object.

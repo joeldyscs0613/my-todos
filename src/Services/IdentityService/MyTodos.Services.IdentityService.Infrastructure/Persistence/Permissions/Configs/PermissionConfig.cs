@@ -10,7 +10,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Permission
 /// <summary>
 /// Entity configuration for Permission aggregate root.
 /// </summary>
-public sealed class PermissionConfiguration : AggregateRootWithGuidIdConfig<Permission>
+public sealed class PermissionConfig : AggregateRootWithGuidIdConfig<Permission>
 {
     public override void Configure(EntityTypeBuilder<Permission> builder)
     {

@@ -1,6 +1,6 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-namespace MyTodos.Services.IdentityService.Application.Invitations.Queries.GetPendingInvitations;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.GetPendingInvitations;
 
 /// <summary>
 /// Query to get all pending invitations (simulates email inbox).

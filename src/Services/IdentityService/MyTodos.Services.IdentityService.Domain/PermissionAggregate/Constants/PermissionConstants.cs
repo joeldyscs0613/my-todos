@@ -1,6 +1,11 @@
-namespace MyTodos.Services.IdentityService.Domain.PermissionAggregate;
+namespace MyTodos.Services.IdentityService.Domain.PermissionAggregate.Constants;
 
-public class PermissionConstants
+public struct PermissionConstants
 {
-    
+    public struct FieldLengths
+    {
+        public const int CodeMaxLength = 200;
+        public const int NameMaxLength = 200;
+        public const int DescriptionMaxLength = 500;
+    }
 }

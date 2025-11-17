@@ -2,21 +2,14 @@ using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Invitations.Queries.GetPendingInvitations;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.GetPendingInvitations;
 
 /// <summary>
 /// Handler for getting pending invitations.
 /// </summary>
-public sealed class GetPendingInvitationsQueryHandler
+public sealed class GetPendingInvitationsQueryHandler(IUserPagedListReadRepository invitationPagedListReadRepository)
     : QueryHandler<GetPendingInvitationsQuery, IReadOnlyList<InvitationDto>>
 {
-    private readonly IUserInvitationReadRepository _invitationReadRepository;
-
-    public GetPendingInvitationsQueryHandler(IUserInvitationReadRepository invitationReadRepository)
-    {
-        _invitationReadRepository = invitationReadRepository;
-    }
-
     public override async Task<Result<IReadOnlyList<InvitationDto>>> Handle(
         GetPendingInvitationsQuery request,
         CancellationToken ct)
@@ -26,12 +19,13 @@ public sealed class GetPendingInvitationsQueryHandler
         // Filter by email if provided (simulates user checking their email for invitations)
         if (!string.IsNullOrWhiteSpace(request.Email))
         {
-            invitations = await _invitationReadRepository.GetPendingByEmailAsync(request.Email, ct);
+            invitations = await invitationPagedListReadRepository.GetUserInvitationsPendingByEmailAsync(request.Email, ct);
         }
         // Filter by tenant if provided
         else if (request.TenantId.HasValue)
         {
-            invitations = await _invitationReadRepository.GetPendingByTenantIdAsync(request.TenantId.Value, ct);
+            invitations = await invitationPagedListReadRepository
+                .GetUserInvitationsPendingByTenantIdAsync(request.TenantId.Value, ct);
         }
         else
         {

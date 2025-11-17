@@ -1,4 +1,7 @@
+using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
+using MyTodos.Services.IdentityService.Application.Users.Queries;
+using MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
@@ -7,29 +10,30 @@ namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Reposito
 /// <summary>
 /// Write repository for User aggregate mutations.
 /// </summary>
-public sealed class UserWriteRepository : IUserWriteRepository
+public sealed class UserWriteRepository(IdentityServiceDbContext context)
+    : WriteEfRepository<User, Guid, IdentityServiceDbContext>(context, new UserQueryConfiguration()),
+        IUserWriteRepository
 {
-    private readonly IdentityServiceDbContext _context;
-
-    public UserWriteRepository(IdentityServiceDbContext context)
+    #region UserInvitations
+    
+    public async Task AddUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default)
     {
-        _context = context;
+        await Context.UserInvitations.AddAsync(invitation, ct);
     }
 
-    public async Task AddAsync(User user, CancellationToken ct = default)
+    public Task UpdateUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default)
     {
-        await _context.Users.AddAsync(user, ct);
-    }
-
-    public Task UpdateAsync(User user, CancellationToken ct = default)
-    {
-        _context.Users.Update(user);
+        Context.UserInvitations.Update(invitation);
+        
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(User user, CancellationToken ct = default)
+    public Task DeleteUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default)
     {
-        _context.Users.Remove(user);
+        Context.UserInvitations.Remove(invitation);
+        
         return Task.CompletedTask;
     }
+    
+    #endregion
 }

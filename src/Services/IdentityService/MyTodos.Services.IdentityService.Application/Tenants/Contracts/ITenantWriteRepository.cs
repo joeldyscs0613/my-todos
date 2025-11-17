@@ -1,4 +1,6 @@
-namespace MyTodos.Services.IdentityService.Domain.TenantAggregate.Contracts;
+using MyTodos.Services.IdentityService.Domain.TenantAggregate;
+
+namespace MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 
 /// <summary>
 /// Write repository for Tenant aggregate.

@@ -1,6 +1,6 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Commands.InviteUser;
+namespace MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
 
 /// <summary>
 /// Command to invite a user to join a tenant or as a global role.

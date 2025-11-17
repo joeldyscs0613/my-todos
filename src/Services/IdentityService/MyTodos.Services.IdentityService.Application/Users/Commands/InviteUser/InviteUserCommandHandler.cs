@@ -3,44 +3,41 @@ using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 using MyTodos.BuildingBlocks.Application.Abstractions.Dtos;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
-using MyTodos.Services.IdentityService.Domain.RoleAggregate.Contracts;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Contracts;
+using MyTodos.Services.IdentityService.Application.Roles.Contracts;
+using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
+using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
-using MyTodos.Services.IdentityService.Domain.UserAggregate.Contracts;
 using MyTodos.Services.IdentityService.Domain.UserAggregate.DomainEvents;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Commands.InviteUser;
+namespace MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
 
 /// <summary>
 /// Handler for inviting a user.
 /// </summary>
 public sealed class InviteUserCommandHandler : CreateCommandHandler<InviteUserCommand, Guid>
 {
-    private readonly IUserInvitationReadRepository _invitationReadRepository;
-    private readonly IUserInvitationWriteRepository _invitationWriteRepository;
-    private readonly IUserReadRepository _userReadRepository;
+    private readonly IUserWriteRepository _userWriteRepository;
+    private readonly IUserPagedListReadRepository _userPagedListReadRepository;
     private readonly IRoleReadRepository _roleReadRepository;
-    private readonly ITenantReadRepository _tenantReadRepository;
+    private readonly ITenantPagedListReadRepository _tenantPagedListReadRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<InviteUserCommandHandler> _logger;
 
     public InviteUserCommandHandler(
-        IUserInvitationReadRepository invitationReadRepository,
-        IUserInvitationWriteRepository invitationWriteRepository,
-        IUserReadRepository userReadRepository,
+        IUserWriteRepository userWriteRepository,
+        IUserPagedListReadRepository userPagedListReadRepository,
         IRoleReadRepository roleReadRepository,
-        ITenantReadRepository tenantReadRepository,
+        ITenantPagedListReadRepository tenantPagedListReadRepository,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ILogger<InviteUserCommandHandler> logger)
     {
-        _invitationReadRepository = invitationReadRepository;
-        _invitationWriteRepository = invitationWriteRepository;
-        _userReadRepository = userReadRepository;
+        _userWriteRepository = userWriteRepository;
+        _userPagedListReadRepository = userPagedListReadRepository;
         _roleReadRepository = roleReadRepository;
-        _tenantReadRepository = tenantReadRepository;
+        _tenantPagedListReadRepository = tenantPagedListReadRepository;
         _currentUserService = currentUserService;
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -57,7 +54,7 @@ public sealed class InviteUserCommandHandler : CreateCommandHandler<InviteUserCo
         }
 
         // Check if user already exists with this email
-        var existingUser = await _userReadRepository.GetByEmailAsync(request.Email, ct);
+        var existingUser = await _userPagedListReadRepository.GetByEmailAsync(request.Email, ct);
         if (existingUser != null)
         {
             _logger.LogWarning("Invitation failed: User already exists with email {Email}", request.Email);
@@ -65,7 +62,7 @@ public sealed class InviteUserCommandHandler : CreateCommandHandler<InviteUserCo
         }
 
         // Check if there's already a pending invitation for this email
-        var existingInvitation = await _invitationReadRepository.ExistsForEmailAsync(request.Email, ct);
+        var existingInvitation = await _userPagedListReadRepository.UserInvitationExistsForEmailAsync(request.Email, ct);
         if (existingInvitation)
         {
             _logger.LogWarning("Invitation failed: Pending invitation already exists for {Email}", request.Email);
@@ -83,7 +80,7 @@ public sealed class InviteUserCommandHandler : CreateCommandHandler<InviteUserCo
         // If tenant-scoped invitation, validate tenant exists
         if (request.TenantId.HasValue)
         {
-            var tenant = await _tenantReadRepository.GetByIdAsync(request.TenantId.Value, ct);
+            var tenant = await _tenantPagedListReadRepository.GetByIdAsync(request.TenantId.Value, ct);
             if (tenant == null)
             {
                 _logger.LogWarning("Invitation failed: Tenant {TenantId} not found", request.TenantId);
@@ -119,7 +116,7 @@ public sealed class InviteUserCommandHandler : CreateCommandHandler<InviteUserCo
         // Note: Domain events would normally be added to an aggregate root
         // For now, we'll just log it since UserInvitation is not an aggregate root
 
-        await _invitationWriteRepository.AddAsync(invitation, ct);
+        await _userWriteRepository.AddUserInvitationAsync(invitation, ct);
         await _unitOfWork.CommitAsync(ct);
 
         _logger.LogInformation("User invitation created: {InvitationId} for email {Email} by user {UserId}",

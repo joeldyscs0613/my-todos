@@ -2,31 +2,31 @@ using Microsoft.Extensions.Logging;
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
-using MyTodos.Services.IdentityService.Domain.UserAggregate.Contracts;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.SignIn;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
 
 /// <summary>
 /// Handler for user sign-in command.
 /// </summary>
 public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand, SignInResponseDto>
 {
-    private readonly IUserReadRepository _userReadRepository;
+    private readonly IUserPagedListReadRepository _userPagedListReadRepository;
     private readonly IPasswordHashingService _passwordHashingService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<SignInCommandHandler> _logger;
 
     public SignInCommandHandler(
-        IUserReadRepository userReadRepository,
+        IUserPagedListReadRepository userPagedListReadRepository,
         IPasswordHashingService passwordHashingService,
         IJwtTokenService jwtTokenService,
         IUnitOfWork unitOfWork,
         ILogger<SignInCommandHandler> logger)
     {
-        _userReadRepository = userReadRepository;
+        _userPagedListReadRepository = userPagedListReadRepository;
         _passwordHashingService = passwordHashingService;
         _jwtTokenService = jwtTokenService;
         _unitOfWork = unitOfWork;
@@ -36,8 +36,8 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
     public override async Task<Result<SignInResponseDto>> Handle(SignInCommand request, CancellationToken ct)
     {
         // Find user by username or email
-        var user = await _userReadRepository.GetByUsernameAsync(request.UsernameOrEmail, ct);
-        user ??= await _userReadRepository.GetByEmailAsync(request.UsernameOrEmail, ct);
+        var user = await _userPagedListReadRepository.GetByUsernameAsync(request.UsernameOrEmail, ct);
+        user ??= await _userPagedListReadRepository.GetByEmailAsync(request.UsernameOrEmail, ct);
 
         if (user == null)
         {
@@ -58,28 +58,21 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
             _logger.LogWarning("Sign-in failed: User {UserId} is inactive", user.Id);
             return Forbidden("User account is inactive");
         }
-
-        // Load user with roles and permissions to get full authentication context
-        var userWithPermissions = await _userReadRepository.GetByIdWithFullPermissionsAsync(user.Id, ct);
-        if (userWithPermissions == null)
-        {
-            return NotFound("User not found");
-        }
-
+        
         // Get primary tenant ID (first tenant-scoped role, or null for global users)
-        var primaryTenantId = userWithPermissions.UserRoles
+        var primaryTenantId = user.UserRoles
             .Where(ur => ur.TenantId.HasValue)
             .Select(ur => ur.TenantId!.Value)
             .FirstOrDefault();
 
         // Get role names for JWT claims
-        var roleNames = userWithPermissions.UserRoles
+        var roleNames = user.UserRoles
             .Select(ur => ur.Role.Name)
             .Distinct()
             .ToList();
 
         // Get all permissions from all roles (aggregate and deduplicate)
-        var permissions = userWithPermissions.UserRoles
+        var permissions = user.UserRoles
             .SelectMany(ur => ur.Role.RolePermissions)
             .Select(rp => rp.Permission.Code)
             .Distinct()

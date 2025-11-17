@@ -1,6 +1,6 @@
 using MyTodos.Services.IdentityService.Domain.UserAggregate.Enums;
 
-namespace MyTodos.Services.IdentityService.Application.Invitations.Queries.GetPendingInvitations;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.GetPendingInvitations;
 
 /// <summary>
 /// Invitation DTO for displaying pending invitations.

@@ -1,10 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.RegisterFromInvitation;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.SignIn;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
 
@@ -13,13 +14,10 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/auth")]
-public sealed class AuthController : ControllerBase
+public sealed class AuthController : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public AuthController(ISender sender)
+    public AuthController()
     {
-        _sender = sender;
     }
 
     /// <summary>
@@ -31,7 +29,7 @@ public sealed class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> SignIn([FromBody] SignInCommand command, CancellationToken ct)
     {
-        var result = await _sender.Send(command, ct);
+        var result = await Sender.Send(command, ct);
         return result.ToActionResult();
     }
 
@@ -44,7 +42,8 @@ public sealed class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterFromInvitationCommand command, CancellationToken ct)
     {
-        var result = await _sender.Send(command, ct);
+        var result = await Sender.Send(command, ct);
+        
         return result.ToActionResult();
     }
 }

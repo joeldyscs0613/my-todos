@@ -1,4 +1,6 @@
-namespace MyTodos.Services.IdentityService.Domain.RoleAggregate.Contracts;
+using MyTodos.Services.IdentityService.Domain.RoleAggregate;
+
+namespace MyTodos.Services.IdentityService.Application.Roles.Contracts;
 
 /// <summary>
 /// Write repository for Role aggregate.

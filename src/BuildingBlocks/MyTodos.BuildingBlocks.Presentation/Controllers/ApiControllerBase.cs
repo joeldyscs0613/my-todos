@@ -15,13 +15,13 @@ namespace MyTodos.BuildingBlocks.Presentation.Controllers;
 [Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
-    private IMediator? _mediator;
+    private ISender? _sender;
 
     /// <summary>
     /// Gets the MediatR instance for sending commands and queries.
     /// </summary>
-    protected IMediator Mediator =>
-        _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+    protected ISender Sender =>
+        _sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
     /// <summary>
     /// Converts a Result to an ActionResult. Returns 204 No Content on success, or Problem Details on failure.
@@ -30,7 +30,8 @@ public abstract class ApiControllerBase : ControllerBase
         => result.ToActionResult();
 
     /// <summary>
-    /// Converts a Result&lt;TValue&gt; to an ActionResult&lt;TValue&gt;. Returns 200 OK with value on success, or Problem Details on failure.
+    /// Converts a Result&lt;TValue&gt; to an ActionResult&lt;TValue&gt;.
+    /// Returns 200 OK with value on success, or Problem Details on failure.
     /// </summary>
     protected ActionResult<TValue> HandleResult<TValue>(Result<TValue> result)
         => result.ToActionResult();
@@ -39,7 +40,8 @@ public abstract class ApiControllerBase : ControllerBase
     /// Converts a Result&lt;TValue&gt; to a 201 Created response with location header.
     /// Returns 201 Created with location header on success, or Problem Details on failure.
     /// </summary>
-    /// <param name="routeName">Name of the route to the GetById endpoint (must match HttpGet attribute Name property).</param>
+    /// <param name="routeName">Name of the route to the GetById endpoint
+    /// (must match HttpGet attribute Name property).</param>
     /// <remarks>
     /// Use RouteConstants or define route names as constants for type safety.
     /// </remarks>

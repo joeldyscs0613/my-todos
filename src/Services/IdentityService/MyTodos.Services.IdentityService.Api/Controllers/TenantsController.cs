@@ -1,8 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
+using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
-using MyTodos.Services.IdentityService.Application.Features.Tenants.Commands.CreateTenant;
+using MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTenant;
 using MyTodos.Services.IdentityService.Contracts;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
@@ -12,26 +13,23 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/tenants")]
-[HasPermission(Permissions.Tenants.Create)]
-public sealed class TenantsController : ControllerBase
+public sealed class TenantsController : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public TenantsController(ISender sender)
+    public TenantsController()
     {
-        _sender = sender;
     }
 
     /// <summary>
     /// Create a new tenant (Global Admin only).
     /// </summary>
     [HttpPost]
+    [HasPermission(Permissions.Tenants.Create)]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand command, CancellationToken ct)
     {
-        var result = await _sender.Send(command, ct);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsSuccess)
         {

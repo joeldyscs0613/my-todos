@@ -1,22 +1,26 @@
-namespace MyTodos.Services.IdentityService.Domain.UserAggregate.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.Services.IdentityService.Domain.UserAggregate;
+
+namespace MyTodos.Services.IdentityService.Application.Users.Contracts;
 
 /// <summary>
 /// Write repository for User aggregate.
 /// </summary>
-public interface IUserWriteRepository
+public interface IUserWriteRepository : IWriteRepository<User, Guid>
 {
-    /// <summary>
-    /// Add a new user
-    /// </summary>
-    Task AddAsync(User user, CancellationToken ct = default);
+    #region UserInvitations
+
+    Task AddUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default);
 
     /// <summary>
-    /// Update an existing user
+    /// Update an existing invitation
     /// </summary>
-    Task UpdateAsync(User user, CancellationToken ct = default);
+    Task UpdateUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default);
 
     /// <summary>
-    /// Delete a user
+    /// Delete an invitation
     /// </summary>
-    Task DeleteAsync(User user, CancellationToken ct = default);
+    Task DeleteUserInvitationAsync(UserInvitation invitation, CancellationToken ct = default);
+
+    #endregion
 }

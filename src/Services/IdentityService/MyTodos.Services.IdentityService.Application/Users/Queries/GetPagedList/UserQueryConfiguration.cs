@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts.Queries;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 
-namespace MyTodos.Services.IdentityService.Application.Users.Queries;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 
 public sealed class UserQueryConfiguration :  IEntityQueryConfiguration<User>
 {

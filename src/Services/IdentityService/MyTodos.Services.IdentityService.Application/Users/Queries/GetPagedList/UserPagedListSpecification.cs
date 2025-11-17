@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 
-namespace MyTodos.Services.IdentityService.Application.Users.Queries.PagedList;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 
 public sealed class UserPagedListSpecification(UserPagedListFilter filter)
     : Specification<User, Guid, UserPagedListFilter>(filter)
@@ -37,6 +37,11 @@ public sealed class UserPagedListSpecification(UserPagedListFilter filter)
         if (Filter.TenantId != null && Filter.TenantId != Guid.Empty)
         {
             query = query.Where(u => u.UserRoles.Any(ur => ur.TenantId == Filter.TenantId));
+        }
+
+        if (Filter.IsActive.HasValue)
+        {
+            query = query.Where(u => u.IsActive == Filter.IsActive);
         }
         
         return query;

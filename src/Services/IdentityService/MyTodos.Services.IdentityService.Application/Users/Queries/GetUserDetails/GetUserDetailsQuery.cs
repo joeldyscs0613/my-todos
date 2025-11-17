@@ -1,6 +1,6 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Queries.GetUserDetails;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
 
 /// <summary>
 /// Query to get user details by ID.

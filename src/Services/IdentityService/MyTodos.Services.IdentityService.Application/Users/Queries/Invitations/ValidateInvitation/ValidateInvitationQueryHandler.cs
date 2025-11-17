@@ -2,26 +2,19 @@ using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Invitations.Queries.ValidateInvitation;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.ValidateInvitation;
 
 /// <summary>
 /// Handler for validating invitation tokens.
 /// </summary>
-public sealed class ValidateInvitationQueryHandler
+public sealed class ValidateInvitationQueryHandler(IUserPagedListReadRepository invitationPagedListReadRepository)
     : QueryHandler<ValidateInvitationQuery, InvitationValidationDto>
 {
-    private readonly IUserInvitationReadRepository _invitationReadRepository;
-
-    public ValidateInvitationQueryHandler(IUserInvitationReadRepository invitationReadRepository)
-    {
-        _invitationReadRepository = invitationReadRepository;
-    }
-
     public override async Task<Result<InvitationValidationDto>> Handle(
         ValidateInvitationQuery request,
         CancellationToken ct)
     {
-        var invitation = await _invitationReadRepository.GetByTokenAsync(request.InvitationToken, ct);
+        var invitation = await invitationPagedListReadRepository.GetUserInvitationByTokenAsync(request.InvitationToken, ct);
 
         if (invitation == null)
         {

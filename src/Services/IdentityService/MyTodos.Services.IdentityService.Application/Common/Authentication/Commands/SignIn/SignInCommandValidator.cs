@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.SignIn;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
 
 /// <summary>
 /// Validator for SignInCommand.

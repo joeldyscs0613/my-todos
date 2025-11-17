@@ -12,9 +12,9 @@ namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Reposito
 /// <summary>
 /// Read-only repository for User aggregate queries.
 /// </summary>
-public sealed class UserReadRepository(IdentityServiceDbContext context)
+public sealed class UserPagedListReadRepository(IdentityServiceDbContext context)
     : PagedListReadEfRepository<User, Guid, UserPagedListSpecification, UserPagedListFilter, IdentityServiceDbContext>(context, new UserQueryConfiguration())
-        , IUserReadRepository
+        , IUserPagedListReadRepository
 {
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken ct = default)
         => await GetFirstOrDefaultAsync(u => u.Username == username, ct);

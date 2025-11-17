@@ -1,7 +1,7 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.SignIn;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
 
 /// <summary>
 /// Command to sign in a user with username/email and password.

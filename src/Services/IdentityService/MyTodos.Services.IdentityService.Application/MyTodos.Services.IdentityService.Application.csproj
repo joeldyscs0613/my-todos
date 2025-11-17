@@ -11,4 +11,12 @@
       <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\" />
+      <Folder Include="Permissions\Commands\" />
+      <Folder Include="Roles\Commands\" />
+      <Folder Include="Tenants\Dtos\" />
+      <Folder Include="Users\Queries\Invitations\" />
+    </ItemGroup>
+
 </Project>

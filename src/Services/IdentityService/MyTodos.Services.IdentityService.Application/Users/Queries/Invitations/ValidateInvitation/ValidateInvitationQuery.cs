@@ -1,6 +1,6 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-namespace MyTodos.Services.IdentityService.Application.Invitations.Queries.ValidateInvitation;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.ValidateInvitation;
 
 /// <summary>
 /// Query to validate an invitation token.

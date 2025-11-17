@@ -1,13 +1,13 @@
 using FluentValidation;
 using MyTodos.BuildingBlocks.Application.Validators;
 
-namespace MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 
-public sealed class TenantPagedListQueryValidator 
-    : PagedListQueryValidator<TenantPagedListQuery, TenantPagedListSpecification,
-        TenantPagedListFilter, TenantPagedListResponseDto>
+public sealed class UserPagedListQueryValidator 
+    : PagedListQueryValidator<UserPagedListQuery, UserPagedListSpecification,
+        UserPagedListFilter, UserPagedListResponseDto>
 {
-    public TenantPagedListQueryValidator()
+    public UserPagedListQueryValidator()
     {
         // Add sort field validation
         RuleFor(x => x.Filter.SortField)

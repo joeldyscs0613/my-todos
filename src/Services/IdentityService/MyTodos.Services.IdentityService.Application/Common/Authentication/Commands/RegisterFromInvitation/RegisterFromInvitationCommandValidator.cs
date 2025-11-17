@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.RegisterFromInvitation;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
 
 /// <summary>
 /// Validator for RegisterFromInvitationCommand.

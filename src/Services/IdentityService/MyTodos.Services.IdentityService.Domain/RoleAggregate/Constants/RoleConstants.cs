@@ -1,6 +1,6 @@
 namespace MyTodos.Services.IdentityService.Domain.RoleAggregate.Constants;
 
-public struct PermissionConstants
+public struct RoleConstants
 {
     public struct FieldLengths
     {

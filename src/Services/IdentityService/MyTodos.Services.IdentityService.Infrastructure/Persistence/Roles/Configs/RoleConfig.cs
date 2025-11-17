@@ -10,7 +10,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Persiste
 /// <summary>
 /// Entity configuration for Role aggregate root.
 /// </summary>
-public sealed class RoleConfiguration : AggregateRootWithGuidIdConfig<Role>
+public sealed class RoleConfig : AggregateRootWithGuidIdConfig<Role>
 {
     public override void Configure(EntityTypeBuilder<Role> builder)
     {

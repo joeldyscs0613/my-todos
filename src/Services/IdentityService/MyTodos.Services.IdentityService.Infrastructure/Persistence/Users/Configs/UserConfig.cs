@@ -1,37 +1,40 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Configs;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
+using MyTodos.Services.IdentityService.Domain.UserAggregate.Constants;
+using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
 namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Persistence;
 
 /// <summary>
 /// Entity configuration for User aggregate root.
 /// </summary>
-public sealed class UserConfiguration : IEntityTypeConfiguration<User>
+public sealed class UserConfig : AggregateRootWithGuidIdConfig<User>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public override void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users");
+        builder.ToTable(TableNames.User);
 
         builder.HasKey(u => u.Id);
 
         builder.Property(u => u.Username)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(UserConstants.FieldLengths.UsernameMaxLength);
 
         builder.Property(u => u.Email)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(UserConstants.FieldLengths.EmailMaxLength);
 
         builder.Property(u => u.PasswordHash)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(UserConstants.FieldLengths.PasswordHashMaxLength);
 
         builder.Property(u => u.FirstName)
-            .HasMaxLength(100);
+            .HasMaxLength(UserConstants.FieldLengths.FirstNameMaxLength);
 
         builder.Property(u => u.LastName)
-            .HasMaxLength(100);
+            .HasMaxLength(UserConstants.FieldLengths.LastNameMaxLength);
 
         builder.Property(u => u.IsActive)
             .IsRequired();

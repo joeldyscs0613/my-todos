@@ -1,22 +1,11 @@
-namespace MyTodos.Services.IdentityService.Domain.PermissionAggregate.Contracts;
+using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.Services.IdentityService.Domain.PermissionAggregate;
+
+namespace MyTodos.Services.IdentityService.Application.Permissions.Contracts;
 
 /// <summary>
 /// Write repository for Permission aggregate.
 /// </summary>
-public interface IPermissionWriteRepository
+public interface IPermissionWriteRepository : IWriteRepository<Permission, Guid>
 {
-    /// <summary>
-    /// Add a new permission
-    /// </summary>
-    Task AddAsync(Permission permission, CancellationToken ct = default);
-
-    /// <summary>
-    /// Update an existing permission
-    /// </summary>
-    Task UpdateAsync(Permission permission, CancellationToken ct = default);
-
-    /// <summary>
-    /// Delete a permission
-    /// </summary>
-    Task DeleteAsync(Permission permission, CancellationToken ct = default);
 }

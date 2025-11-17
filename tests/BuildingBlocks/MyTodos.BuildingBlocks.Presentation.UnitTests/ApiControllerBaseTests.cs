@@ -46,32 +46,6 @@ public class ApiControllerBaseTests
         };
     }
 
-    #region Mediator Tests
-
-    [Fact]
-    public void Mediator_LazyLoadsFromRequestServices()
-    {
-        // Act
-        var mediator = _controller.ExposedMediator;
-
-        // Assert
-        Assert.NotNull(mediator);
-        Assert.Same(_mockMediator.Object, mediator);
-    }
-
-    [Fact]
-    public void Mediator_CachesInstanceOnSubsequentCalls()
-    {
-        // Act
-        var mediator1 = _controller.ExposedMediator;
-        var mediator2 = _controller.ExposedMediator;
-
-        // Assert
-        Assert.Same(mediator1, mediator2);
-    }
-
-    #endregion
-
     #region HandleResult(Result) Tests
 
     [Fact]
@@ -308,7 +282,7 @@ public class ApiControllerBaseTests
     private class TestController : ApiControllerBase
     {
         // Expose protected members for testing
-        public IMediator ExposedMediator => Mediator;
+        public ISender ExposedSender => Sender;
 
         public ActionResult ExposedHandleResult(Result result)
             => HandleResult(result);

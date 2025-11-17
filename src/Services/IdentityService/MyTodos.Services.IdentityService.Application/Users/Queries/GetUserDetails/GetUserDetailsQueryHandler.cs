@@ -1,24 +1,24 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
-using MyTodos.Services.IdentityService.Domain.UserAggregate.Contracts;
+using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Users.Queries.GetUserDetails;
+namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
 
 /// <summary>
 /// Handler for getting user details.
 /// </summary>
 public sealed class GetUserDetailsQueryHandler : QueryHandler<GetUserDetailsQuery, UserDetailsDto>
 {
-    private readonly IUserReadRepository _userReadRepository;
+    private readonly IUserPagedListReadRepository _userPagedListReadRepository;
 
-    public GetUserDetailsQueryHandler(IUserReadRepository userReadRepository)
+    public GetUserDetailsQueryHandler(IUserPagedListReadRepository userPagedListReadRepository)
     {
-        _userReadRepository = userReadRepository;
+        _userPagedListReadRepository = userPagedListReadRepository;
     }
 
     public override async Task<Result<UserDetailsDto>> Handle(GetUserDetailsQuery request, CancellationToken ct)
     {
-        var user = await _userReadRepository.GetByIdWithRolesAsync(request.UserId, ct);
+        var user = await _userPagedListReadRepository.GetByIdAsync(request.UserId, ct);
         if (user == null)
         {
             return NotFound("User not found");

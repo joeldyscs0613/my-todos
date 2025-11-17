@@ -1,24 +1,24 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
-using MyTodos.Services.IdentityService.Application.Users.Contracts;
-using MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
-using MyTodos.Services.IdentityService.Domain.UserAggregate;
+using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
+using MyTodos.Services.IdentityService.Domain.TenantAggregate;
+using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 
 namespace MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
 
-public sealed class UserPagedListQuery 
-    : PagedListQuery<UserPagedListSpecification, UserPagedListFilter, TenantPagedListResponseDto>
+public sealed class TenantPagedListQuery 
+    : PagedListQuery<TenantPagedListSpecification, TenantPagedListFilter, TenantPagedListResponseDto>
 {
 }
 
-public sealed class UserPagedListQueryHandler(IUserPagedListReadRepository readRepository)
-    : PagedListQueryHandler<User, Guid, UserPagedListSpecification, UserPagedListFilter,
-        UserPagedListQuery, TenantPagedListResponseDto>(readRepository)
+public sealed class TenantPagedListQueryHandler(ITenantPagedListReadRepository readRepository)
+    : PagedListQueryHandler<Tenant, Guid, TenantPagedListSpecification, TenantPagedListFilter,
+        TenantPagedListQuery, TenantPagedListResponseDto>(readRepository)
 {
     protected override List<TenantPagedListResponseDto> GetResultList(
-        UserPagedListQuery request, IReadOnlyList<User> list)
+        TenantPagedListQuery request, IReadOnlyList<Tenant> list)
     {
-        return list.Select(u 
-            => new TenantPagedListResponseDto(u.Id, u.FirstName, u.LastName, u.Username, u.Email, u.IsActive))
+        return list.Select(t
+            => new TenantPagedListResponseDto(t.Id, t.Name, Enum.GetName(typeof(TenantPlan), t.Plan), t.IsActive))
             .ToList();
     }
 }

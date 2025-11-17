@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Configs;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
@@ -8,9 +9,9 @@ namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Persiste
 /// <summary>
 /// Entity configuration for RolePermission (part of Role aggregate).
 /// </summary>
-public sealed class RolePermissionConfiguration : IEntityTypeConfiguration<RolePermission>
+public sealed class RolePermissionConfiguration : EntityWithGuidIdConfig<RolePermission>
 {
-    public void Configure(EntityTypeBuilder<RolePermission> builder)
+    public override void Configure(EntityTypeBuilder<RolePermission> builder)
     {
         builder.ToTable(TableNames.RolePermission);
 

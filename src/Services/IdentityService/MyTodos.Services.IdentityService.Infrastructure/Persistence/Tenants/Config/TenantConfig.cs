@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Configs;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
+using MyTodos.Services.IdentityService.Domain.TenantAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
 namespace MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Persistence;
@@ -8,9 +10,9 @@ namespace MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Persis
 /// <summary>
 /// Entity configuration for Tenant aggregate root.
 /// </summary>
-public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
+public sealed class TenantConfig : AggregateRootWithGuidIdConfig<Tenant>
 {
-    public void Configure(EntityTypeBuilder<Tenant> builder)
+    public override void Configure(EntityTypeBuilder<Tenant> builder)
     {
         builder.ToTable(TableNames.Tenant);
 
@@ -18,7 +20,7 @@ public sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 
         builder.Property(t => t.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(TenantConstants.FieldLengths.NameMaxLength);
 
         builder.Property(t => t.Plan)
             .IsRequired()

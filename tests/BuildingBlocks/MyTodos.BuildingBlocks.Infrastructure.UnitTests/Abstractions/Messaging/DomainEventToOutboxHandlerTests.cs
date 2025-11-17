@@ -2,7 +2,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MyTodos.BuildingBlocks.Application.Abstractions.IntegrationEvents;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
-using MyTodos.BuildingBlocks.Infrastructure.Abstractions.Messaging;
+using MyTodos.BuildingBlocks.Infrastructure.Messaging.Abstractions;
+using MyTodos.BuildingBlocks.Infrastructure.Messaging.DomainEvents;
 using MyTodos.SharedKernel.Abstractions;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.UnitTests.Abstractions.Messaging;

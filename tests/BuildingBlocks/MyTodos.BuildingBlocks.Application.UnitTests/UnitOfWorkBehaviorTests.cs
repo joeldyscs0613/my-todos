@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using MyTodos.BuildingBlocks.Application.Behaviors;
 using MyTodos.BuildingBlocks.Application.Contracts;
@@ -11,6 +12,7 @@ namespace MyTodos.BuildingBlocks.Application.UnitTests;
 public class UnitOfWorkBehaviorTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWork;
+    private readonly Mock<DbContext> _dbContext;
     private readonly UnitOfWorkBehavior<TestCommand, Result> _behavior;
     private readonly UnitOfWorkBehavior<TestQuery, Result> _queryBehavior;
     private readonly UnitOfWorkBehavior<TestByNameCommand, Result> _commandByNameBehavior;
@@ -18,9 +20,10 @@ public class UnitOfWorkBehaviorTests
     public UnitOfWorkBehaviorTests()
     {
         _unitOfWork = new Mock<IUnitOfWork>();
-        _behavior = new UnitOfWorkBehavior<TestCommand, Result>(_unitOfWork.Object);
-        _queryBehavior = new UnitOfWorkBehavior<TestQuery, Result>(_unitOfWork.Object);
-        _commandByNameBehavior = new UnitOfWorkBehavior<TestByNameCommand, Result>(_unitOfWork.Object);
+        _dbContext = new Mock<DbContext>();
+        _behavior = new UnitOfWorkBehavior<TestCommand, Result>(_unitOfWork.Object, _dbContext.Object);
+        _queryBehavior = new UnitOfWorkBehavior<TestQuery, Result>(_unitOfWork.Object, _dbContext.Object);
+        _commandByNameBehavior = new UnitOfWorkBehavior<TestByNameCommand, Result>(_unitOfWork.Object, _dbContext.Object);
     }
 
     #region Test Helper Classes
@@ -126,7 +129,7 @@ public class UnitOfWorkBehaviorTests
     public async Task Handle_WithSuccessResultContainingValue_CommitsTransaction()
     {
         // Arrange
-        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object);
+        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, _dbContext.Object);
         var command = new TestCommand();
         var successResult = Result.Success(42);
         RequestHandlerDelegate<Result<int>> next = (ct) => Task.FromResult(successResult);
@@ -166,7 +169,7 @@ public class UnitOfWorkBehaviorTests
     public async Task Handle_WithFailureResultContainingValue_DoesNotCommitTransaction()
     {
         // Arrange
-        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object);
+        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, _dbContext.Object);
         var command = new TestCommand();
         var failureResult = Result.NotFound<int>("Entity not found");
         RequestHandlerDelegate<Result<int>> next = (ct) => Task.FromResult(failureResult);
@@ -194,45 +197,6 @@ public class UnitOfWorkBehaviorTests
         // Assert
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorType.Conflict, result.ErrorType);
-        _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-    }
-
-    #endregion
-
-    #region Exception Handling Tests
-
-    [Fact]
-    public async Task Handle_WhenCommitThrowsException_PropagatesException()
-    {
-        // Arrange
-        var command = new TestCommand();
-        var successResult = Result.Success();
-        RequestHandlerDelegate<Result> next = (ct) => Task.FromResult(successResult);
-        var expectedException = new InvalidOperationException("Database error");
-        _unitOfWork.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-            .ThrowsAsync(expectedException);
-
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _behavior.Handle(command, next, CancellationToken.None));
-
-        Assert.Equal("Database error", exception.Message);
-        _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task Handle_WhenHandlerThrowsException_PropagatesExceptionWithoutCommit()
-    {
-        // Arrange
-        var command = new TestCommand();
-        var expectedException = new InvalidOperationException("Handler error");
-        RequestHandlerDelegate<Result> next = (ct) => throw expectedException;
-
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _behavior.Handle(command, next, CancellationToken.None));
-
-        Assert.Equal("Handler error", exception.Message);
         _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 

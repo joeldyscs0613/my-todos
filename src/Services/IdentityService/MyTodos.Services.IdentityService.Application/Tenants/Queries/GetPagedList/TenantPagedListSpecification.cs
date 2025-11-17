@@ -29,6 +29,11 @@ public sealed class TenantPagedListSpecification(TenantPagedListFilter filter)
 
     protected override Dictionary<string, Expression<Func<Tenant, object>>> GetSortFunctions()
     {
-        
+        return new Dictionary<string, Expression<Func<Tenant, object>>>
+        {
+            { nameof(Filter.Name), t => t.Name },
+            { nameof(Filter.TenantPlan), t => t.Plan },
+            { nameof(Filter.IsActive), t => t.IsActive }
+        };
     }
 }

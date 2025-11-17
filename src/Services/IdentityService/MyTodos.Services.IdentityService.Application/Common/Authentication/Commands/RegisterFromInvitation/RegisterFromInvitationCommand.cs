@@ -1,7 +1,7 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
-using MyTodos.Services.IdentityService.Application.Features.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Authentication.Commands.RegisterFromInvitation;
+namespace MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
 
 /// <summary>
 /// Command to register a new user from an invitation token.

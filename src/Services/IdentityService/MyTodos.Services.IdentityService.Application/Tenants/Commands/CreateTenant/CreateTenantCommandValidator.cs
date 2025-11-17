@@ -1,7 +1,6 @@
 using FluentValidation;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 
-namespace MyTodos.Services.IdentityService.Application.Features.Tenants.Commands.CreateTenant;
+namespace MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTenant;
 
 /// <summary>
 /// Validator for CreateTenantCommand.
