@@ -90,12 +90,26 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
         return queryConfiguration.ConfigureAggregate(query);
     }
 
+    /// <summary>
+    /// Apply entity-specific filters from the filter object (e.g., UserId, TenantId, IsActive).
+    /// </summary>
     protected abstract IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query);
 
+    /// <summary>
+    /// Apply search text across multiple entity fields (e.g., search by username, email, or name).
+    /// </summary>
     protected abstract IQueryable<TEntity> ApplySearchBy(IQueryable<TEntity> query);
 
+    /// <summary>
+    /// Map filter property names to entity sort expressions. Use nameof() for keys.
+    /// Example: { nameof(Filter.Username), u => u.Username }
+    /// </summary>
     protected abstract Dictionary<string, Expression<Func<TEntity, object>>> GetSortFunctions();
-    
+
+    /// <summary>
+    /// Applies sorting based on SortField and SortDirection from the filter.
+    /// Supports case-insensitive field matching and validates against GetSortFunctions().
+    /// </summary>
     protected IQueryable<TEntity> ApplySort(IQueryable<TEntity> query)
     {
         if (string.IsNullOrWhiteSpace(SortField))
