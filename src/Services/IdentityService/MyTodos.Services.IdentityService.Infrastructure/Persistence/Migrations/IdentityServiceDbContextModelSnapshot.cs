@@ -7,7 +7,7 @@ using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace MyTodos.Services.IdentityService.Infrastructure.Migrations
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityServiceDbContext))]
     partial class IdentityServiceDbContextModelSnapshot : ModelSnapshot

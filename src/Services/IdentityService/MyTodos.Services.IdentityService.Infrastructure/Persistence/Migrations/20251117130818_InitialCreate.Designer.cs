@@ -8,7 +8,7 @@ using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace MyTodos.Services.IdentityService.Infrastructure.Migrations
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityServiceDbContext))]
     [Migration("20251117130818_InitialCreate")]
