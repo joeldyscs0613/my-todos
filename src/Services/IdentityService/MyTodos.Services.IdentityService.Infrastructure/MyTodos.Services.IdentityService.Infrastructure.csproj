@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MyTodos.Services.IdentityService.Application\MyTodos.Services.IdentityService.Application.csproj" />
+      <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Infrastructure\MyTodos.BuildingBlocks.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.11" />
+    </ItemGroup>
+
+</Project>
