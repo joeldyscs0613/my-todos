@@ -4,7 +4,7 @@ using MyTodos.BuildingBlocks.Application.Contracts.DomainEvents;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.SharedKernel.Contracts;
 
-namespace MyTodos.BuildingBlocks.Infrastructure.Abstractions.Messaging;
+namespace MyTodos.BuildingBlocks.Infrastructure.Messaging.DomainEvents;
 
 /// <summary>
 /// Base handler that converts domain events to integration events and saves them to the outbox.
