@@ -5,118 +5,208 @@ namespace MyTodos.Services.IdentityService.Contracts;
 /// These constants can be imported by other services (TodoService, etc.) to avoid hard-coding permission strings.
 /// </summary>
 /// <remarks>
-/// Permission naming convention: {resource}.{action}
-/// Examples: users.create, roles.update, permissions.delete
+/// Permission naming convention: {resource}/{context}/{action}
+/// Examples: users/user/create, users/details/view, users/list/export
+///
+/// Three-level hierarchy:
+/// - Resource: The domain resource (users, roles, tenants, etc.)
+/// - Context: The aspect or view of the resource (user, list, details, security, etc.)
+/// - Action: The operation being performed (view, manage, create, delete, etc.)
 ///
 /// Wildcard support:
 /// - "*" = Super admin (all permissions)
-/// - "users.*" = All user permissions (create, read, update, delete, etc.)
+/// - "users/*" = All user permissions
+/// - "users/details/*" = All detail operations for users
+///
+/// Standard Contexts:
+/// - {resource} (singular): Entity-level operations (create, delete)
+/// - list: Collection views and operations (view, export)
+/// - details: Individual resource details (view, manage)
+/// - security: Security-related operations (lock, unlock, password)
+/// - roles/permissions: Assignment operations
+/// - settings: Configuration operations
+/// - status: State change operations
+///
+/// Standard Actions:
+/// - view: Read-only access
+/// - manage: Full control (edit, update, configure)
+/// - create: Create new entities
+/// - delete: Remove entities
+/// - export: Export data
+/// - assign/revoke: Relationship management
+/// - lock/unlock, activate/deactivate: State changes
 /// </remarks>
 public static class Permissions
 {
     /// <summary>
-    /// Super admin wildcard - grants access to all permissions.
+    /// Super admin wildcard - grants access to all permissions across all resources.
     /// </summary>
     public const string All = "*";
 
     /// <summary>
     /// User management permissions.
+    /// Controls access to user accounts, profiles, security settings, and role assignments.
     /// </summary>
     public static class Users
     {
-        public const string Prefix = "users";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "users";
+        public const string All = $"{Resource}/*";
 
-        public const string Create = $"{Prefix}.create";
-        public const string Read = $"{Prefix}.read";
-        public const string Update = $"{Prefix}.update";
-        public const string Delete = $"{Prefix}.delete";
-        public const string List = $"{Prefix}.list";
-        public const string ChangePassword = $"{Prefix}.change-password";
-        public const string AssignRole = $"{Prefix}.assign-role";
-        public const string RevokeRole = $"{Prefix}.revoke-role";
-        public const string Lock = $"{Prefix}.lock";
-        public const string Unlock = $"{Prefix}.unlock";
+        // Entity-level operations
+        public const string Create = $"{Resource}/user/create";
+        public const string Delete = $"{Resource}/user/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
+
+        // Security operations
+        public const string ManageSecurity = $"{Resource}/security/manage";
+        public const string ChangePassword = $"{Resource}/security/change-password";
+        public const string Lock = $"{Resource}/security/lock";
+        public const string Unlock = $"{Resource}/security/unlock";
+
+        // Role assignment operations
+        public const string ViewRoles = $"{Resource}/roles/view";
+        public const string AssignRole = $"{Resource}/roles/assign";
+        public const string RevokeRole = $"{Resource}/roles/revoke";
     }
 
     /// <summary>
     /// Role management permissions.
+    /// Controls access to roles, role definitions, and permission assignments.
     /// </summary>
     public static class Roles
     {
-        public const string Prefix = "roles";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "roles";
+        public const string All = $"{Resource}/*";
 
-        public const string Create = $"{Prefix}.create";
-        public const string Read = $"{Prefix}.read";
-        public const string Update = $"{Prefix}.update";
-        public const string Delete = $"{Prefix}.delete";
-        public const string List = $"{Prefix}.list";
-        public const string AssignPermission = $"{Prefix}.assign-permission";
-        public const string RevokePermission = $"{Prefix}.revoke-permission";
+        // Entity-level operations
+        public const string Create = $"{Resource}/role/create";
+        public const string Delete = $"{Resource}/role/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
+
+        // Permission assignment operations
+        public const string ViewPermissions = $"{Resource}/permissions/view";
+        public const string AssignPermission = $"{Resource}/permissions/assign";
+        public const string RevokePermission = $"{Resource}/permissions/revoke";
     }
 
     /// <summary>
     /// Permission management permissions.
+    /// Controls access to the permission system itself (meta-permissions).
     /// </summary>
     public static class PermissionManagement
     {
-        public const string Prefix = "permissions";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "permissions";
+        public const string All = $"{Resource}/*";
 
-        public const string Create = $"{Prefix}.create";
-        public const string Read = $"{Prefix}.read";
-        public const string Update = $"{Prefix}.update";
-        public const string Delete = $"{Prefix}.delete";
-        public const string List = $"{Prefix}.list";
+        // Entity-level operations
+        public const string Create = $"{Resource}/permission/create";
+        public const string Delete = $"{Resource}/permission/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
     }
 
     /// <summary>
     /// Tenant management permissions (for multi-tenancy).
+    /// Controls access to tenant creation, configuration, and status management.
     /// </summary>
     public static class Tenants
     {
-        public const string Prefix = "tenants";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "tenants";
+        public const string All = $"{Resource}/*";
 
-        public const string Create = $"{Prefix}.create";
-        public const string Read = $"{Prefix}.read";
-        public const string Update = $"{Prefix}.update";
-        public const string Delete = $"{Prefix}.delete";
-        public const string List = $"{Prefix}.list";
-        public const string Activate = $"{Prefix}.activate";
-        public const string Deactivate = $"{Prefix}.deactivate";
+        // Entity-level operations
+        public const string Create = $"{Resource}/tenant/create";
+        public const string Delete = $"{Resource}/tenant/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
+
+        // Settings operations
+        public const string ViewSettings = $"{Resource}/settings/view";
+        public const string ManageSettings = $"{Resource}/settings/manage";
+
+        // Status operations
+        public const string Activate = $"{Resource}/status/activate";
+        public const string Deactivate = $"{Resource}/status/deactivate";
     }
 
     /// <summary>
     /// User invitation permissions.
+    /// Controls access to the invitation system for onboarding new users.
     /// </summary>
     public static class Invitations
     {
-        public const string Prefix = "invitations";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "invitations";
+        public const string All = $"{Resource}/*";
 
-        public const string Create = $"{Prefix}.create";
-        public const string Read = $"{Prefix}.read";
-        public const string Cancel = $"{Prefix}.cancel";
-        public const string List = $"{Prefix}.list";
-        public const string Accept = $"{Prefix}.accept";
+        // Entity-level operations
+        public const string Create = $"{Resource}/invitation/create";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string Cancel = $"{Resource}/details/cancel";
+
+        // Special operations
+        public const string Accept = $"{Resource}/accept";
     }
 
     /// <summary>
-    /// Authentication and session management permissions.
+    /// Authentication and self-service permissions.
+    /// Note: These permissions apply to the current user's own resources.
+    /// Access to other users' profiles/passwords requires Users.* permissions.
     /// </summary>
+    /// <remarks>
+    /// Auth permissions are implicit for authenticated users - they don't require
+    /// explicit permission grants. They're defined here for completeness and
+    /// potential future policy-based restrictions.
+    /// </remarks>
     public static class Auth
     {
-        public const string Prefix = "auth";
-        public const string All = $"{Prefix}.*";
+        public const string Resource = "auth";
+        public const string All = $"{Resource}/*";
 
-        public const string Login = $"{Prefix}.login";
-        public const string Logout = $"{Prefix}.logout";
-        public const string RefreshToken = $"{Prefix}.refresh-token";
-        public const string RevokeToken = $"{Prefix}.revoke-token";
-        public const string ChangeOwnPassword = $"{Prefix}.change-own-password";
-        public const string ViewOwnProfile = $"{Prefix}.view-own-profile";
-        public const string UpdateOwnProfile = $"{Prefix}.update-own-profile";
+        // Authentication operations (typically unrestricted)
+        public const string Login = $"{Resource}/login";
+        public const string Logout = $"{Resource}/logout";
+
+        // Token operations
+        public const string RefreshToken = $"{Resource}/token/refresh";
+        public const string RevokeToken = $"{Resource}/token/revoke";
+
+        // Profile operations (own profile)
+        public const string ViewProfile = $"{Resource}/profile/view";
+        public const string ManageProfile = $"{Resource}/profile/manage";
+
+        // Password operations (own password)
+        public const string ChangePassword = $"{Resource}/password/change";
     }
 }

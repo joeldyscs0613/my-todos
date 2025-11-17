@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
-using MyTodos.Services.IdentityService.Application.Invitations.Queries.GetPendingInvitations;
-using MyTodos.Services.IdentityService.Application.Invitations.Queries.ValidateInvitation;
+using MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.GetPendingInvitations;
+using MyTodos.Services.IdentityService.Application.Users.Queries.Invitations.ValidateInvitation;
 using MyTodos.Services.IdentityService.Contracts;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
@@ -14,9 +14,9 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/users/invitations")]
-public sealed class InvitationsController : ApiControllerBase
+public sealed class UserInvitationsController : ApiControllerBase
 {
-    public InvitationsController()
+    public UserInvitationsController()
     {
     }
 

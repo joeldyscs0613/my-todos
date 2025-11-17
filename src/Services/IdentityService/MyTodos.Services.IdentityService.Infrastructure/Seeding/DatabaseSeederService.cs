@@ -133,64 +133,21 @@ public sealed class DatabaseSeederService : IHostedService
 
     private static List<Permission> CreatePermissions()
     {
-        return new List<Permission>
+        // Use PermissionRegistry to get all permissions with metadata
+        var permissionMetadataList = PermissionRegistry.All;
+
+        var permissions = new List<Permission>();
+
+        foreach (var metadata in permissionMetadataList)
         {
-            // Wildcard permission (all access)
-            Permission.Create(Permissions.All, "All Permissions", "Global wildcard - access to everything"),
+            permissions.Add(Permission.Create(
+                metadata.Permission,
+                metadata.DisplayName,
+                metadata.Description
+            ));
+        }
 
-            // User management
-            Permission.Create(Permissions.Users.Create, "Create User", "Create new users"),
-            Permission.Create(Permissions.Users.Read, "View User Details", "View user details"),
-            Permission.Create(Permissions.Users.Update, "Update User", "Update user information"),
-            Permission.Create(Permissions.Users.Delete, "Delete User", "Delete users"),
-            Permission.Create(Permissions.Users.List, "List Users", "List all users"),
-            Permission.Create(Permissions.Users.ChangePassword, "Change User Password", "Change any user's password"),
-            Permission.Create(Permissions.Users.AssignRole, "Assign Role to User", "Assign roles to users"),
-            Permission.Create(Permissions.Users.RevokeRole, "Revoke Role from User", "Revoke roles from users"),
-            Permission.Create(Permissions.Users.Lock, "Lock User", "Lock user accounts"),
-            Permission.Create(Permissions.Users.Unlock, "Unlock User", "Unlock user accounts"),
-
-            // Role management
-            Permission.Create(Permissions.Roles.Create, "Create Role", "Create new roles"),
-            Permission.Create(Permissions.Roles.Read, "View Role Details", "View role details"),
-            Permission.Create(Permissions.Roles.Update, "Update Role", "Update role information"),
-            Permission.Create(Permissions.Roles.Delete, "Delete Role", "Delete roles"),
-            Permission.Create(Permissions.Roles.List, "List Roles", "List all roles"),
-            Permission.Create(Permissions.Roles.AssignPermission, "Assign Permission to Role", "Assign permissions to roles"),
-            Permission.Create(Permissions.Roles.RevokePermission, "Revoke Permission from Role", "Revoke permissions from roles"),
-
-            // Permission management
-            Permission.Create(Permissions.PermissionManagement.Create, "Create Permission", "Create new permissions"),
-            Permission.Create(Permissions.PermissionManagement.Read, "View Permission Details", "View permission details"),
-            Permission.Create(Permissions.PermissionManagement.Update, "Update Permission", "Update permission information"),
-            Permission.Create(Permissions.PermissionManagement.Delete, "Delete Permission", "Delete permissions"),
-            Permission.Create(Permissions.PermissionManagement.List, "List Permissions", "List all permissions"),
-
-            // Tenant management
-            Permission.Create(Permissions.Tenants.Create, "Create Tenant", "Create new tenants"),
-            Permission.Create(Permissions.Tenants.Read, "View Tenant Details", "View tenant details"),
-            Permission.Create(Permissions.Tenants.Update, "Update Tenant", "Update tenant settings"),
-            Permission.Create(Permissions.Tenants.Delete, "Delete Tenant", "Delete tenants"),
-            Permission.Create(Permissions.Tenants.List, "List Tenants", "List all tenants"),
-            Permission.Create(Permissions.Tenants.Activate, "Activate Tenant", "Activate tenant accounts"),
-            Permission.Create(Permissions.Tenants.Deactivate, "Deactivate Tenant", "Deactivate tenant accounts"),
-
-            // Invitation management
-            Permission.Create(Permissions.Invitations.Create, "Create Invitation", "Send user invitations"),
-            Permission.Create(Permissions.Invitations.Read, "View Invitation Details", "View invitation details"),
-            Permission.Create(Permissions.Invitations.Cancel, "Cancel Invitation", "Cancel pending invitations"),
-            Permission.Create(Permissions.Invitations.List, "List Invitations", "List all invitations"),
-            Permission.Create(Permissions.Invitations.Accept, "Accept Invitation", "Accept invitations"),
-
-            // Authentication permissions
-            Permission.Create(Permissions.Auth.Login, "Login", "Sign in to the system"),
-            Permission.Create(Permissions.Auth.Logout, "Logout", "Sign out of the system"),
-            Permission.Create(Permissions.Auth.RefreshToken, "Refresh Token", "Refresh authentication tokens"),
-            Permission.Create(Permissions.Auth.RevokeToken, "Revoke Token", "Revoke authentication tokens"),
-            Permission.Create(Permissions.Auth.ChangeOwnPassword, "Change Own Password", "Change your own password"),
-            Permission.Create(Permissions.Auth.ViewOwnProfile, "View Own Profile", "View your own profile"),
-            Permission.Create(Permissions.Auth.UpdateOwnProfile, "Update Own Profile", "Update your own profile")
-        };
+        return permissions;
     }
 
     private static (Role GlobalAdmin, Role TenantAdmin, Role TenantUser) CreateRoles()
@@ -236,26 +193,30 @@ public sealed class DatabaseSeederService : IHostedService
         var tenantAdminPermissionCodes = new[]
         {
             // User management (full access within tenant)
-            Permissions.Users.Create, Permissions.Users.Read, Permissions.Users.Update,
-            Permissions.Users.Delete, Permissions.Users.List, Permissions.Users.AssignRole,
-            Permissions.Users.RevokeRole, Permissions.Users.Lock, Permissions.Users.Unlock,
+            Permissions.Users.Create, Permissions.Users.Delete,
+            Permissions.Users.ViewList, Permissions.Users.ExportList,
+            Permissions.Users.ViewDetails, Permissions.Users.ManageDetails,
+            Permissions.Users.ManageSecurity, Permissions.Users.ChangePassword,
+            Permissions.Users.Lock, Permissions.Users.Unlock,
+            Permissions.Users.ViewRoles, Permissions.Users.AssignRole, Permissions.Users.RevokeRole,
 
             // Role management (read only)
-            Permissions.Roles.Read, Permissions.Roles.List,
+            Permissions.Roles.ViewList, Permissions.Roles.ViewDetails, Permissions.Roles.ViewPermissions,
 
             // Permission management (read only)
-            Permissions.PermissionManagement.Read, Permissions.PermissionManagement.List,
+            Permissions.PermissionManagement.ViewList, Permissions.PermissionManagement.ViewDetails,
 
             // Tenant management (read/update own tenant only)
-            Permissions.Tenants.Read, Permissions.Tenants.Update,
+            Permissions.Tenants.ViewDetails, Permissions.Tenants.ManageDetails,
+            Permissions.Tenants.ViewSettings, Permissions.Tenants.ManageSettings,
 
             // Invitation management (full access within tenant)
-            Permissions.Invitations.Create, Permissions.Invitations.Read,
-            Permissions.Invitations.Cancel, Permissions.Invitations.List,
+            Permissions.Invitations.Create, Permissions.Invitations.ViewList, Permissions.Invitations.ExportList,
+            Permissions.Invitations.ViewDetails, Permissions.Invitations.Cancel,
 
             // Auth permissions
-            Permissions.Auth.ViewOwnProfile, Permissions.Auth.UpdateOwnProfile,
-            Permissions.Auth.ChangeOwnPassword
+            Permissions.Auth.ViewProfile, Permissions.Auth.ManageProfile,
+            Permissions.Auth.ChangePassword
         };
 
         foreach (var code in tenantAdminPermissionCodes)
@@ -267,11 +228,11 @@ public sealed class DatabaseSeederService : IHostedService
         // Tenant User gets basic read permissions
         var tenantUserPermissionCodes = new[]
         {
-            Permissions.Users.Read,
-            Permissions.Roles.Read,
-            Permissions.Auth.ViewOwnProfile,
-            Permissions.Auth.UpdateOwnProfile,
-            Permissions.Auth.ChangeOwnPassword
+            Permissions.Users.ViewDetails,
+            Permissions.Roles.ViewDetails,
+            Permissions.Auth.ViewProfile,
+            Permissions.Auth.ManageProfile,
+            Permissions.Auth.ChangePassword
         };
 
         foreach (var code in tenantUserPermissionCodes)

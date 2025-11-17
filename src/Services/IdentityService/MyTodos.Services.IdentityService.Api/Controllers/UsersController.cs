@@ -1,9 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
+using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
-using MyTodos.Services.IdentityService.Application.Features.Users.Commands.InviteUser;
-using MyTodos.Services.IdentityService.Application.Features.Users.Queries.GetUserDetails;
+using MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
+using MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
 using MyTodos.Services.IdentityService.Contracts;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
@@ -13,26 +14,20 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/users")]
-public sealed class UsersController : ControllerBase
+public sealed class UsersController() : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public UsersController(ISender sender)
-    {
-        _sender = sender;
-    }
-
     /// <summary>
     /// Get user details by ID.
     /// </summary>
     [HttpGet("{userId:guid}")]
-    [HasPermission(Permissions.Users.Read)]
+    [HasPermission(Permissions.Users.ViewDetails)]
     [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserDetails(Guid userId, CancellationToken ct)
     {
         var query = new GetUserDetailsQuery(userId);
-        var result = await _sender.Send(query, ct);
+        var result = await Sender.Send(query, ct);
+        
         return result.ToActionResult();
     }
 
@@ -46,7 +41,7 @@ public sealed class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> InviteUser([FromBody] InviteUserCommand command, CancellationToken ct)
     {
-        var result = await _sender.Send(command, ct);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsSuccess)
         {
