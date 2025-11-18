@@ -1,5 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using MyTodos.BuildingBlocks.Application.Behaviors;
 using MyTodos.BuildingBlocks.Application.Contracts;
@@ -20,7 +22,26 @@ public class UnitOfWorkBehaviorTests
     public UnitOfWorkBehaviorTests()
     {
         _unitOfWork = new Mock<IUnitOfWork>();
+
+        // Create mock transaction
+        var mockTransaction = new Mock<IDbContextTransaction>();
+        mockTransaction.Setup(t => t.CommitAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.RollbackAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.DisposeAsync())
+            .Returns(ValueTask.CompletedTask);
+
+        // Create mock database facade
+        var mockDatabase = new Mock<DatabaseFacade>(MockBehavior.Default, null);
+        mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockTransaction.Object);
+
+        // Setup DbContext mock
         _dbContext = new Mock<DbContext>();
+        _dbContext.Setup(c => c.Database)
+            .Returns(mockDatabase.Object);
+
         _behavior = new UnitOfWorkBehavior<TestCommand, Result>(_unitOfWork.Object, _dbContext.Object);
         _queryBehavior = new UnitOfWorkBehavior<TestQuery, Result>(_unitOfWork.Object, _dbContext.Object);
         _commandByNameBehavior = new UnitOfWorkBehavior<TestByNameCommand, Result>(_unitOfWork.Object, _dbContext.Object);
@@ -129,7 +150,26 @@ public class UnitOfWorkBehaviorTests
     public async Task Handle_WithSuccessResultContainingValue_CommitsTransaction()
     {
         // Arrange
-        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, _dbContext.Object);
+        // Create mock transaction for this test
+        var mockTransaction = new Mock<IDbContextTransaction>();
+        mockTransaction.Setup(t => t.CommitAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.RollbackAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.DisposeAsync())
+            .Returns(ValueTask.CompletedTask);
+
+        // Create mock database facade for this test
+        var mockDatabase = new Mock<DatabaseFacade>(MockBehavior.Default, null);
+        mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockTransaction.Object);
+
+        // Setup DbContext mock for this test
+        var dbContext = new Mock<DbContext>();
+        dbContext.Setup(c => c.Database)
+            .Returns(mockDatabase.Object);
+
+        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, dbContext.Object);
         var command = new TestCommand();
         var successResult = Result.Success(42);
         RequestHandlerDelegate<Result<int>> next = (ct) => Task.FromResult(successResult);
@@ -169,7 +209,26 @@ public class UnitOfWorkBehaviorTests
     public async Task Handle_WithFailureResultContainingValue_DoesNotCommitTransaction()
     {
         // Arrange
-        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, _dbContext.Object);
+        // Create mock transaction for this test
+        var mockTransaction = new Mock<IDbContextTransaction>();
+        mockTransaction.Setup(t => t.CommitAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.RollbackAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        mockTransaction.Setup(t => t.DisposeAsync())
+            .Returns(ValueTask.CompletedTask);
+
+        // Create mock database facade for this test
+        var mockDatabase = new Mock<DatabaseFacade>(MockBehavior.Default, null);
+        mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(mockTransaction.Object);
+
+        // Setup DbContext mock for this test
+        var dbContext = new Mock<DbContext>();
+        dbContext.Setup(c => c.Database)
+            .Returns(mockDatabase.Object);
+
+        var behavior = new UnitOfWorkBehavior<TestCommand, Result<int>>(_unitOfWork.Object, dbContext.Object);
         var command = new TestCommand();
         var failureResult = Result.NotFound<int>("Entity not found");
         RequestHandlerDelegate<Result<int>> next = (ct) => Task.FromResult(failureResult);
