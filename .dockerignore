@@ -1,0 +1,34 @@
+# Directories
+**/bin/
+**/obj/
+**/out/
+**/node_modules/
+**/dist/
+**/.vscode/
+**/.idea/
+**/.vs/
+
+# Files
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/.DS_Store
+**/*.user
+**/*.suo
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.gitattributes
+**/README.md
+**/LICENSE
+
+# Build artifacts
+**/TestResults/
+**/coverage/
+**/*.log
+
+# Client app specific
+**/.vite/
+**/build/
+**/yarn.lock

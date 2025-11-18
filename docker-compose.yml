@@ -1,24 +1,4 @@
-version: '3.8'
-
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:16-alpine
-    container_name: mytodos-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mytodos
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -34,25 +14,33 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - mytodos-network
+    profiles:
+      - infra
+      - full
 
   # Identity Service
   identity-service:
     build:
       context: .
       dockerfile: src/Services/IdentityService/MyTodos.Services.IdentityService.Api/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-1.0.0}
+        BUILD_SHA: ${BUILD_SHA:-local}
     container_name: mytodos-identity-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5001
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=mytodos_identity;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/identityservice.db
       - RabbitMQ__Host=rabbitmq
       - RabbitMQ__Username=guest
       - RabbitMQ__Password=guest
     ports:
       - "5001:5001"
+    volumes:
+      - identity_data:/app/data
     depends_on:
-      postgres:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     healthcheck:
@@ -60,25 +48,33 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - mytodos-network
+    profiles:
+      - backend
+      - full
 
   # Todo Service
   todo-service:
     build:
       context: .
       dockerfile: src/Services/TodoService/MyTodos.Services.TodoService.Api/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-1.0.0}
+        BUILD_SHA: ${BUILD_SHA:-local}
     container_name: mytodos-todo-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5011
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=mytodos_todo;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/todoservice.db
       - RabbitMQ__Host=rabbitmq
       - RabbitMQ__Username=guest
       - RabbitMQ__Password=guest
     ports:
       - "5011:5011"
+    volumes:
+      - todo_data:/app/data
     depends_on:
-      postgres:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     healthcheck:
@@ -86,25 +82,33 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - mytodos-network
+    profiles:
+      - backend
+      - full
 
   # Notification Service
   notification-service:
     build:
       context: .
       dockerfile: src/Services/NotificationService/MyTodos.Services.NotificationService.Api/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-1.0.0}
+        BUILD_SHA: ${BUILD_SHA:-local}
     container_name: mytodos-notification-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5250
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=mytodos_notification;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/notificationservice.db
       - RabbitMQ__Host=rabbitmq
       - RabbitMQ__Username=guest
       - RabbitMQ__Password=guest
     ports:
       - "5250:5250"
+    volumes:
+      - notification_data:/app/data
     depends_on:
-      postgres:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     healthcheck:
@@ -112,12 +116,20 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - mytodos-network
+    profiles:
+      - backend
+      - full
 
   # API Gateway
   api-gateway:
     build:
       context: .
       dockerfile: src/Web/MyTodos.Web.ApiGateway/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-1.0.0}
+        BUILD_SHA: ${BUILD_SHA:-local}
     container_name: mytodos-api-gateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -139,11 +151,42 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - mytodos-network
+    profiles:
+      - web
+      - full
+
+  # Client App
+  client-app:
+    build:
+      context: .
+      dockerfile: src/Web/MyTodos.Web.ClientApp/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-1.0.0}
+        BUILD_SHA: ${BUILD_SHA:-local}
+    container_name: mytodos-client-app
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    ports:
+      - "3000:80"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    networks:
+      - mytodos-network
+    profiles:
+      - web
+      - full
 
 volumes:
-  postgres_data:
+  identity_data:
+    driver: local
+  todo_data:
+    driver: local
+  notification_data:
     driver: local
 
 networks:
-  default:
-    name: mytodos-network
+  mytodos-network:
+    driver: bridge
