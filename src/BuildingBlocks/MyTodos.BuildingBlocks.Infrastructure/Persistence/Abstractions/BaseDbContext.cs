@@ -29,7 +29,7 @@ public abstract class BaseDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Apply outbox configuration
-        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfig());
 
         // Apply common configurations
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
