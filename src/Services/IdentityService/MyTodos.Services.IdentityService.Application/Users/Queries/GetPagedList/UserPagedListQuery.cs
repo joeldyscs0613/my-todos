@@ -4,9 +4,12 @@ using MyTodos.Services.IdentityService.Domain.UserAggregate;
 
 namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 
-public sealed class UserPagedListQuery 
+public sealed class UserPagedListQuery
     : PagedListQuery<UserPagedListSpecification, UserPagedListFilter, UserPagedListResponseDto>
 {
+    public UserPagedListQuery(UserPagedListFilter filter) : base(filter)
+    {
+    }
 }
 
 public sealed class UserPagedListQueryHandler(IUserPagedListReadRepository readRepository)

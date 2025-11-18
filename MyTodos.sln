@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.SharedKernel", "src\MyTodos.SharedKernel\MyTodos.SharedKernel.csproj", "{4D348F31-1AEE-437D-8818-4B110B64524C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.SharedKernel.UnitTests", "tests\MyTodos.SharedKernel.UnitTests\MyTodos.SharedKernel.UnitTests.csproj", "{EDC15041-8F9D-48AF-A31E-38EA078626AD}"
 EndProject
@@ -101,11 +101,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.Services.TodoService.Contracts", "src\Services\TodoService\MyTodos.Services.TodoService.Contracts\MyTodos.Services.TodoService.Contracts.csproj", "{90ECB137-A85F-4BEE-994C-E4E9DE74E51A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.Web.ApiGateway", "src\Web\ApiGateway\MyTodos.Web.ApiGateway\MyTodos.Web.ApiGateway.csproj", "{73E4B6A7-503A-4495-99B4-273F2826CE5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTodos.Web.ApiGateway", "src\Web\MyTodos.Web.ApiGateway\MyTodos.Web.ApiGateway.csproj", "{73E4B6A7-503A-4495-99B4-273F2826CE5C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{D459D161-69C7-4106-A1AC-F2FA58C930D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedKernel", "SharedKernel", "{13858E8E-3BA7-445C-882D-0987EF677350}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MyTodos.Web.ClientApp", "MyTodos.Web.ClientApp", "{EBC05C91-4D55-0F6A-2192-34F77F694FAF}"
+	ProjectSection(SolutionItems) = preProject
+		src\Web\MyTodos.Web.ClientApp\package.json = src\Web\MyTodos.Web.ClientApp\package.json
+		src\Web\MyTodos.Web.ClientApp\package-lock.json = src\Web\MyTodos.Web.ClientApp\package-lock.json
+		src\Web\MyTodos.Web.ClientApp\vite.config.ts = src\Web\MyTodos.Web.ClientApp\vite.config.ts
+		src\Web\MyTodos.Web.ClientApp\tsconfig.json = src\Web\MyTodos.Web.ClientApp\tsconfig.json
+		src\Web\MyTodos.Web.ClientApp\tsconfig.app.json = src\Web\MyTodos.Web.ClientApp\tsconfig.app.json
+		src\Web\MyTodos.Web.ClientApp\tsconfig.node.json = src\Web\MyTodos.Web.ClientApp\tsconfig.node.json
+		src\Web\MyTodos.Web.ClientApp\index.html = src\Web\MyTodos.Web.ClientApp\index.html
+		src\Web\MyTodos.Web.ClientApp\eslint.config.js = src\Web\MyTodos.Web.ClientApp\eslint.config.js
+		src\Web\MyTodos.Web.ClientApp\.env.development = src\Web\MyTodos.Web.ClientApp\.env.development
+		src\Web\MyTodos.Web.ClientApp\.gitignore = src\Web\MyTodos.Web.ClientApp\.gitignore
+		src\Web\MyTodos.Web.ClientApp\README.md = src\Web\MyTodos.Web.ClientApp\README.md
+		src\Web\MyTodos.Web.ClientApp\Dockerfile = src\Web\MyTodos.Web.ClientApp\Dockerfile
+		src\Web\MyTodos.Web.ClientApp\nginx.conf = src\Web\MyTodos.Web.ClientApp\nginx.conf
+		src\Web\MyTodos.Web.ClientApp\src\main.tsx = src\Web\MyTodos.Web.ClientApp\src\main.tsx
+		src\Web\MyTodos.Web.ClientApp\src\App.tsx = src\Web\MyTodos.Web.ClientApp\src\App.tsx
+		src\Web\MyTodos.Web.ClientApp\src\App.css = src\Web\MyTodos.Web.ClientApp\src\App.css
+		src\Web\MyTodos.Web.ClientApp\src\index.css = src\Web\MyTodos.Web.ClientApp\src\index.css
+		src\Web\MyTodos.Web.ClientApp\src\vite-env.d.ts = src\Web\MyTodos.Web.ClientApp\src\vite-env.d.ts
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -447,6 +469,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4D348F31-1AEE-437D-8818-4B110B64524C} = {DE0CB450-283A-4C04-BD23-023C0D7E7CFA}
+		{EDC15041-8F9D-48AF-A31E-38EA078626AD} = {13858E8E-3BA7-445C-882D-0987EF677350}
 		{7D289D46-8D8E-4030-BDD6-A511F1BC3234} = {74AFE122-A74C-46D0-A590-98FFA7F62418}
 		{5F3302E1-221C-4142-8657-67E947D58A43} = {48C2E365-4921-4A59-A32C-C678F36AD11A}
 		{74AFE122-A74C-46D0-A590-98FFA7F62418} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
@@ -492,9 +515,9 @@ Global
 		{9D5F7A83-E4B2-4C3F-9A6B-4E1D5B8C7F92} = {47931FAB-DBE1-FD8F-0AFF-2CD4B99C52C4}
 		{4C6E9B74-F5C3-4D4E-8B7A-5F2E6C9D8A73} = {47931FAB-DBE1-FD8F-0AFF-2CD4B99C52C4}
 		{90ECB137-A85F-4BEE-994C-E4E9DE74E51A} = {8A9B1C2D-3E4F-5A6B-7C8D-9E0F1A2B3C4D}
-		{D459D161-69C7-4106-A1AC-F2FA58C930D5} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{73E4B6A7-503A-4495-99B4-273F2826CE5C} = {D459D161-69C7-4106-A1AC-F2FA58C930D5}
+		{D459D161-69C7-4106-A1AC-F2FA58C930D5} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{13858E8E-3BA7-445C-882D-0987EF677350} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
-		{EDC15041-8F9D-48AF-A31E-38EA078626AD} = {13858E8E-3BA7-445C-882D-0987EF677350}
+		{EBC05C91-4D55-0F6A-2192-34F77F694FAF} = {D459D161-69C7-4106-A1AC-F2FA58C930D5}
 	EndGlobalSection
 EndGlobal

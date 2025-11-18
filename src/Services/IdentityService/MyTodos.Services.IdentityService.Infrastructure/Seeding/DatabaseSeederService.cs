@@ -91,7 +91,7 @@ public sealed class DatabaseSeederService : IHostedService
             // 5. Create Global Admin User
             var adminUser = User.Create(
                 "admin",
-                "admin@system.com",
+                "admin@mytodos.com",
                 passwordHashingService.HashPassword("Admin123!"),
                 "System",
                 "Administrator"

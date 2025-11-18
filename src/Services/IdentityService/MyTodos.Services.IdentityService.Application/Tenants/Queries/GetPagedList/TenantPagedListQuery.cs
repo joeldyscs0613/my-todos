@@ -5,9 +5,12 @@ using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 
 namespace MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
 
-public sealed class TenantPagedListQuery 
+public sealed class TenantPagedListQuery
     : PagedListQuery<TenantPagedListSpecification, TenantPagedListFilter, TenantPagedListResponseDto>
 {
+    public TenantPagedListQuery(TenantPagedListFilter filter) : base(filter)
+    {
+    }
 }
 
 public sealed class TenantPagedListQueryHandler(ITenantPagedListReadRepository readRepository)

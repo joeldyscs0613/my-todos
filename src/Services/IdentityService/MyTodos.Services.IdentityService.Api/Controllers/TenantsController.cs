@@ -1,9 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MyTodos.BuildingBlocks.Application.Helpers;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
 using MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTenant;
+using MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
+using MyTodos.Services.IdentityService.Application.Tenants.Queries.GetTenantDetails;
 using MyTodos.Services.IdentityService.Contracts;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
@@ -15,8 +18,34 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 [Route("api/tenants")]
 public sealed class TenantsController : ApiControllerBase
 {
-    public TenantsController()
+    /// <summary>
+    /// Get paginated list of tenants with optional filtering and sorting.
+    /// </summary>
+    [HttpGet]
+    [HasPermission(Permissions.Tenants.ViewList)]
+    [ProducesResponseType(typeof(PagedList<TenantPagedListResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetTenantsList([FromQuery] TenantPagedListFilter filter, CancellationToken ct)
     {
+        var query = new TenantPagedListQuery(filter);
+        var result = await Sender.Send(query, ct);
+
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Get tenant details by ID.
+    /// </summary>
+    [HttpGet("{tenantId:guid}")]
+    [HasPermission(Permissions.Tenants.ViewDetails)]
+    [ProducesResponseType(typeof(TenantDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetTenantDetails(Guid tenantId, CancellationToken ct)
+    {
+        var query = new GetTenantDetailsQuery(tenantId);
+        var result = await Sender.Send(query, ct);
+
+        return result.ToActionResult();
     }
 
     /// <summary>
@@ -34,7 +63,7 @@ public sealed class TenantsController : ApiControllerBase
         if (result.IsSuccess)
         {
             return CreatedAtAction(
-                nameof(CreateTenant),
+                nameof(GetTenantDetails),
                 new { tenantId = result.Value!.Id },
                 result.Value);
         }

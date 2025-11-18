@@ -1,9 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MyTodos.BuildingBlocks.Application.Helpers;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
 using MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
+using MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 using MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
 using MyTodos.Services.IdentityService.Contracts;
 
@@ -17,6 +19,21 @@ namespace MyTodos.Services.IdentityService.Api.Controllers;
 public sealed class UsersController() : ApiControllerBase
 {
     /// <summary>
+    /// Get paginated list of users with optional filtering and sorting.
+    /// </summary>
+    [HttpGet]
+    [HasPermission(Permissions.Users.ViewList)]
+    [ProducesResponseType(typeof(PagedList<UserPagedListResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUsersList([FromQuery] UserPagedListFilter filter, CancellationToken ct)
+    {
+        var query = new UserPagedListQuery(filter);
+        var result = await Sender.Send(query, ct);
+
+        return result.ToActionResult();
+    }
+
+    /// <summary>
     /// Get user details by ID.
     /// </summary>
     [HttpGet("{userId:guid}")]
@@ -27,7 +44,7 @@ public sealed class UsersController() : ApiControllerBase
     {
         var query = new GetUserDetailsQuery(userId);
         var result = await Sender.Send(query, ct);
-        
+
         return result.ToActionResult();
     }
 
