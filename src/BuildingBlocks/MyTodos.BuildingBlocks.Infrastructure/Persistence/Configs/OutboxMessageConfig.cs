@@ -8,7 +8,7 @@ namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Configs;
 /// <summary>
 /// Entity Framework Core configuration for OutboxMessage entity.
 /// </summary>
-public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
+public class OutboxMessageConfig : IEntityTypeConfiguration<OutboxMessage>
 {
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
