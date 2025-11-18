@@ -46,11 +46,28 @@ builder.Services.AddBuildingBlocksPresentation(
     "v1",
     "Identity and Access Management service - handles users, roles, permissions, and authentication");
 
+// Add Health Checks
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration.GetConnectionString("IdentityServiceDb")
+    ?? "Data Source=identityservice.db";
+
+var rabbitMqHost = builder.Configuration["RabbitMQ:Host"] ?? "localhost";
+var rabbitMqUsername = builder.Configuration["RabbitMQ:Username"] ?? "guest";
+var rabbitMqPassword = builder.Configuration["RabbitMQ:Password"] ?? "guest";
+
+builder.Services.AddHealthChecks()
+    .AddSqlite(connectionString, name: "database")
+    .AddRabbitMQ(
+        rabbitConnectionString: $"amqp://{rabbitMqUsername}:{rabbitMqPassword}@{rabbitMqHost}:5672",
+        name: "rabbitmq");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
 // BuildingBlocks middleware (exception handling, Swagger, CORS)
 app.UseBuildingBlocksPresentation(app.Environment);
+
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

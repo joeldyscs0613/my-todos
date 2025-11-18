@@ -51,8 +51,18 @@ builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-// Add Health Checks
-builder.Services.AddHealthChecks();
+// Add Health Checks with downstream service checks
+var identityServiceUrl = builder.Configuration["ReverseProxy:Clusters:identity-cluster:Destinations:destination1:Address"]
+    ?? "http://localhost:5001";
+var todoServiceUrl = builder.Configuration["ReverseProxy:Clusters:todos-cluster:Destinations:destination1:Address"]
+    ?? "http://localhost:5011";
+var notificationServiceUrl = builder.Configuration["ReverseProxy:Clusters:notifications-cluster:Destinations:destination1:Address"]
+    ?? "http://localhost:5250";
+
+builder.Services.AddHealthChecks()
+    .AddUrlGroup(new Uri($"{identityServiceUrl}/health"), name: "identity-service")
+    .AddUrlGroup(new Uri($"{todoServiceUrl}/health"), name: "todo-service")
+    .AddUrlGroup(new Uri($"{notificationServiceUrl}/health"), name: "notification-service");
 
 // Add Swagger (optional - for documentation)
 builder.Services.AddEndpointsApiExplorer();

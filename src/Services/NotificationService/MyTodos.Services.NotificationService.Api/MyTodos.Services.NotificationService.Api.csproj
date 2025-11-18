@@ -1,16 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.Sqlite" Version="8.0.1" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MyTodos.Services.NotificationService.Application\MyTodos.Services.NotificationService.Application.csproj" />
     <ProjectReference Include="..\MyTodos.Services.NotificationService.Infrastructure\MyTodos.Services.NotificationService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Presentation\MyTodos.BuildingBlocks.Presentation.csproj" />
     <ProjectReference Include="..\MyTodos.Services.NotificationService.Contracts\MyTodos.Services.NotificationService.Contracts.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
 
 </Project>
