@@ -59,4 +59,4 @@ Request → ValidationBehavior → Handler → Response
 - **Dependency Inversion:** Application defines contracts, Infrastructure implements
 - **Single Responsibility:** Each behavior handles one cross-cutting concern
 
-*This is a take-home assignment, so all application infrastructure lives in one project. In production, you might split Behaviors, Validators, and Contracts into separate assemblies if they're consumed by different bounded contexts.*
+*This is a take-home assignment, so I kept all as simple as possible.*
