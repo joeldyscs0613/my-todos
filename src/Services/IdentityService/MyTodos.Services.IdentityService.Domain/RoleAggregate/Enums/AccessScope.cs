@@ -8,10 +8,10 @@ public enum AccessScope
     /// <summary>
     /// System-wide access across all tenants (e.g., GlobalAdmin role)
     /// </summary>
-    Global = 1,
+    Global = 10,
 
     /// <summary>
     /// Tenant-scoped access within specific tenant context (e.g., TenantAdmin, TenantUser roles)
     /// </summary>
-    Tenant = 2
+    Tenant = 20
 }

@@ -8,20 +8,20 @@ public enum InvitationStatus
     /// <summary>
     /// Invitation is pending acceptance
     /// </summary>
-    Pending = 0,
+    Pending = 10,
 
     /// <summary>
     /// Invitation has been accepted and user registered
     /// </summary>
-    Accepted = 1,
+    Accepted = 20,
 
     /// <summary>
     /// Invitation has expired
     /// </summary>
-    Expired = 2,
+    Expired = 30,
 
     /// <summary>
     /// Invitation was cancelled/revoked
     /// </summary>
-    Cancelled = 3
+    Cancelled = 40
 }

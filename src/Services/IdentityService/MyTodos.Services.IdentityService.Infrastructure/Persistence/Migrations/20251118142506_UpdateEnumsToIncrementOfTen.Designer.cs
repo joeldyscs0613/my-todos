@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityServiceDbContext))]
-    partial class IdentityServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118142506_UpdateEnumsToIncrementOfTen")]
+    partial class UpdateEnumsToIncrementOfTen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");

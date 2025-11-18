@@ -8,15 +8,15 @@ public enum RoleType
     /// <summary>
     /// Global administrator with system-wide access across all tenants
     /// </summary>
-    GlobalAdmin = 1,
+    GlobalAdmin = 10,
 
     /// <summary>
     /// Administrator within a specific tenant
     /// </summary>
-    TenantAdmin = 2,
+    TenantAdmin = 20,
 
     /// <summary>
     /// Standard user within a specific tenant
     /// </summary>
-    TenantUser = 3
+    TenantUser = 30
 }
