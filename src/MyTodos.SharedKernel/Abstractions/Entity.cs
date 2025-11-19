@@ -44,7 +44,7 @@ public abstract class Entity<TId> : IEntity
     {
         Id = id;
     }
-    
+
     /// <summary>
     /// Parameterless constructor for deserialization only (EF Core, JSON serializers).
     /// DO NOT USE in domain code.

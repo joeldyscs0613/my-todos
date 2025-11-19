@@ -58,7 +58,7 @@ public class EntityTests
         var entity = new TestIntEntity(1);
         var username = "joe.smith";
         var before = DateTimeOffsetHelper.UtcNow;
-        
+
         // Act
         entity.SetCreatedInfo(username);
 

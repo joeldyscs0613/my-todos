@@ -150,12 +150,12 @@ public class AggregateRootTests
         // Arrange
         var aggregate = new TestIntAggregate(1);
         var idStr = aggregate.Id.ToString();
-        
+
         // Act & Assert
-        Assert.Equal(0, aggregate.DomainEvents.Count);
+        Assert.Empty(aggregate.DomainEvents);
 
         aggregate.AddDomainEvent(new TestDomainEvent(idStr));
-        Assert.Equal(1, aggregate.DomainEvents.Count);
+        Assert.Single(aggregate.DomainEvents);
 
         aggregate.AddDomainEvent(new TestDomainEvent(idStr
         ));
