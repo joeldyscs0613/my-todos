@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 
 namespace MyTodos.Services.NotificationService.Infrastructure.Persistence;
 
@@ -13,6 +14,21 @@ public sealed class NotificationServiceDbContextFactory : IDesignTimeDbContextFa
         var optionsBuilder = new DbContextOptionsBuilder<NotificationServiceDbContext>();
         optionsBuilder.UseSqlite("Data Source=notificationservice.db");
 
-        return new NotificationServiceDbContext(optionsBuilder.Options);
+        // Create a design-time mock for ICurrentUserService
+        var mockCurrentUserService = new DesignTimeCurrentUserService();
+
+        return new NotificationServiceDbContext(optionsBuilder.Options, mockCurrentUserService);
+    }
+
+    /// <summary>
+    /// Design-time mock implementation of ICurrentUserService.
+    /// Returns null for all properties as no user context exists during migrations.
+    /// </summary>
+    private sealed class DesignTimeCurrentUserService : ICurrentUserService
+    {
+        public Guid? UserId => null;
+        public string? Username => null;
+        public Guid? TenantId => null;
+        public bool IsAuthenticated => false;
     }
 }
