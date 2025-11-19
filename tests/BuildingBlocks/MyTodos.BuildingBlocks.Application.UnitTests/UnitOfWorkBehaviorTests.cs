@@ -62,7 +62,7 @@ public class UnitOfWorkBehaviorTests
     }
 
     #endregion
-    
+
     #region Query Bypass Tests
 
     [Fact]

@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Contracts;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 
@@ -18,13 +20,15 @@ public abstract class ReadEfRepository<TEntity, TId, TDbContext> : IReadReposito
 {
     protected readonly TDbContext Context;
     protected readonly IEntityQueryConfiguration<TEntity> QueryConfiguration;
+    protected readonly ICurrentUserService _currentUserService;
 
-    protected ReadEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration)
+    protected ReadEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration, ICurrentUserService currentUserService)
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
-        QueryConfiguration = queryConfiguration  ?? throw new ArgumentNullException(nameof(queryConfiguration));
+        QueryConfiguration = queryConfiguration ?? throw new ArgumentNullException(nameof(queryConfiguration));
+        _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
     }
-    
+
     /// <summary>
     /// Retrieves all entities matching the optional predicate.
     /// Uses centralized aggregate configuration to load complete entities.
@@ -73,7 +77,10 @@ public abstract class ReadEfRepository<TEntity, TId, TDbContext> : IReadReposito
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The entity if found; otherwise null.</returns>
     public virtual async Task<TEntity?> GetByIdAsync(TId id, CancellationToken ct)
-        => await GetInitialQueryForEntity().FirstOrDefaultAsync(e => e.Id.Equals(id), ct);
+    {
+        var entity = await GetInitialQueryForEntity().FirstOrDefaultAsync(e => e.Id.Equals(id), ct);
+        return ValidateTenantAccess(entity);
+    }
 
     /// <summary>
     /// Retrieves the first entity matching the predicate.
@@ -95,7 +102,7 @@ public abstract class ReadEfRepository<TEntity, TId, TDbContext> : IReadReposito
     /// <returns>True if at least one matching entity exists; otherwise false.</returns>
     public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct)
         => await GetInitialQueryForEntity().AnyAsync(predicate, ct);
-    
+
     /// <summary>
     /// Builds the base query for entity retrieval operations with aggregate configuration applied.
     /// Used by GetByIdAsync, GetFirstOrDefaultAsync, GetAllAsync, and ExistsAsync.
@@ -114,5 +121,24 @@ public abstract class ReadEfRepository<TEntity, TId, TDbContext> : IReadReposito
     protected virtual IQueryable<TEntity> GetInitialQueryForList()
     {
         return Context.Set<TEntity>().AsNoTracking();
+    }
+
+    /// <summary>
+    /// Validates that the entity belongs to the current user's tenant.
+    /// Returns null if the entity doesn't belong to the current tenant (returns 404 to caller).
+    /// Override this method to customize tenant validation behavior.
+    /// </summary>
+    /// <param name="entity">The entity to validate.</param>
+    /// <returns>The entity if valid, null if cross-tenant access detected.</returns>
+    protected virtual TEntity? ValidateTenantAccess(TEntity? entity)
+    {
+        if (entity != null && entity is IMultiTenantEntity tenantEntity && _currentUserService.TenantId.HasValue)
+        {
+            if (tenantEntity.TenantId != _currentUserService.TenantId.Value)
+            {
+                return null; // Cross-tenant access - return null (caller will return 404)
+            }
+        }
+        return entity;
     }
 }

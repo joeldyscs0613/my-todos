@@ -18,6 +18,7 @@ public abstract class UnitOfWork<TDbContext> : IUnitOfWork
 {
     protected readonly TDbContext Context;
     protected readonly IDomainEventDispatcher DomainEventDispatcher;
+    private readonly ICurrentUserService _currentUserService;
     protected string Username { get; init; }
 
     protected UnitOfWork(
@@ -27,7 +28,8 @@ public abstract class UnitOfWork<TDbContext> : IUnitOfWork
     {
         Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         DomainEventDispatcher = domainEventDispatcher ?? throw new ArgumentNullException(nameof(domainEventDispatcher));
-        Username = currentUserService?.Username ?? "system";
+        _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+        Username = currentUserService.Username ?? "system";
     }
 
     /// <summary>
@@ -40,6 +42,7 @@ public abstract class UnitOfWork<TDbContext> : IUnitOfWork
     public async Task<int> CommitAsync(CancellationToken ct = default)
     {
         UpdateAuditableProperties();
+        UpdateTenantProperties();
 
         // Collect domain events from tracked aggregates BEFORE saving
         // Events are cleared from aggregates after collection
@@ -82,6 +85,66 @@ public abstract class UnitOfWork<TDbContext> : IUnitOfWork
             else
             {
                 entry.Entity.SetUpdatedInfo(Username);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates and validates tenant properties for multi-tenant entities. Not virtual to prevent tenant isolation bypass.
+    /// Ensures TenantId is set correctly for new entities and validates tenant ownership for modifications
+    /// and set it correctly no matter where in the app had been updated by mistake.
+    /// </summary>
+    private void UpdateTenantProperties()
+    {
+        if (!_currentUserService.TenantId.HasValue)
+        {
+            // If there are any multi-tenant entities being tracked, this is an error
+            var hasMultiTenantEntities = Context.ChangeTracker.Entries()
+                .Any(e => e.Entity is IMultiTenantEntity &&
+                         (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            if (hasMultiTenantEntities)
+            {
+                throw new InvalidOperationException(
+                    "TenantId is not available from CurrentUserService, but multi-tenant entities are being persisted.");
+            }
+
+            return; // No tenant context, nothing to do
+        }
+
+        var currentTenantId = _currentUserService.TenantId.Value;
+        var entries = Context.ChangeTracker.Entries()
+            .Where(e => e.Entity is IMultiTenantEntity &&
+                       (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+        foreach (var entry in entries)
+        {
+            var tenantEntity = (IMultiTenantEntity)entry.Entity;
+
+            if (entry.State == EntityState.Added)
+            {
+                // For new entities, always set to current user's tenant
+                tenantEntity.SetTenantId(currentTenantId);
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                // For modified entities, validate and auto-correct
+                var originalTenantId = (Guid)entry.OriginalValues[nameof(IMultiTenantEntity.TenantId)];
+
+                // First check: Does the original entity belong to the current user?
+                if (originalTenantId != currentTenantId)
+                {
+                    throw new UnauthorizedAccessException(
+                        $"Cannot modify entity belonging to TenantId '{originalTenantId}' " +
+                        $"- current user belongs to TenantId '{currentTenantId}'");
+                }
+
+                // Second check: Was TenantId tampered with? Auto-correct it
+                if (tenantEntity.TenantId != originalTenantId)
+                {
+                    // Reset to original value (auto-correct potential tampering)
+                    tenantEntity.SetTenantId(originalTenantId);
+                }
             }
         }
     }

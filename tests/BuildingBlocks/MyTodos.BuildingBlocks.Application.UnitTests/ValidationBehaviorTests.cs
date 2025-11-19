@@ -17,7 +17,7 @@ public class ValidationBehaviorTests
     }
 
     #endregion
-    
+
     #region No Validators Tests
 
     [Fact]
@@ -78,13 +78,13 @@ public class ValidationBehaviorTests
         var expectedResult = Result.Success();
         RequestHandlerDelegate<Result> next = (ct) => Task.FromResult(expectedResult);
 
-        validator1.Setup(x 
+        validator1.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        validator2.Setup(x 
+        validator2.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        validator3.Setup(x 
+        validator3.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 
@@ -93,11 +93,11 @@ public class ValidationBehaviorTests
 
         // Assert
         Assert.Equal(expectedResult, result);
-        validator1.Verify(x 
+        validator1.Verify(x
             => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()), Times.Once);
-        validator2.Verify(x 
+        validator2.Verify(x
             => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()), Times.Once);
-        validator3.Verify(x 
+        validator3.Verify(x
             => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -153,11 +153,11 @@ public class ValidationBehaviorTests
             () => behavior.Handle(request, next, CancellationToken.None));
 
         Assert.Equal(3, exception.Errors.Count());
-        Assert.Contains(exception.Errors, 
+        Assert.Contains(exception.Errors,
             e => e.PropertyName == "Value" && e.ErrorMessage == "Value is required");
-        Assert.Contains(exception.Errors, 
+        Assert.Contains(exception.Errors,
             e => e.PropertyName == "Value" && e.ErrorMessage == "Value must be at least 3 characters");
-        Assert.Contains(exception.Errors, 
+        Assert.Contains(exception.Errors,
             e => e.PropertyName == "OtherProperty" && e.ErrorMessage == "OtherProperty is invalid");
     }
 
@@ -174,10 +174,10 @@ public class ValidationBehaviorTests
 
         var failure1 = new ValidationFailure("Value", "Error from validator 1");
         var failure2 = new ValidationFailure("Value", "Error from validator 2");
-        validator1.Setup(x 
+        validator1.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(new[] { failure1 }));
-        validator2.Setup(x 
+        validator2.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(new[] { failure2 }));
 
@@ -203,13 +203,13 @@ public class ValidationBehaviorTests
         RequestHandlerDelegate<Result> next = (ct) => Task.FromResult(Result.Success());
 
         var failure = new ValidationFailure("Value", "Error from validator 2");
-        validator1.Setup(x 
+        validator1.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult()); // Success
-        validator2.Setup(x 
+        validator2.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(new[] { failure })); // Failure
-        validator3.Setup(x 
+        validator3.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult()); // Success
 
@@ -237,7 +237,7 @@ public class ValidationBehaviorTests
         var token = cts.Token;
         RequestHandlerDelegate<Result> next = (ct) => Task.FromResult(Result.Success());
 
-        validator.Setup(x 
+        validator.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 
@@ -263,10 +263,10 @@ public class ValidationBehaviorTests
         var token = cts.Token;
         RequestHandlerDelegate<Result> next = (ct) => Task.FromResult(Result.Success());
 
-        validator1.Setup(x 
+        validator1.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        validator2.Setup(x 
+        validator2.Setup(x
                 => x.ValidateAsync(It.IsAny<ValidationContext<TestRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 

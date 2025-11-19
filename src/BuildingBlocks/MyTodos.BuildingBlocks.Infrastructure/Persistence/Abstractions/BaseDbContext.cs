@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Messaging.Outbox;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Configs;
 using MyTodos.SharedKernel.Contracts;
@@ -11,13 +13,16 @@ namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 /// </summary>
 public abstract class BaseDbContext : DbContext
 {
+    private readonly ICurrentUserService _currentUserService;
+
     /// <summary>
     /// Outbox messages for reliable integration event publishing.
     /// </summary>
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
-    protected BaseDbContext(DbContextOptions options) : base(options)
+    protected BaseDbContext(DbContextOptions options, ICurrentUserService currentUserService) : base(options)
     {
+        _currentUserService = currentUserService;
     }
 
     /// <summary>
@@ -40,6 +45,25 @@ public abstract class BaseDbContext : DbContext
                 modelBuilder.Entity(entityType.ClrType)
                     .Ignore(nameof(IAggregateRoot.DomainEvents));
             }
+
+            // Apply global query filters for multi-tenant entities
+            if (typeof(IMultiTenantEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                var method = typeof(BaseDbContext)
+                    .GetMethod(nameof(SetMultiTenantQueryFilter), BindingFlags.NonPublic | BindingFlags.Instance)
+                    ?.MakeGenericMethod(entityType.ClrType);
+                method?.Invoke(this, new object[] { modelBuilder });
+            }
+        }
+    }
+
+    private void SetMultiTenantQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        where TEntity : class, IMultiTenantEntity
+    {
+        if (_currentUserService.TenantId.HasValue)
+        {
+            var tenantId = _currentUserService.TenantId.Value;
+            modelBuilder.Entity<TEntity>().HasQueryFilter(e => e.TenantId == tenantId);
         }
     }
 }

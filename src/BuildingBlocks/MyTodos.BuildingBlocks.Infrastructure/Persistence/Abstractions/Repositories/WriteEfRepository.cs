@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Contracts;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 
@@ -26,12 +28,14 @@ public abstract class WriteEfRepository<TEntity, TId, TDbContext> : IWriteReposi
     protected readonly TDbContext Context;
     protected readonly DbSet<TEntity> Set;
     protected readonly IEntityQueryConfiguration<TEntity> QueryConfiguration;
+    protected readonly ICurrentUserService _currentUserService;
 
-    protected WriteEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration)
+    protected WriteEfRepository(TDbContext context, IEntityQueryConfiguration<TEntity> queryConfiguration, ICurrentUserService currentUserService)
     {
-        Context = context  ?? throw new ArgumentNullException(nameof(context));
+        Context = context ?? throw new ArgumentNullException(nameof(context));
         Set = Context.Set<TEntity>();
-        QueryConfiguration = queryConfiguration  ?? throw new ArgumentNullException(nameof(queryConfiguration));;
+        QueryConfiguration = queryConfiguration ?? throw new ArgumentNullException(nameof(queryConfiguration)); ;
+        _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
     }
 
     /// <summary>
@@ -53,7 +57,8 @@ public abstract class WriteEfRepository<TEntity, TId, TDbContext> : IWriteReposi
     {
         var query = Set.AsQueryable();
         query = QueryConfiguration.ConfigureAggregate(query);
-        return await query.FirstOrDefaultAsync(e => e.Id.Equals(id), ct);
+        var entity = await query.FirstOrDefaultAsync(e => e.Id.Equals(id), ct);
+        return ValidateTenantAccess(entity);
     }
 
     /// <summary>
@@ -99,5 +104,24 @@ public abstract class WriteEfRepository<TEntity, TId, TDbContext> : IWriteReposi
     {
         Set.Remove(entity);
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Validates that the entity belongs to the current user's tenant.
+    /// Returns null if the entity doesn't belong to the current tenant (returns 404 to caller).
+    /// Override this method to customize tenant validation behavior.
+    /// </summary>
+    /// <param name="entity">The entity to validate.</param>
+    /// <returns>The entity if valid, null if cross-tenant access detected.</returns>
+    protected virtual TEntity? ValidateTenantAccess(TEntity? entity)
+    {
+        if (entity != null && entity is IMultiTenantEntity tenantEntity && _currentUserService.TenantId.HasValue)
+        {
+            if (tenantEntity.TenantId != _currentUserService.TenantId.Value)
+            {
+                return null; // Cross-tenant access - return null (caller will return 404)
+            }
+        }
+        return entity;
     }
 }
