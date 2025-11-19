@@ -1,6 +1,8 @@
 using MyTodos.Services.IdentityService.Domain.RoleAggregate.Enums;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
+using MyTodos.SharedKernel;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Domain.RoleAggregate;
 
@@ -58,7 +60,7 @@ public sealed class Role : AggregateRoot<Guid>
     /// <param name="name">Display name</param>
     /// <param name="scope">Access scope (Global or Tenant)</param>
     /// <param name="description">Optional description</param>
-    public static Role Create(
+    public static Result<Role> Create(
         RoleType roleType,
         string code,
         string name,
@@ -66,10 +68,10 @@ public sealed class Role : AggregateRoot<Guid>
         string? description = null)
     {
         if (string.IsNullOrWhiteSpace(code))
-            throw new DomainException("Role code cannot be empty");
+            return Result.Failure<Role>(Error.BadRequest("Role code cannot be empty"));
 
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Role name cannot be empty");
+            return Result.Failure<Role>(Error.BadRequest("Role name cannot be empty"));
 
         var roleId = Guid.NewGuid();
         var role = new Role(roleId)
@@ -81,19 +83,20 @@ public sealed class Role : AggregateRoot<Guid>
             Description = description
         };
 
-        return role;
+        return Result.Success(role);
     }
 
     /// <summary>
     /// Update role details
     /// </summary>
-    public void Update(string name, string? description = null)
+    public Result Update(string name, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Role name cannot be empty");
+            return Result.Failure(Error.BadRequest("Role name cannot be empty"));
 
         Name = name;
         Description = description;
+        return Result.Success();
     }
 
     /// <summary>

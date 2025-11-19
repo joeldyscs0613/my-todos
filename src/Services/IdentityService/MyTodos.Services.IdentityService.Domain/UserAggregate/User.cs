@@ -1,5 +1,7 @@
 using MyTodos.Services.IdentityService.Domain.UserAggregate.DomainEvents;
+using MyTodos.SharedKernel;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Domain.UserAggregate;
 
@@ -42,7 +44,7 @@ public sealed class User : AggregateRoot<Guid>
     /// <summary>
     /// Last time the user logged in
     /// </summary>
-    public DateTime? LastLoginAt { get; private set; }
+    public DateTimeOffset? LastLoginAt { get; private set; }
 
     // Child entities within User aggregate
     private readonly List<UserRole> _userRoles = new();
@@ -59,7 +61,7 @@ public sealed class User : AggregateRoot<Guid>
     /// <summary>
     /// Create a new user
     /// </summary>
-    public static User Create(
+    public static Result<User> Create(
         string username,
         string email,
         string passwordHash,
@@ -67,13 +69,13 @@ public sealed class User : AggregateRoot<Guid>
         string? lastName = null)
     {
         if (string.IsNullOrWhiteSpace(username))
-            throw new DomainException("Username cannot be empty");
+            return Result.Failure<User>(Error.BadRequest("Username cannot be empty"));
 
         if (string.IsNullOrWhiteSpace(email))
-            throw new DomainException("Email cannot be empty");
+            return Result.Failure<User>(Error.BadRequest("Email cannot be empty"));
 
         if (string.IsNullOrWhiteSpace(passwordHash))
-            throw new DomainException("PasswordHash cannot be empty");
+            return Result.Failure<User>(Error.BadRequest("PasswordHash cannot be empty"));
 
         var userId = Guid.NewGuid();
         var user = new User(userId)
@@ -88,7 +90,7 @@ public sealed class User : AggregateRoot<Guid>
 
         user.AddDomainEvent(new UserRegisteredDomainEvent(user.Id, user.Username, user.Email));
 
-        return user;
+        return Result.Success(user);
     }
 
     /// <summary>
@@ -103,12 +105,13 @@ public sealed class User : AggregateRoot<Guid>
     /// <summary>
     /// Update user password
     /// </summary>
-    public void UpdatePassword(string newPasswordHash)
+    public Result UpdatePassword(string newPasswordHash)
     {
         if (string.IsNullOrWhiteSpace(newPasswordHash))
-            throw new DomainException("Password cannot be empty");
+            return Result.Failure(Error.BadRequest("Password cannot be empty"));
 
         PasswordHash = newPasswordHash;
+        return Result.Success();
     }
 
     /// <summary>
@@ -116,8 +119,8 @@ public sealed class User : AggregateRoot<Guid>
     /// </summary>
     public void RecordLogin()
     {
-        LastLoginAt = DateTime.UtcNow;
-        AddDomainEvent(new UserLoggedInDomainEvent(Id, DateTime.UtcNow));
+        LastLoginAt = DateTimeOffsetHelper.UtcNow;
+        AddDomainEvent(new UserLoggedInDomainEvent(Id, DateTimeOffsetHelper.UtcNow));
     }
 
     /// <summary>

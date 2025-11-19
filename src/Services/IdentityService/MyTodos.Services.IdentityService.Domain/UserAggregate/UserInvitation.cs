@@ -2,6 +2,7 @@ using MyTodos.Services.IdentityService.Domain.RoleAggregate;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
 using MyTodos.Services.IdentityService.Domain.UserAggregate.Enums;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Domain.UserAggregate;
 
@@ -39,12 +40,12 @@ public sealed class UserInvitation : Entity<Guid>
     /// <summary>
     /// When the invitation expires
     /// </summary>
-    public DateTime ExpiresAt { get; private set; }
+    public DateTimeOffset ExpiresAt { get; private set; }
 
     /// <summary>
     /// When the invitation was accepted (null if not accepted)
     /// </summary>
-    public DateTime? AcceptedAt { get; private set; }
+    public DateTimeOffset? AcceptedAt { get; private set; }
 
     /// <summary>
     /// Current status of the invitation
@@ -68,7 +69,7 @@ public sealed class UserInvitation : Entity<Guid>
     /// <summary>
     /// Create a new user invitation (internal - only User aggregate can create)
     /// </summary>
-    public static UserInvitation Create(
+    public static Result<UserInvitation> Create(
         Guid invitedByUserId,
         string email,
         Guid roleId,
@@ -86,7 +87,7 @@ public sealed class UserInvitation : Entity<Guid>
             InvitedByUserId = invitedByUserId,
             TenantId = tenantId,
             RoleId = roleId,
-            ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+            ExpiresAt = DateTimeOffsetHelper.UtcNow.AddDays(expirationDays),
             Status = InvitationStatus.Pending
         };
 
@@ -96,27 +97,31 @@ public sealed class UserInvitation : Entity<Guid>
     /// <summary>
     /// Mark invitation as accepted
     /// </summary>
-    public void MarkAsAccepted()
+    public Result MarkAsAccepted()
     {
         if (Status != InvitationStatus.Pending)
-            throw new InvalidOperationException($"Cannot accept invitation with status {Status}");
+            return Result.BadRequest($"Cannot accept invitation with status {Status}");
 
         if (IsExpired())
-            throw new InvalidOperationException("Cannot accept expired invitation");
+            return Result.BadRequest("Cannot accept expired invitation");
 
         Status = InvitationStatus.Accepted;
-        AcceptedAt = DateTime.UtcNow;
+        AcceptedAt = DateTimeOffsetHelper.UtcNow;
+        
+        return Result.Success();
     }
 
     /// <summary>
     /// Mark invitation as cancelled
     /// </summary>
-    public void Cancel()
+    public Result Cancel()
     {
         if (Status != InvitationStatus.Pending)
-            throw new InvalidOperationException($"Cannot cancel invitation with status {Status}");
+            return Result.BadRequest($"Cannot cancel invitation with status {Status}");
 
         Status = InvitationStatus.Cancelled;
+        
+        return Result.Success();
     }
 
     /// <summary>
@@ -124,7 +129,7 @@ public sealed class UserInvitation : Entity<Guid>
     /// </summary>
     public bool IsExpired()
     {
-        return DateTime.UtcNow > ExpiresAt;
+        return DateTimeOffsetHelper.UtcNow > ExpiresAt;
     }
 
     /// <summary>
