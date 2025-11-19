@@ -14,7 +14,7 @@ public sealed record UserInvitedDomainEvent : DomainEvent
     public Guid? TenantId { get; init; }
     public Guid RoleId { get; init; }
     public string InvitationToken { get; init; }
-    public DateTime ExpiresAt { get; init; }
+    public DateTimeOffset ExpiresAt { get; init; }
 
     public UserInvitedDomainEvent(
         Guid invitationId,
@@ -23,7 +23,7 @@ public sealed record UserInvitedDomainEvent : DomainEvent
         Guid? tenantId,
         Guid roleId,
         string invitationToken,
-        DateTime expiresAt)
+        DateTimeOffset expiresAt)
         : base("UserInvited", "UserInvitation", invitationId.ToString())
     {
         InvitationId = invitationId;

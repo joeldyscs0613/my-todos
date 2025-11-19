@@ -1,7 +1,9 @@
 using MyTodos.Services.IdentityService.Domain.TenantAggregate.DomainEvents;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
+using MyTodos.SharedKernel;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Domain.TenantAggregate;
 
@@ -33,7 +35,7 @@ public sealed class Tenant : AggregateRoot<Guid>
     /// <summary>
     /// When the tenant's subscription expires
     /// </summary>
-    public DateTime? SubscriptionExpiresAt { get; private set; }
+    public DateTimeOffset? SubscriptionExpiresAt { get; private set; }
 
     // Navigation property for queries (read-only in domain)
     public ICollection<UserRole> UserRoles { get; private set; } = new List<UserRole>();
@@ -49,13 +51,13 @@ public sealed class Tenant : AggregateRoot<Guid>
     /// <summary>
     /// Create a new tenant
     /// </summary>
-    public static Tenant Create(
+    public static Result<Tenant> Create(
         string name,
         TenantPlan plan = TenantPlan.Free,
         int maxUsers = 5)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Tenant name cannot be empty");
+            return Result.BadRequest<Tenant>("Tenant name cannot be empty");
 
         var tenantId = Guid.NewGuid();
         var tenant = new Tenant(tenantId)
@@ -68,20 +70,25 @@ public sealed class Tenant : AggregateRoot<Guid>
 
         tenant.AddDomainEvent(new TenantCreatedDomainEvent(tenant.Id, tenant.Name, tenant.Plan));
 
-        return tenant;
+        return Result.Success(tenant);
     }
 
     /// <summary>
     /// Upgrade tenant's subscription plan
     /// </summary>
-    public void UpgradePlan(TenantPlan newPlan, int newMaxUsers, DateTime? expiresAt = null)
+    public Result UpgradePlan(TenantPlan newPlan, int newMaxUsers, DateTimeOffset? expiresAt = null)
     {
+        // Business rule: New plan must be higher tier than current plan
         if (newPlan <= Plan)
-            throw new DomainException("New plan must be a higher tier than current plan");
+        {
+            return Result.BadRequest("New plan must be a higher tier than current plan");
+        }
 
         Plan = newPlan;
         MaxUsers = newMaxUsers;
         SubscriptionExpiresAt = expiresAt;
+
+        return Result.Success();
     }
 
     /// <summary>

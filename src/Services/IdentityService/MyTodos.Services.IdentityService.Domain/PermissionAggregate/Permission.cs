@@ -1,5 +1,7 @@
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
+using MyTodos.SharedKernel;
 using MyTodos.SharedKernel.Abstractions;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Domain.PermissionAggregate;
 
@@ -42,13 +44,13 @@ public sealed class Permission : AggregateRoot<Guid>
     /// <param name="code">Unique permission code (e.g., "users.create", "todos.*", "*")</param>
     /// <param name="name">Display name</param>
     /// <param name="description">Optional description</param>
-    public static Permission Create(string code, string name, string? description = null)
+    public static Result<Permission> Create(string code, string name, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(code))
-            throw new DomainException("Permission code cannot be empty");
+            return Result.Failure<Permission>(Error.BadRequest("Permission code cannot be empty"));
 
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Permission name cannot be empty");
+            return Result.Failure<Permission>(Error.BadRequest("Permission name cannot be empty"));
 
         var permissionId = Guid.NewGuid();
         var permission = new Permission(permissionId)
@@ -58,19 +60,20 @@ public sealed class Permission : AggregateRoot<Guid>
             Description = description
         };
 
-        return permission;
+        return Result.Success(permission);
     }
 
     /// <summary>
     /// Update permission details
     /// </summary>
-    public void Update(string name, string? description = null)
+    public Result Update(string name, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Permission name cannot be empty");
+            return Result.Failure(Error.BadRequest("Permission name cannot be empty"));
 
         Name = name;
         Description = description;
+        return Result.Success();
     }
 
     /// <summary>

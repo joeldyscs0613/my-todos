@@ -8,9 +8,9 @@ namespace MyTodos.Services.IdentityService.Domain.UserAggregate.DomainEvents;
 public sealed record UserLoggedInDomainEvent : DomainEvent
 {
     public Guid UserId { get; init; }
-    public DateTime LoginTimestamp { get; init; }
+    public DateTimeOffset LoginTimestamp { get; init; }
 
-    public UserLoggedInDomainEvent(Guid userId, DateTime loginTimestamp)
+    public UserLoggedInDomainEvent(Guid userId, DateTimeOffset loginTimestamp)
         : base("UserLoggedIn", "User", userId.ToString())
     {
         UserId = userId;
