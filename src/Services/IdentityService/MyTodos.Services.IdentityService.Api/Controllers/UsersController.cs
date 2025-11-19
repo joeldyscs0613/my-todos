@@ -4,6 +4,7 @@ using MyTodos.BuildingBlocks.Application.Helpers;
 using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
+using MyTodos.Services.IdentityService.Application.Users.Commands.CreateUser;
 using MyTodos.Services.IdentityService.Application.Users.Commands.InviteUser;
 using MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
 using MyTodos.Services.IdentityService.Application.Users.Queries.GetUserDetails;
@@ -38,7 +39,7 @@ public sealed class UsersController() : ApiControllerBase
     /// </summary>
     [HttpGet("{userId:guid}")]
     [HasPermission(Permissions.Users.ViewDetails)]
-    [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDetailsResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserDetails(Guid userId, CancellationToken ct)
     {
@@ -65,6 +66,31 @@ public sealed class UsersController() : ApiControllerBase
             return CreatedAtAction(
                 nameof(GetUserDetails),
                 new { userId = result.Value!.Id },
+                result.Value);
+        }
+
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Create a user directly with default credentials (temporary endpoint for development).
+    /// Username is derived from email (part before @) and password is set to "Password@123!".
+    /// </summary>
+    [HttpPost("create")]
+    [HasPermission(Permissions.Users.Create)]
+    [ProducesResponseType(typeof(CreateUserResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command, CancellationToken ct)
+    {
+        var result = await Sender.Send(command, ct);
+
+        if (result.IsSuccess)
+        {
+            return CreatedAtAction(
+                nameof(GetUserDetails),
+                new { userId = result.Value!.UserId },
                 result.Value);
         }
 

@@ -25,7 +25,7 @@ public sealed class UserInvitationsController : ApiControllerBase
     /// </summary>
     [HttpGet("pending")]
     [HasPermission(Permissions.Invitations.ViewList)]
-    [ProducesResponseType(typeof(IReadOnlyList<InvitationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IReadOnlyList<InvitationResponseDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPendingInvitations(
         [FromQuery] string? email,
         [FromQuery] Guid? tenantId,
@@ -33,7 +33,7 @@ public sealed class UserInvitationsController : ApiControllerBase
     {
         var query = new GetPendingInvitationsQuery { Email = email, TenantId = tenantId };
         var result = await Sender.Send(query, ct);
-        
+
         return result.ToActionResult();
     }
 
@@ -41,12 +41,12 @@ public sealed class UserInvitationsController : ApiControllerBase
     /// Validate an invitation token before registration.
     /// </summary>
     [HttpGet("{token}/validate")]
-    [ProducesResponseType(typeof(InvitationValidationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(InvitationValidationResponseDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> ValidateInvitation(string token, CancellationToken ct)
     {
         var query = new ValidateInvitationQuery(token);
         var result = await Sender.Send(query, ct);
-        
+
         return result.ToActionResult();
     }
 }

@@ -1,11 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
+using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.Logout;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
+using MyTodos.Services.IdentityService.Contracts;
 
 namespace MyTodos.Services.IdentityService.Api.Controllers;
 
@@ -43,7 +46,24 @@ public sealed class AuthController : ApiControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterFromInvitationCommand command, CancellationToken ct)
     {
         var result = await Sender.Send(command, ct);
-        
+
+        return result.ToActionResult();
+    }
+
+    /// <summary>
+    /// Log out the current user.
+    /// In a JWT-based system, the client should discard the token after calling this endpoint.
+    /// This endpoint is primarily used for audit logging.
+    /// </summary>
+    [HttpPost("logout")]
+    [HasPermission(Permissions.Auth.Logout)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Logout(CancellationToken ct)
+    {
+        var command = new LogoutCommand();
+        var result = await Sender.Send(command, ct);
+
         return result.ToActionResult();
     }
 }

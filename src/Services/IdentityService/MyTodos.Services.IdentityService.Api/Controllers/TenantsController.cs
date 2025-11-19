@@ -38,7 +38,7 @@ public sealed class TenantsController : ApiControllerBase
     /// </summary>
     [HttpGet("{tenantId:guid}")]
     [HasPermission(Permissions.Tenants.ViewDetails)]
-    [ProducesResponseType(typeof(TenantDetailsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TenantDetailsResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTenantDetails(Guid tenantId, CancellationToken ct)
     {
