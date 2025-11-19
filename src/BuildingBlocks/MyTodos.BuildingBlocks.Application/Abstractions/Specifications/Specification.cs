@@ -28,7 +28,7 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
     public string? SortDirection => Filter.SortDirection;
 
     public IReadOnlyList<string> ValidSortFields => GetSortFunctions().Keys.ToList();
-    
+
     protected Specification(TFilter filter)
     {
         Filter = filter;
@@ -144,11 +144,11 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
 
         return query;
     }
-    
+
     protected IQueryable<TEntity> ApplyPaging(IQueryable<TEntity> query)
     {
         TotalCount = query.Count();
-        
+
         var pageNumber = Filter.PageNumber;
 
         var pageSize = PageSize > PageListConstants.MaxPageSize
@@ -161,10 +161,10 @@ public abstract class Specification<TEntity, TId, TFilter> : ISpecification<TEnt
         {
             pageSize = PageListConstants.DefaultPageSize;
         }
-            
+
         Filter.PageSize = pageSize;
         query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-        
+
         return query;
     }
 }

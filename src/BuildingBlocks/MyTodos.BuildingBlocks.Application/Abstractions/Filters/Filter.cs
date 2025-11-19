@@ -7,14 +7,14 @@ public abstract class Filter
     protected Filter()
     {
     }
-    
+
     private string? _searchBy;
     public string? SearchBy
     {
         get => _searchBy;
         set => _searchBy = value?.Trim();
     }
-    
+
     private string? _sortField;
     public string? SortField
     {
@@ -35,9 +35,10 @@ public abstract class Filter
         get => _pageNumber;
         set => _pageNumber = value < 1 ? 1 : value;
     }
-    
+
     private int _pageSize;
-    public int PageSize {
+    public int PageSize
+    {
         get => _pageSize;
         set => _pageSize = value < 1 ? PageListConstants.DefaultPageSize : value;
     }

@@ -1,6 +1,6 @@
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Constants;
 
-public struct SchemaNames
+public static class SchemaNames
 {
-    
+
 }

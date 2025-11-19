@@ -24,12 +24,12 @@ public class OutboxMessage
     /// <summary>
     /// Timestamp when the event occurred
     /// </summary>
-    public DateTime OccurredOn { get; set; }
+    public DateTimeOffset OccurredOn { get; set; }
 
     /// <summary>
     /// Timestamp when the message was successfully processed
     /// </summary>
-    public DateTime? ProcessedOn { get; set; }
+    public DateTimeOffset? ProcessedOn { get; set; }
 
     /// <summary>
     /// Error message if processing failed

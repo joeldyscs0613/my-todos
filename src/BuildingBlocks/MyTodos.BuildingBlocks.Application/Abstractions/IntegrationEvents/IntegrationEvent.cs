@@ -1,3 +1,5 @@
+using MyTodos.SharedKernel.Helpers;
+
 namespace MyTodos.BuildingBlocks.Application.Abstractions.IntegrationEvents;
 
 /// <summary>
@@ -15,7 +17,7 @@ public abstract record IntegrationEvent
     /// <summary>
     /// Timestamp when the event occurred
     /// </summary>
-    public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
+    public DateTimeOffset OccurredOn { get; init; } = DateTimeOffsetHelper.UtcNow;
 
     /// <summary>
     /// The type name of the event (used for deserialization routing)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Abstractions.IntegrationEvents;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Infrastructure.Messaging.Outbox;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 
@@ -61,7 +62,7 @@ public class OutboxRepository : IOutboxRepository
         if (message != null)
         {
             // Record successful processing time
-            message.ProcessedOn = DateTime.UtcNow;
+            message.ProcessedOn = DateTimeOffsetHelper.UtcNow;
             // Clear any previous error from failed retry attempts
             message.Error = null;
             await _context.SaveChangesAsync(ct);

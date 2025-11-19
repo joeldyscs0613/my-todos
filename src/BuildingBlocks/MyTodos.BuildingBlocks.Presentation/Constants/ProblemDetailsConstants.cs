@@ -1,8 +1,8 @@
 namespace MyTodos.BuildingBlocks.Presentation.Constants;
 
-public struct ProblemDetailsConstants
+public static class ProblemDetailsConstants
 {
-    public struct Titles
+    public static class Titles
     {
         public const string BadRequest = "Bad Request";
         public const string NotFound = "Not Found";
@@ -12,8 +12,8 @@ public struct ProblemDetailsConstants
         public const string UnprocessableEntity = "Unprocessable Entity";
         public const string InternalServerError = "Internal Server Error";
     }
-    
-    public struct Types
+
+    public static class Types
     {
         public const string BadRequest = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
         public const string NotFound = "https://tools.ietf.org/html/rfc7231#section-6.5.4";

@@ -8,7 +8,7 @@ using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto> 
+public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto>
     : Query<PagedList<TResponseItemDto>>
     where TFilter : Filter
     where TSpecification : class
@@ -17,11 +17,11 @@ public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto>
     public int PageNumber => Filter.PageNumber;
     public int PageSize => Filter.PageSize;
     public TSpecification Specification { get; protected set; }
-    
+
     protected PagedListQuery(TFilter filter)
     {
         Filter = filter;
-        
+
         var specification = (Activator.CreateInstance(typeof(TSpecification), filter) as TSpecification);
         Specification = specification ?? throw new InvalidOperationException($" {typeof(TSpecification)} not created");
     }

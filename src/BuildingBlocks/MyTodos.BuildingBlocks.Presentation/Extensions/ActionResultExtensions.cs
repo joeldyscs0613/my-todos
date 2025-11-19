@@ -11,7 +11,8 @@ public static class ActionResultExtensions
     {
         if (result.IsSuccess)
         {
-            throw new InvalidOperationException("Cannot convert a successful result to ProblemDetails. Only failed results can be converted.");
+            throw new InvalidOperationException("Cannot convert a successful result to ProblemDetails. " +
+                                                "Only failed results can be converted.");
         }
 
         var problemDetails = new Microsoft.AspNetCore.Mvc.ProblemDetails()
@@ -35,7 +36,8 @@ public static class ActionResultExtensions
     {
         if (result.IsSuccess)
         {
-            throw new InvalidOperationException("Cannot convert a successful result to ProblemDetails. Only failed results can be converted.");
+            throw new InvalidOperationException("Cannot convert a successful result to ProblemDetails. " +
+                                                "Only failed results can be converted.");
         }
 
         var problemDetails = new Microsoft.AspNetCore.Mvc.ProblemDetails()

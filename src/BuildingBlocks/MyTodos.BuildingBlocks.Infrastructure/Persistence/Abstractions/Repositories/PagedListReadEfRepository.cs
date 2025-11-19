@@ -3,6 +3,7 @@ using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 using MyTodos.BuildingBlocks.Application.Contracts;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Application.Contracts.Specifications;
 using MyTodos.SharedKernel.Abstractions;
 
@@ -22,8 +23,9 @@ public abstract class PagedListReadEfRepository<TEntity, TId, TSpecification, TF
 {
     protected PagedListReadEfRepository(
         TDbContext context,
-        IEntityQueryConfiguration<TEntity> queryConfiguration)
-        : base(context, queryConfiguration)
+        IEntityQueryConfiguration<TEntity> queryConfiguration,
+        ICurrentUserService currentUserService)
+        : base(context, queryConfiguration, currentUserService)
     {
     }
 

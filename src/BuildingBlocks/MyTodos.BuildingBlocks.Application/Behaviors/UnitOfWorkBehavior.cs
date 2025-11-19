@@ -82,9 +82,9 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse>(
     private static bool IsCommand()
     {
         var interfaces = typeof(TRequest).GetInterfaces();
-        var isCommand = interfaces.Contains(typeof(ICommand)) 
+        var isCommand = interfaces.Contains(typeof(ICommand))
                         || typeof(TRequest).Name.EndsWith("Command", StringComparison.OrdinalIgnoreCase);
-        
+
         return isCommand;
     }
 }

@@ -1,6 +1,6 @@
 namespace MyTodos.BuildingBlocks.Application.Constants;
 
-public struct PageListConstants
+public static class PageListConstants
 {
     public const int DefaultPageNumber = 1;
     public const int MaxPageSize = 50;
