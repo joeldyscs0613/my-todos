@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
+using MyTodos.Services.IdentityService.Domain.UserAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
 namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Persistence;
@@ -18,11 +19,11 @@ public sealed class UserInvitationConfiguration : IEntityTypeConfiguration<UserI
 
         builder.Property(ui => ui.Email)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(UserInvitationConstants.FieldLengths.EmailMaxLength);
 
         builder.Property(ui => ui.InvitationToken)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(UserInvitationConstants.FieldLengths.InvitationTokenMaxLength);
 
         builder.Property(ui => ui.InvitedByUserId)
             .IsRequired();

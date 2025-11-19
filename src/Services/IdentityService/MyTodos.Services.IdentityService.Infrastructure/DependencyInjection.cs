@@ -43,11 +43,11 @@ public static class DependencyInjection
         // Register UnitOfWork (uses the specific DbContext)
         services.AddScoped<MyTodos.BuildingBlocks.Application.Contracts.Persistence.IUnitOfWork, MyTodos.Services.IdentityService.Infrastructure.Persistence.IdentityServiceUnitOfWork>();
 
-        // Register repositories
-        RegisterRepositories(services);
-
-        // Register security services
+        // Register security services (must be before repositories as they depend on ICurrentUserService)
         RegisterSecurityServices(services, configuration);
+
+        // Register repositories (depends on ICurrentUserService)
+        RegisterRepositories(services);
 
         // Register database seeder
         services.AddHostedService<DatabaseSeederService>();

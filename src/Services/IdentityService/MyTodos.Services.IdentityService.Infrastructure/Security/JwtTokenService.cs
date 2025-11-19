@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Infrastructure.Security;
 
@@ -100,7 +101,7 @@ public sealed class JwtTokenService : IJwtTokenService
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
+            expires: DateTimeOffsetHelper.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes).DateTime,
             signingCredentials: credentials
         );
 

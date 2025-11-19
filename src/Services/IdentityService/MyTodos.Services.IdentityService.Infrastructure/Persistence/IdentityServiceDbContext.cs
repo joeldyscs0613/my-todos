@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 using MyTodos.Services.IdentityService.Domain.PermissionAggregate;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
@@ -14,8 +15,8 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence;
 /// </summary>
 public sealed class IdentityServiceDbContext : BaseDbContext
 {
-    public IdentityServiceDbContext(DbContextOptions options)
-        : base(options)
+    public IdentityServiceDbContext(DbContextOptions options, ICurrentUserService currentUserService)
+        : base(options, currentUserService)
     {
     }
 
@@ -44,7 +45,7 @@ public sealed class IdentityServiceDbContext : BaseDbContext
         // Apply query filter to all entities implementing ITenantEntity
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType))
+            if (typeof(IMultiTenantEntity).IsAssignableFrom(entityType.ClrType))
             {
                 // Note: Actual tenant filtering will be implemented via interceptor
                 // that reads current tenant from ICurrentUserService

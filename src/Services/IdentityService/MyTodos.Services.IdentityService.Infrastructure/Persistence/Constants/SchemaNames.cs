@@ -1,7 +1,7 @@
 namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-public struct SchemaNames
+public static class SchemaNames
 {
     public const string Messaging = "messaging";
-    public const string Config =  "config";
+    public const string Config = "config";
 }

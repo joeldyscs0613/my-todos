@@ -51,11 +51,16 @@ public sealed class DatabaseSeederService : IHostedService
             _logger.LogInformation("Starting database seeding...");
 
             // 1. Create System Tenant (for global admins)
-            var systemTenant = Tenant.Create(
+            var systemTenantResult = Tenant.Create(
                 "System",
                 TenantPlan.Enterprise,
                 maxUsers: 100
             );
+            if (systemTenantResult.IsFailure)
+            {
+                throw new InvalidOperationException($"Failed to create system tenant: {systemTenantResult.FirstError.Description}");
+            }
+            var systemTenant = systemTenantResult.Value!;
             systemTenant.SetCreatedInfo("system");
 
             // 2. Create Permissions
@@ -89,13 +94,18 @@ public sealed class DatabaseSeederService : IHostedService
             }
 
             // 5. Create Global Admin User
-            var adminUser = User.Create(
+            var adminUserResult = User.Create(
                 "admin",
                 "admin@mytodos.com",
                 passwordHashingService.HashPassword("Admin123!"),
                 "System",
                 "Administrator"
             );
+            if (adminUserResult.IsFailure)
+            {
+                throw new InvalidOperationException($"Failed to create admin user: {adminUserResult.FirstError.Description}");
+            }
+            var adminUser = adminUserResult.Value!;
             adminUser.SetCreatedInfo("system");
 
             // 6. Assign Global Admin role to admin user (no tenant - global role, creates UserRole entity)
@@ -140,11 +150,16 @@ public sealed class DatabaseSeederService : IHostedService
 
         foreach (var metadata in permissionMetadataList)
         {
-            permissions.Add(Permission.Create(
+            var permissionResult = Permission.Create(
                 metadata.Permission,
                 metadata.DisplayName,
                 metadata.Description
-            ));
+            );
+            if (permissionResult.IsFailure)
+            {
+                throw new InvalidOperationException($"Failed to create permission '{metadata.Permission}': {permissionResult.FirstError.Description}");
+            }
+            permissions.Add(permissionResult.Value!);
         }
 
         return permissions;
@@ -152,29 +167,44 @@ public sealed class DatabaseSeederService : IHostedService
 
     private static (Role GlobalAdmin, Role TenantAdmin, Role TenantUser) CreateRoles()
     {
-        var globalAdminRole = Role.Create(
+        var globalAdminRoleResult = Role.Create(
             RoleType.GlobalAdmin,
             "global-admin",
             "Global Administrator",
             AccessScope.Global,
             "System-wide administrator with full access"
         );
+        if (globalAdminRoleResult.IsFailure)
+        {
+            throw new InvalidOperationException($"Failed to create global admin role: {globalAdminRoleResult.FirstError.Description}");
+        }
+        var globalAdminRole = globalAdminRoleResult.Value!;
 
-        var tenantAdminRole = Role.Create(
+        var tenantAdminRoleResult = Role.Create(
             RoleType.TenantAdmin,
             "tenant-admin",
             "Tenant Administrator",
             AccessScope.Tenant,
             "Tenant administrator with management permissions"
         );
+        if (tenantAdminRoleResult.IsFailure)
+        {
+            throw new InvalidOperationException($"Failed to create tenant admin role: {tenantAdminRoleResult.FirstError.Description}");
+        }
+        var tenantAdminRole = tenantAdminRoleResult.Value!;
 
-        var tenantUserRole = Role.Create(
+        var tenantUserRoleResult = Role.Create(
             RoleType.TenantUser,
             "tenant-user",
             "Tenant User",
             AccessScope.Tenant,
             "Regular tenant user with basic permissions"
         );
+        if (tenantUserRoleResult.IsFailure)
+        {
+            throw new InvalidOperationException($"Failed to create tenant user role: {tenantUserRoleResult.FirstError.Description}");
+        }
+        var tenantUserRole = tenantUserRoleResult.Value!;
 
         return (globalAdminRole, tenantAdminRole, tenantUserRole);
     }

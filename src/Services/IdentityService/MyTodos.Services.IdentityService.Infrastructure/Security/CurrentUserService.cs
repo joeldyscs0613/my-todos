@@ -6,35 +6,30 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Security;
 
 /// <summary>
 /// Retrieves current user information from HTTP context claims.
+/// Claims are parsed once during construction for better performance.
 /// </summary>
-public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
+public sealed class CurrentUserService : ICurrentUserService
 {
-    public Guid? UserId
+    public Guid? UserId { get; }
+    public string? Username { get; }
+    public Guid? TenantId { get; }
+    public bool IsAuthenticated { get; }
+
+    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
-        get
+        var user = httpContextAccessor.HttpContext?.User;
+
+        IsAuthenticated = user?.Identity?.IsAuthenticated ?? false;
+
+        if (IsAuthenticated)
         {
-            var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+            var userIdClaim = user!.FindFirstValue(ClaimTypes.NameIdentifier);
+            UserId = Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+
+            Username = user.FindFirstValue(ClaimTypes.Name);
+
+            var tenantIdClaim = user.FindFirstValue("tenant_id");
+            TenantId = Guid.TryParse(tenantIdClaim, out var tenantId) ? tenantId : null;
         }
     }
-
-    public string? Username
-    {
-        get
-        {
-            return httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
-        }
-    }
-
-    public Guid? TenantId
-    {
-        get
-        {
-            var tenantIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue("tenant_id");
-            return Guid.TryParse(tenantIdClaim, out var tenantId) ? tenantId : null;
-        }
-    }
-
-    public bool IsAuthenticated 
-        => httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
 }

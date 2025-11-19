@@ -1,3 +1,4 @@
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.Services.IdentityService.Application.Roles.Contracts;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence;
@@ -10,10 +11,12 @@ namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Reposito
 public sealed class RoleWriteRepository : IRoleWriteRepository
 {
     private readonly IdentityServiceDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public RoleWriteRepository(IdentityServiceDbContext context)
+    public RoleWriteRepository(IdentityServiceDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task AddAsync(Role role, CancellationToken ct = default)

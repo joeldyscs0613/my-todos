@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 using MyTodos.Services.IdentityService.Application.Users;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
@@ -12,8 +13,8 @@ namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Reposito
 /// <summary>
 /// Read-only repository for User aggregate queries.
 /// </summary>
-public sealed class UserPagedListReadRepository(IdentityServiceDbContext context)
-    : PagedListReadEfRepository<User, Guid, UserPagedListSpecification, UserPagedListFilter, IdentityServiceDbContext>(context, new UserQueryConfiguration())
+public sealed class UserPagedListReadRepository(IdentityServiceDbContext context, ICurrentUserService currentUserService)
+    : PagedListReadEfRepository<User, Guid, UserPagedListSpecification, UserPagedListFilter, IdentityServiceDbContext>(context, new UserQueryConfiguration(), currentUserService)
         , IUserPagedListReadRepository
 {
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken ct = default)
@@ -26,7 +27,7 @@ public sealed class UserPagedListReadRepository(IdentityServiceDbContext context
         => await GetAllAsync(u => u.UserRoles.Any(ur => ur.TenantId == tenantId), ct);
 
     #region UserInvitations
-    
+
     public async Task<UserInvitation?> GetUserInvitationByTokenAsync(string token, CancellationToken ct = default)
         => await Context.UserInvitations.FirstOrDefaultAsync(ui => ui.InvitationToken == token, ct);
 
@@ -36,11 +37,11 @@ public sealed class UserPagedListReadRepository(IdentityServiceDbContext context
 
     public async Task<IReadOnlyList<UserInvitation>> GetUserInvitationsPendingByTenantIdAsync(
         Guid tenantId, CancellationToken ct = default)
-        => await Context.UserInvitations.Where(ui => ui.TenantId == tenantId 
+        => await Context.UserInvitations.Where(ui => ui.TenantId == tenantId
             && ui.Status == Domain.UserAggregate.Enums.InvitationStatus.Pending).ToListAsync(ct);
 
     public async Task<bool> UserInvitationExistsForEmailAsync(string email, CancellationToken ct = default)
         => await Context.UserInvitations.AnyAsync(ui => ui.Email == email, ct);
-    
+
     #endregion
 }

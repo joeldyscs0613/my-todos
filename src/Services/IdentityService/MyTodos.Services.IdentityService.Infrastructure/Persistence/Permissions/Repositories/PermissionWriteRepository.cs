@@ -1,3 +1,4 @@
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
 using MyTodos.Services.IdentityService.Application.Permissions;
 using MyTodos.Services.IdentityService.Application.Permissions.Contracts;
@@ -9,6 +10,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Permission
 /// <summary>
 /// Write repository for Permission aggregate mutations.
 /// </summary>
-public sealed class PermissionWriteRepository(IdentityServiceDbContext context)
-    : WriteEfRepository<Permission, Guid, IdentityServiceDbContext>(context, new PermissionQueryConfiguration()),
+public sealed class PermissionWriteRepository(IdentityServiceDbContext context, ICurrentUserService currentUserService)
+    : WriteEfRepository<Permission, Guid, IdentityServiceDbContext>(context, new PermissionQueryConfiguration(), currentUserService),
         IPermissionWriteRepository;

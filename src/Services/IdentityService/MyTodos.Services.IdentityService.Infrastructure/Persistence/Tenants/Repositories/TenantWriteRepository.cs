@@ -1,3 +1,4 @@
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence;
@@ -10,10 +11,12 @@ namespace MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Reposi
 public sealed class TenantWriteRepository : ITenantWriteRepository
 {
     private readonly IdentityServiceDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public TenantWriteRepository(IdentityServiceDbContext context)
+    public TenantWriteRepository(IdentityServiceDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task AddAsync(Tenant tenant, CancellationToken ct = default)

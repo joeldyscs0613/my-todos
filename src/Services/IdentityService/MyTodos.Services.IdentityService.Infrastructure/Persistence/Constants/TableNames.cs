@@ -4,7 +4,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 /// Defines constant table names for the Identity Service database.
 /// Uses singular naming convention for consistency.
 /// </summary>
-public struct TableNames
+public static class TableNames
 {
     // Aggregate Root Tables
     public const string User = nameof(User);

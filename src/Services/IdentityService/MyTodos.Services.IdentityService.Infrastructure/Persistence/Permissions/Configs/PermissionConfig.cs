@@ -15,9 +15,9 @@ public sealed class PermissionConfig : AggregateRootWithGuidIdConfig<Permission>
     public override void Configure(EntityTypeBuilder<Permission> builder)
     {
         base.Configure(builder);
-        
+
         builder.ToTable(TableNames.Permission);
-        
+
         builder.Property(p => p.Code)
             .IsRequired()
             .HasMaxLength(PermissionConstants.FieldLengths.CodeMaxLength);
