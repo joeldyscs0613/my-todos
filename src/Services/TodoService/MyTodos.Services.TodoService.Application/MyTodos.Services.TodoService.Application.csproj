@@ -3,11 +3,17 @@
   <ItemGroup>
     <ProjectReference Include="..\MyTodos.Services.TodoService.Domain\MyTodos.Services.TodoService.Domain.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Infrastructure\MyTodos.BuildingBlocks.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageReference Include="MediatR" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Projects\Commands\ChangeProjectStartDate\" />
+    <Folder Include="Projects\Commands\ChangeProjectTargetDate\" />
   </ItemGroup>
 
   <PropertyGroup>
