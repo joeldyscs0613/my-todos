@@ -7,7 +7,7 @@ namespace MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 /// <summary>
 /// Read repository for Tenant aggregate.
 /// </summary>
-public interface ITenantPagedListReadRepository 
+public interface ITenantPagedListReadRepository
     : IPagedListReadRepository<Tenant, Guid, TenantPagedListSpecification, TenantPagedListFilter>
 {
     /// <summary>

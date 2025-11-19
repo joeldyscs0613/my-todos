@@ -8,7 +8,7 @@ namespace MyTodos.Services.IdentityService.Application.Users.Contracts;
 /// <summary>
 /// Read repository for User aggregate.
 /// </summary>
-public interface IUserPagedListReadRepository 
+public interface IUserPagedListReadRepository
     : IPagedListReadRepository<User, Guid, UserPagedListSpecification, UserPagedListFilter>
 {
     /// <summary>
