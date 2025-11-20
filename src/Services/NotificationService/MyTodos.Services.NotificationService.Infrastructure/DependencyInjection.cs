@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure;
 using MyTodos.Services.NotificationService.Infrastructure.Persistence;
 using MyTodos.Services.NotificationService.Infrastructure.Seeding;
+using MyTodos.Services.NotificationService.Infrastructure.Security;
 
 namespace MyTodos.Services.NotificationService.Infrastructure;
 
@@ -21,22 +23,26 @@ public static class DependencyInjection
         services.AddDbContext<NotificationServiceDbContext>(options =>
             options.UseSqlite(connectionString));
 
-        // 2. UnitOfWork
+        // 2. Security services
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+        // 3. UnitOfWork
         services.AddScoped<IUnitOfWork, NotificationServiceUnitOfWork>();
 
-        // 3. Repositories
+        // 4. Repositories
         // Add repository registrations here as they are created
         // Example:
         // services.AddScoped<INotificationReadRepository, NotificationReadRepository>();
         // services.AddScoped<INotificationWriteRepository, NotificationWriteRepository>();
 
-        // 4. DbContext for BuildingBlocks (important!)
+        // 5. DbContext for BuildingBlocks (important!)
         services.AddScoped<DbContext>(sp => sp.GetRequiredService<NotificationServiceDbContext>());
 
-        // 5. Seeding
+        // 6. Seeding
         services.AddScoped<DatabaseSeederService>();
 
-        // 6. BuildingBlocks infrastructure
+        // 7. BuildingBlocks infrastructure
         services.AddBuildingBlocksInfrastructure(configuration);
 
         return services;
