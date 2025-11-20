@@ -40,16 +40,20 @@ public class OutboxRepository : IOutboxRepository
         int batchSize,
         CancellationToken ct = default)
     {
-        var messages = await _context.Set<OutboxMessage>()
-            // Find messages that haven't been processed yet
+        // Fetch unprocessed messages and process them in-memory
+        // SQLite doesn't support DateTimeOffset in ORDER BY, so we must do client-side ordering
+        var unprocessed = await _context.Set<OutboxMessage>()
             .Where(m => m.ProcessedOn == null)
+            .ToListAsync(ct);
+
+        var messages = unprocessed
             // Process oldest messages first to maintain event order
             .OrderBy(m => m.OccurredOn)
             // Limit to batch size to prevent overwhelming the system
             .Take(batchSize)
             // Return only the fields needed for processing
-            .Select(m => new ValueTuple<Guid, string, string, int>(m.Id, m.Type, m.Content, m.RetryCount))
-            .ToListAsync(ct);
+            .Select(m => (m.Id, m.Type, m.Content, m.RetryCount))
+            .ToList();
 
         return messages;
     }

@@ -65,7 +65,8 @@ public class OutboxProcessorService : BackgroundService
         // Create a new scope for this batch of messages.
         // This gives us fresh instances of scoped services (DbContext, repositories, publisher)
         // that will be properly disposed when the scope ends, preventing memory leaks.
-        using var scope = _serviceScopeFactory.CreateScope();
+        // Use 'await using' because RabbitMqPublisher implements IAsyncDisposable.
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
         var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
         var publisher = scope.ServiceProvider.GetRequiredService<IRabbitMqPublisher>();
 
