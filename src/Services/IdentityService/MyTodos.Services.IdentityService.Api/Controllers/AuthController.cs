@@ -5,7 +5,6 @@ using MyTodos.BuildingBlocks.Presentation.Authorization;
 using MyTodos.BuildingBlocks.Presentation.Controllers;
 using MyTodos.BuildingBlocks.Presentation.Extensions;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.Logout;
-using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.RegisterFromInvitation;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.Commands.SignIn;
 using MyTodos.Services.IdentityService.Application.Common.Authentication.DTOs;
 using MyTodos.Services.IdentityService.Contracts;
@@ -33,20 +32,6 @@ public sealed class AuthController : ApiControllerBase
     public async Task<IActionResult> SignIn([FromBody] SignInCommand command, CancellationToken ct)
     {
         var result = await Sender.Send(command, ct);
-        return result.ToActionResult();
-    }
-
-    /// <summary>
-    /// Register a new user from an invitation token.
-    /// </summary>
-    [AllowAnonymous]
-    [HttpPost("register")]
-    [ProducesResponseType(typeof(SignInResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterFromInvitationCommand command, CancellationToken ct)
-    {
-        var result = await Sender.Send(command, ct);
-
         return result.ToActionResult();
     }
 

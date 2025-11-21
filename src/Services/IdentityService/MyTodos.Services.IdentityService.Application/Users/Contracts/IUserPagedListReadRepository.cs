@@ -25,30 +25,4 @@ public interface IUserPagedListReadRepository
     /// Get all users in a specific tenant
     /// </summary>
     Task<IReadOnlyList<User>> GetByTenantIdAsync(Guid tenantId, CancellationToken ct = default);
-
-    #region UserInvitations
-
-    /// <summary>
-    /// Get invitation by token
-    /// </summary>
-    Task<UserInvitation?> GetUserInvitationByTokenAsync(string token, CancellationToken ct = default);
-
-    /// <summary>
-    /// Get pending invitations for a specific email
-    /// </summary>
-    Task<IReadOnlyList<UserInvitation>> GetUserInvitationsPendingByEmailAsync(
-        string email, CancellationToken ct = default);
-
-    /// <summary>
-    /// Get all pending invitations for a tenant
-    /// </summary>
-    Task<IReadOnlyList<UserInvitation>> GetUserInvitationsPendingByTenantIdAsync(
-        Guid tenantId, CancellationToken ct = default);
-
-    /// <summary>
-    /// Check if an invitation exists for an email
-    /// </summary>
-    Task<bool> UserInvitationExistsForEmailAsync(string email, CancellationToken ct = default);
-
-    #endregion
 }
