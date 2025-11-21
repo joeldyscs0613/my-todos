@@ -1,9 +1,8 @@
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.Services.IdentityService.Application.Roles.Contracts;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
-using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Repositories;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Roles.Repositories;
 
 /// <summary>
 /// Write repository for Role aggregate mutations.

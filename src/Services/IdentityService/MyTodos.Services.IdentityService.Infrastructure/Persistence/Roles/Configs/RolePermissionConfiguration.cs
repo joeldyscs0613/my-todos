@@ -4,7 +4,7 @@ using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Configs;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Persistence;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Roles.Configs;
 
 /// <summary>
 /// Entity configuration for RolePermission (part of Role aggregate).

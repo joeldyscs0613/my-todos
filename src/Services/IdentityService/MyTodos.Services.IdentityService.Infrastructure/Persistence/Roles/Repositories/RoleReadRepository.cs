@@ -1,12 +1,10 @@
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
-using MyTodos.Services.IdentityService.Application.Roles;
 using MyTodos.Services.IdentityService.Application.Roles.Contracts;
 using MyTodos.Services.IdentityService.Application.Roles.Queries;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate;
-using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Repositories;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Roles.Repositories;
 
 /// <summary>
 /// Read-only repository for Role aggregate queries.

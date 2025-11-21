@@ -5,7 +5,7 @@ using MyTodos.Services.IdentityService.Domain.PermissionAggregate;
 using MyTodos.Services.IdentityService.Domain.PermissionAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Permissions.Configurations;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Permissions.Configs;
 
 /// <summary>
 /// Entity configuration for Permission aggregate root.
