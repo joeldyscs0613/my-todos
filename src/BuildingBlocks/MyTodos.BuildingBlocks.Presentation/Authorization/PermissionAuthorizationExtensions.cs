@@ -14,12 +14,14 @@ public static class PermissionAuthorizationExtensions
     public static IServiceCollection AddPermissionAuthorization(this IServiceCollection services)
     {
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, ConditionalAuthenticationHandler>();
 
-        // Add authorization with fallback policy
+        // Add authorization with fallback policy that allows anonymous paths like /health
         services.AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("Bearer")
+                .AddRequirements(new ConditionalAuthenticationRequirement())
                 .Build();
             options.InvokeHandlersAfterFailure = false;
         });

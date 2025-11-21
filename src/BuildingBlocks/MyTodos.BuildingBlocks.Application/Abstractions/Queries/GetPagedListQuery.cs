@@ -8,7 +8,7 @@ using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 
-public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto>
+public abstract class GetPagedListQuery<TSpecification, TFilter, TResponseItemDto>
     : Query<PagedList<TResponseItemDto>>
     where TFilter : Filter
     where TSpecification : class
@@ -18,7 +18,7 @@ public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto>
     public int PageSize => Filter.PageSize;
     public TSpecification Specification { get; protected set; }
 
-    protected PagedListQuery(TFilter filter)
+    protected GetPagedListQuery(TFilter filter)
     {
         Filter = filter;
 
@@ -26,23 +26,23 @@ public abstract class PagedListQuery<TSpecification, TFilter, TResponseItemDto>
         Specification = specification ?? throw new InvalidOperationException($" {typeof(TSpecification)} not created");
     }
 
-    protected PagedListQuery()
+    protected GetPagedListQuery()
     {
     }
 }
 
-public abstract class PagedListQueryHandler
+public abstract class GetPagedListQueryHandler
     <TEntity, TId, TSpecification, TFilter, TQuery, TResponseItemDto>
     : QueryHandler<TQuery, PagedList<TResponseItemDto>>
     where TEntity : AggregateRoot<TId>
     where TId : IComparable
-    where TQuery : PagedListQuery<TSpecification, TFilter, TResponseItemDto>
+    where TQuery : GetPagedListQuery<TSpecification, TFilter, TResponseItemDto>
     where TSpecification : Specification<TEntity, TId, TFilter>
     where TFilter : Filter
 {
     protected readonly IPagedListReadRepository<TEntity, TId, TSpecification, TFilter> ReadRepository;
 
-    protected PagedListQueryHandler(IPagedListReadRepository<TEntity, TId, TSpecification, TFilter> readRepository)
+    protected GetPagedListQueryHandler(IPagedListReadRepository<TEntity, TId, TSpecification, TFilter> readRepository)
     {
         ReadRepository = readRepository;
     }

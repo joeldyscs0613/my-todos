@@ -1,5 +1,10 @@
+using MediatR;
+
 namespace MyTodos.SharedKernel.Contracts;
 
-public interface IDomainEvent
+/// <summary>
+/// Marker interface for domain events that can be published via MediatR.
+/// </summary>
+public interface IDomainEvent : INotification
 {
 }

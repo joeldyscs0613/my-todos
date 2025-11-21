@@ -36,7 +36,7 @@ public abstract class Filter
         set => _pageNumber = value < 1 ? 1 : value;
     }
 
-    private int _pageSize;
+    private int _pageSize = PageListConstants.DefaultPageSize;
     public int PageSize
     {
         get => _pageSize;

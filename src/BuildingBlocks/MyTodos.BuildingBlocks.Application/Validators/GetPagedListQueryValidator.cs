@@ -12,16 +12,16 @@ namespace MyTodos.BuildingBlocks.Application.Validators;
 /// <typeparam name="TSpecification">The specification type used by the query.</typeparam>
 /// <typeparam name="TFilter">The filter type used by the query.</typeparam>
 /// <typeparam name="TResponseItemDto">The response item DTO type.</typeparam>
-public abstract class PagedListQueryValidator<TQuery, TSpecification, TFilter, TResponseItemDto>
+public abstract class GetPagedListQueryValidator<TQuery, TSpecification, TFilter, TResponseItemDto>
     : QueryValidator<TQuery>
-    where TQuery : PagedListQuery<TSpecification, TFilter, TResponseItemDto>
+    where TQuery : GetPagedListQuery<TSpecification, TFilter, TResponseItemDto>
     where TFilter : Filter
     where TSpecification : class
 {
     /// <summary>
     /// Initializes a new instance of the PagedListQueryValidator class with common validation rules.
     /// </summary>
-    protected PagedListQueryValidator()
+    protected GetPagedListQueryValidator()
     {
         // Validate Filter object is not null
         RuleFor(x => x.Filter)

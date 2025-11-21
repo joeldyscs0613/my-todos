@@ -9,7 +9,7 @@ namespace MyTodos.BuildingBlocks.Application.Validators;
 /// <typeparam name="TQuery">The type of query being validated.</typeparam>
 /// <remarks>
 /// This is a minimal base class that can be used for any query type.
-/// For paged queries with sorting and filtering, use <see cref="PagedListQueryValidator{TQuery, TSpecification, TFilter, TResponseItemDto}"/> instead.
+/// For paged queries with sorting and filtering, use <see cref="GetPagedListQueryValidator{TQuery,TSpecification,TFilter,TResponseItemDto}"/> instead.
 /// </remarks>
 public abstract class QueryValidator<TQuery> : AbstractValidator<TQuery>
     where TQuery : class

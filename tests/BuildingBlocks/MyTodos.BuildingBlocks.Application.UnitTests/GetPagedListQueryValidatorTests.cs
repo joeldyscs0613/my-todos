@@ -10,7 +10,7 @@ using MyTodos.SharedKernel.Abstractions;
 
 namespace MyTodos.BuildingBlocks.Application.UnitTests;
 
-public class PagedListQueryValidatorTests
+public class GetPagedListQueryValidatorTests
 {
     #region Test Classes
 
@@ -51,7 +51,7 @@ public class PagedListQueryValidatorTests
         }
     }
 
-    private class TestQuery : PagedListQuery<TestSpecification, TestFilter, TestDto>
+    private class TestQuery : GetPagedListQuery<TestSpecification, TestFilter, TestDto>
     {
         public TestQuery(TestFilter filter) : base(filter) { }
     }
@@ -62,7 +62,7 @@ public class PagedListQueryValidatorTests
         public string Name { get; set; } = string.Empty;
     }
 
-    private class TestQueryValidator : PagedListQueryValidator<TestQuery, TestSpecification, TestFilter, TestDto>
+    private class TestQueryValidator : GetPagedListQueryValidator<TestQuery, TestSpecification, TestFilter, TestDto>
     {
         public TestQueryValidator()
         {
@@ -79,7 +79,7 @@ public class PagedListQueryValidatorTests
 
     private readonly TestQueryValidator _validator;
 
-    public PagedListQueryValidatorTests()
+    public GetPagedListQueryValidatorTests()
     {
         _validator = new TestQueryValidator();
     }

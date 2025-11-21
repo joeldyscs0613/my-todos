@@ -13,7 +13,7 @@ namespace MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 /// </summary>
 public abstract class BaseDbContext : DbContext
 {
-    private readonly ICurrentUserService _currentUserService;
+    protected readonly ICurrentUserService CurrentUserService;
 
     /// <summary>
     /// Outbox messages for reliable integration event publishing.
@@ -22,7 +22,7 @@ public abstract class BaseDbContext : DbContext
 
     protected BaseDbContext(DbContextOptions options, ICurrentUserService currentUserService) : base(options)
     {
-        _currentUserService = currentUserService;
+        CurrentUserService = currentUserService;
     }
 
     /// <summary>
@@ -60,9 +60,9 @@ public abstract class BaseDbContext : DbContext
     private void SetMultiTenantQueryFilter<TEntity>(ModelBuilder modelBuilder)
         where TEntity : class, IMultiTenantEntity
     {
-        if (_currentUserService.TenantId.HasValue)
+        if (CurrentUserService.TenantId.HasValue)
         {
-            var tenantId = _currentUserService.TenantId.Value;
+            var tenantId = CurrentUserService.TenantId.Value;
             modelBuilder.Entity<TEntity>().HasQueryFilter(e => e.TenantId == tenantId);
         }
     }
