@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace MyTodos.BuildingBlocks.Application.Contracts.Security;
 
 /// <summary>
@@ -24,4 +26,30 @@ public interface ICurrentUserService
     /// Indicates if the current request is authenticated
     /// </summary>
     bool IsAuthenticated { get; }
+
+    /// <summary>
+    /// Gets the list of roles assigned to the current user
+    /// </summary>
+    /// <returns>List of role names/codes</returns>
+    List<string> GetRoles();
+
+    /// <summary>
+    /// Gets the list of permissions granted to the current user
+    /// </summary>
+    /// <returns>List of permission codes</returns>
+    List<string> GetPermissions();
+
+    /// <summary>
+    /// Checks if the current user is a Global Administrator.
+    /// Global Administrators have full access to all tenants and platform management.
+    /// </summary>
+    /// <returns>True if the user is a Global Administrator, false otherwise</returns>
+    bool IsGlobalAdmin();
+
+    /// <summary>
+    /// Checks if the current user is a Tenant Administrator.
+    /// Tenant Administrators can manage users within their own tenant.
+    /// </summary>
+    /// <returns>True if the user is a Tenant Administrator, false otherwise</returns>
+    bool IsTenantAdmin();
 }

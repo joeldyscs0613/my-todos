@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using MyTodos.BuildingBlocks.Application.Constants;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 
 namespace MyTodos.BuildingBlocks.Infrastructure.Security;
@@ -62,5 +63,27 @@ public class CurrentUserService : ICurrentUserService
         return _user.FindAll("permission")
             .Select(c => c.Value)
             .ToList();
+    }
+
+    /// <summary>
+    /// Checks if the current user is a Global Administrator.
+    /// Global Administrators have full access to all tenants and platform management.
+    /// Virtual to allow services to override with custom logic if needed.
+    /// </summary>
+    public virtual bool IsGlobalAdmin()
+    {
+        var roles = GetRoles();
+        return roles.Contains(WellKnownRoles.GlobalAdmin);
+    }
+
+    /// <summary>
+    /// Checks if the current user is a Tenant Administrator.
+    /// Tenant Administrators can manage users within their own tenant.
+    /// Virtual to allow services to override with custom logic if needed.
+    /// </summary>
+    public virtual bool IsTenantAdmin()
+    {
+        var roles = GetRoles();
+        return roles.Contains(WellKnownRoles.TenantAdmin);
     }
 }

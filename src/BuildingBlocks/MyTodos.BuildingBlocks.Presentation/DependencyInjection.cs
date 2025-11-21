@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +27,16 @@ public static class DependencyInjection
         string apiVersion = "v1",
         string? apiDescription = null)
     {
-        // Add controllers with API conventions
-        services.AddControllers();
+        // Add controllers with API conventions and JSON configuration
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                // Configure JSON serialization to use string names for enums instead of numeric values
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
+        // Add HTTP context accessor for authorization handlers
+        services.AddHttpContextAccessor();
 
         // Add global exception handling
         services.AddExceptionHandler<MyTodos.BuildingBlocks.Presentation.Middleware.GlobalExceptionHandler>();
