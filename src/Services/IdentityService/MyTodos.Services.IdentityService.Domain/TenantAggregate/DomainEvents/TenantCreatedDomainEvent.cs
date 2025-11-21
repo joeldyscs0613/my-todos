@@ -1,4 +1,3 @@
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 using MyTodos.SharedKernel.Abstractions;
 
 namespace MyTodos.Services.IdentityService.Domain.TenantAggregate.DomainEvents;
@@ -10,14 +9,12 @@ public sealed record TenantCreatedDomainEvent : DomainEvent
 {
     public Guid TenantId { get; init; }
     public string Name { get; init; }
-    public TenantPlan Plan { get; init; }
 
-    public TenantCreatedDomainEvent(Guid tenantId, string name, TenantPlan plan)
+    public TenantCreatedDomainEvent(Guid tenantId, string name)
         : base("TenantCreated", "Tenant", tenantId.ToString())
     {
         TenantId = tenantId;
         Name = name;
-        Plan = plan;
     }
 
     // For deserialization

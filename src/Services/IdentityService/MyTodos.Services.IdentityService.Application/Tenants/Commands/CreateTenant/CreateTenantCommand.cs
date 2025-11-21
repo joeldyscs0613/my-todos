@@ -6,7 +6,6 @@ using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate.Constants;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTenant;
@@ -16,9 +15,8 @@ namespace MyTodos.Services.IdentityService.Application.Tenants.Commands.CreateTe
 /// </summary>
 public sealed class CreateTenantCommand : CreateCommand<Guid>
 {
-    public string Name { get; init; } = string.Empty;
-    public TenantPlan Plan { get; init; } = TenantPlan.Free;
-    public int MaxUsers { get; init; } = 5;
+    public string Name { get; init; }
+    public bool IsActive { get; set; }
 }
 
 /// <summary>
@@ -34,17 +32,8 @@ public sealed class CreateTenantCommandValidator : AbstractValidator<CreateTenan
             .MinimumLength(2)
             .WithMessage("Tenant name must be at least 2 characters")
             .MaximumLength(TenantConstants.FieldLengths.NameMaxLength)
-            .WithMessage(string.Format(TenantConstants.ErrorMessages.NameTooLong, TenantConstants.FieldLengths.NameMaxLength));
-
-        RuleFor(x => x.Plan)
-            .IsInEnum()
-            .WithMessage("Invalid tenant plan");
-
-        RuleFor(x => x.MaxUsers)
-            .GreaterThan(0)
-            .WithMessage("Max users must be greater than 0")
-            .LessThanOrEqualTo(TenantConstants.Invariants.MaxNumberOfUsersAllowed)
-            .WithMessage($"Max users cannot exceed {TenantConstants.Invariants.MaxNumberOfUsersAllowed}");
+            .WithMessage(string.Format(TenantConstants.ErrorMessages.NameTooLong, 
+                TenantConstants.FieldLengths.NameMaxLength));
     }
 }
 
@@ -85,8 +74,7 @@ public sealed class CreateTenantCommandHandler : CreateCommandHandler<CreateTena
         // Create tenant
         var tenantResult = Tenant.Create(
             request.Name,
-            request.Plan,
-            request.MaxUsers
+            request.IsActive
         );
 
         if (tenantResult.IsFailure)

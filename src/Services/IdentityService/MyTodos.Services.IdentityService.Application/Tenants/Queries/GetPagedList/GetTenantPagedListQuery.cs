@@ -5,27 +5,28 @@ using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
 using MyTodos.BuildingBlocks.Application.Contracts.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
+using MyTodos.BuildingBlocks.Application.Helpers;
 using MyTodos.BuildingBlocks.Application.Validators;
 using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
+using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
 
-public sealed class TenantPagedListQuery
-    : PagedListQuery<TenantPagedListSpecification, TenantPagedListFilter, TenantPagedListResponseDto>
+public sealed class GetTenantPagedListQuery
+    : GetPagedListQuery<TenantPagedListSpecification, TenantPagedListFilter, TenantPagedListResponseDto>
 {
-    public TenantPagedListQuery(TenantPagedListFilter filter) : base(filter)
+    public GetTenantPagedListQuery(TenantPagedListFilter filter) : base(filter)
     {
     }
 }
 
-public sealed record TenantPagedListResponseDto(Guid Id, string Name, string TenantPlan, bool IsActive);
+public sealed record TenantPagedListResponseDto(Guid Id, string Name, bool IsActive);
 
 public sealed class TenantPagedListFilter : Filter
 {
     public string? Name { get; set; }
-    public string? TenantPlan { get; set; }
     public bool? IsActive { get; set; }
 }
 
@@ -57,7 +58,6 @@ public sealed class TenantPagedListSpecification(TenantPagedListFilter filter)
         return new Dictionary<string, Expression<Func<Tenant, object>>>
         {
             { nameof(Filter.Name), t => t.Name },
-            { nameof(Filter.TenantPlan), t => t.Plan },
             { nameof(Filter.IsActive), t => t.IsActive }
         };
     }
@@ -67,19 +67,16 @@ public sealed class TenantQueryConfiguration : IEntityQueryConfiguration<Tenant>
 {
     public IQueryable<Tenant> ConfigureAggregate(IQueryable<Tenant> query)
     {
-        return query
-            .Include(t => t.UserRoles)
-            .ThenInclude(ur => ur.User)
-            .ThenInclude(t => t.UserRoles)
-            .ThenInclude(ur => ur.Role);
+        // Simplified to avoid circular includes
+        return query;
     }
 }
 
-public sealed class TenantPagedListQueryValidator
-    : PagedListQueryValidator<TenantPagedListQuery, TenantPagedListSpecification,
+public sealed class TenantGetPagedListQueryValidator
+    : GetPagedListQueryValidator<GetTenantPagedListQuery, TenantPagedListSpecification,
         TenantPagedListFilter, TenantPagedListResponseDto>
 {
-    public TenantPagedListQueryValidator()
+    public TenantGetPagedListQueryValidator()
     {
         // Add sort field validation
         RuleFor(x => x.Filter.SortField)
@@ -90,15 +87,31 @@ public sealed class TenantPagedListQueryValidator
     }
 }
 
-public sealed class TenantPagedListQueryHandler(ITenantPagedListReadRepository readRepository)
-    : PagedListQueryHandler<Tenant, Guid, TenantPagedListSpecification, TenantPagedListFilter,
-        TenantPagedListQuery, TenantPagedListResponseDto>(readRepository)
+public sealed class TenantGetPagedListQueryHandler(
+    ITenantPagedListReadRepository readRepository,
+    ICurrentUserService currentUserService)
+    : GetPagedListQueryHandler<Tenant, Guid, TenantPagedListSpecification, TenantPagedListFilter,
+        GetTenantPagedListQuery, TenantPagedListResponseDto>(readRepository)
 {
+    public override async Task<Result<PagedList<TenantPagedListResponseDto>>> Handle(
+        GetTenantPagedListQuery request,
+        CancellationToken ct)
+    {
+        // Only Global Administrators can view tenant lists
+        if (!currentUserService.IsGlobalAdmin())
+        {
+            return Result.Forbidden<PagedList<TenantPagedListResponseDto>>(
+                "Only Global Administrators can view tenant lists");
+        }
+
+        return await base.Handle(request, ct);
+    }
+
     protected override List<TenantPagedListResponseDto> GetResultList(
-        TenantPagedListQuery request, IReadOnlyList<Tenant> list)
+        GetTenantPagedListQuery request, IReadOnlyList<Tenant> list)
     {
         return list.Select(t
-            => new TenantPagedListResponseDto(t.Id, t.Name, Enum.GetName(typeof(TenantPlan), t.Plan), t.IsActive))
+            => new TenantPagedListResponseDto(t.Id, t.Name, t.IsActive))
             .ToList();
     }
 }

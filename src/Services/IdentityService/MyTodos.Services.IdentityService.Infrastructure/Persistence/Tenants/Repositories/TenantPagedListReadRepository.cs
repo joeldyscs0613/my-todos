@@ -3,9 +3,8 @@ using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositorie
 using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Application.Tenants.Queries.GetPagedList;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate;
-using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Repositories;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Tenants.Repositories;
 
 /// <summary>
 /// Read-only repository for Tenant aggregate queries.
