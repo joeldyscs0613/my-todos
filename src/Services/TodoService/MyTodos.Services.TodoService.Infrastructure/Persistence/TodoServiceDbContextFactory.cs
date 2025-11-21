@@ -29,5 +29,18 @@ public sealed class TodoServiceDbContextFactory : IDesignTimeDbContextFactory<To
         public Guid? TenantId => null;
         public string? Username => null;
         public bool IsAuthenticated => false;
+        public List<string> GetRoles()
+        {
+            return new List<string>();
+        }
+
+        public List<string> GetPermissions()
+        {
+            return new List<string>();
+        }
+
+        public bool IsGlobalAdmin() => false;
+
+        public bool IsTenantAdmin() => false;
     }
 }

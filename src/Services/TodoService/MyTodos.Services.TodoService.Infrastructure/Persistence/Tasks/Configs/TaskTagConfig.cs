@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyTodos.Services.TodoService.Domain.TaskAggregate;
 using MyTodos.Services.TodoService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.TodoService.Infrastructure.TaskAggregate.Persistence;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence.Tasks.Configs;
 
 public sealed class TaskTagConfig : IEntityTypeConfiguration<TaskTag>
 {

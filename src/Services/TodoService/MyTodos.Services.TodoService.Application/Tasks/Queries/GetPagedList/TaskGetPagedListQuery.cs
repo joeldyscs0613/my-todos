@@ -6,21 +6,21 @@ using TaskEntity = MyTodos.Services.TodoService.Domain.TaskAggregate.Task;
 
 namespace MyTodos.Services.TodoService.Application.Tasks.Queries.GetPagedList;
 
-public sealed class TaskPagedListQuery
-    : PagedListQuery<TaskPagedListSpecification, TaskPagedListFilter, TaskPagedListResponseDto>
+public sealed class TaskGetPagedListQuery
+    : GetPagedListQuery<TaskPagedListSpecification, TaskPagedListFilter, TaskPagedListResponseDto>
 {
-    public TaskPagedListQuery(TaskPagedListFilter filter) : base(filter)
+    public TaskGetPagedListQuery(TaskPagedListFilter filter) : base(filter)
     {
     }
 }
 
-public sealed class TaskPagedListQueryHandler(
+public sealed class TaskGetPagedListQueryHandler(
     ITaskPagedListReadRepository readRepository)
-    : PagedListQueryHandler<TaskEntity, Guid, TaskPagedListSpecification, TaskPagedListFilter,
-        TaskPagedListQuery, TaskPagedListResponseDto>(readRepository)
+    : GetPagedListQueryHandler<TaskEntity, Guid, TaskPagedListSpecification, TaskPagedListFilter,
+        TaskGetPagedListQuery, TaskPagedListResponseDto>(readRepository)
 {
     protected override List<TaskPagedListResponseDto> GetResultList(
-        TaskPagedListQuery request, IReadOnlyList<TaskEntity> list)
+        TaskGetPagedListQuery request, IReadOnlyList<TaskEntity> list)
     {
         return list.Select(t =>
             new TaskPagedListResponseDto(

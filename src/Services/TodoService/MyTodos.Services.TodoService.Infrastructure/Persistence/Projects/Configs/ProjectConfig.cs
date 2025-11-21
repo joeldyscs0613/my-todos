@@ -5,7 +5,7 @@ using MyTodos.Services.TodoService.Domain.ProjectAggregate;
 using MyTodos.Services.TodoService.Domain.ProjectAggregate.Constants;
 using MyTodos.Services.TodoService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.TodoService.Infrastructure.ProjectAggregate.Persistence;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence.Projects.Configs;
 
 public sealed class ProjectConfig : MultiTenantAggregateRootConfig<Project, Guid>
 {

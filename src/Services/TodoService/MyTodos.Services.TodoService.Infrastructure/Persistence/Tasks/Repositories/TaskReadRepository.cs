@@ -1,13 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
-using MyTodos.Services.TodoService.Application.Tasks;
 using MyTodos.Services.TodoService.Application.Tasks.Contracts;
 using MyTodos.Services.TodoService.Application.Tasks.Queries;
-using MyTodos.Services.TodoService.Infrastructure.Persistence;
 using TaskEntity = MyTodos.Services.TodoService.Domain.TaskAggregate.Task;
 
-namespace MyTodos.Services.TodoService.Infrastructure.TaskAggregate.Repositories;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence.Tasks.Repositories;
 
 public sealed class TaskReadRepository
     : ReadEfRepository<TaskEntity, Guid, TodoServiceDbContext>

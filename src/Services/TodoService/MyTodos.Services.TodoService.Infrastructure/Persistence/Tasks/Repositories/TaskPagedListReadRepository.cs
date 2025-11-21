@@ -1,14 +1,11 @@
-using Microsoft.EntityFrameworkCore;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
-using MyTodos.Services.TodoService.Application.Tasks;
 using MyTodos.Services.TodoService.Application.Tasks.Contracts;
 using MyTodos.Services.TodoService.Application.Tasks.Queries;
 using MyTodos.Services.TodoService.Application.Tasks.Queries.GetPagedList;
-using MyTodos.Services.TodoService.Infrastructure.Persistence;
 using TaskEntity = MyTodos.Services.TodoService.Domain.TaskAggregate.Task;
 
-namespace MyTodos.Services.TodoService.Infrastructure.TaskAggregate.Repositories;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence.Tasks.Repositories;
 
 /// <summary>
 /// Paged list read repository for Task aggregate queries.

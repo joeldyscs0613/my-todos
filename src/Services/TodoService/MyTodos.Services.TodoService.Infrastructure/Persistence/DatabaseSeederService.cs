@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyTodos.Services.TodoService.Infrastructure.Persistence;
 
-namespace MyTodos.Services.TodoService.Infrastructure.Seeding;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence;
 
 public sealed class DatabaseSeederService
 {

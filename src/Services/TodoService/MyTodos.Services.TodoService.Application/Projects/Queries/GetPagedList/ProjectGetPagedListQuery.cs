@@ -6,21 +6,21 @@ using MyTodos.SharedKernel.Helpers;
 
 namespace MyTodos.Services.TodoService.Application.Projects.Queries.GetPagedList;
 
-public sealed class ProjectPagedListQuery
-    : PagedListQuery<ProjectPagedListSpecification, ProjectPagedListFilter, ProjectPagedListResponseDto>
+public sealed class ProjectGetPagedListQuery
+    : GetPagedListQuery<ProjectPagedListSpecification, ProjectPagedListFilter, ProjectPagedListResponseDto>
 {
-    public ProjectPagedListQuery(ProjectPagedListFilter filter) : base(filter)
+    public ProjectGetPagedListQuery(ProjectPagedListFilter filter) : base(filter)
     {
     }
 }
 
-public sealed class ProjectPagedListQueryHandler(
+public sealed class ProjectGetPagedListQueryHandler(
     IProjectPagedListReadRepository readRepository)
-    : PagedListQueryHandler<Project, Guid, ProjectPagedListSpecification, ProjectPagedListFilter,
-        ProjectPagedListQuery, ProjectPagedListResponseDto>(readRepository)
+    : GetPagedListQueryHandler<Project, Guid, ProjectPagedListSpecification, ProjectPagedListFilter,
+        ProjectGetPagedListQuery, ProjectPagedListResponseDto>(readRepository)
 {
     protected override List<ProjectPagedListResponseDto> GetResultList(
-        ProjectPagedListQuery request, IReadOnlyList<Project> list)
+        ProjectGetPagedListQuery request, IReadOnlyList<Project> list)
     {
         return list.Select(p =>
             new ProjectPagedListResponseDto(

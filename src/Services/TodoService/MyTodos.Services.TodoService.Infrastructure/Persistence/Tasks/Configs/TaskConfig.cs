@@ -5,7 +5,7 @@ using MyTodos.Services.TodoService.Domain.TaskAggregate.Constants;
 using MyTodos.Services.TodoService.Infrastructure.Persistence.Constants;
 using TaskEntity = MyTodos.Services.TodoService.Domain.TaskAggregate.Task;
 
-namespace MyTodos.Services.TodoService.Infrastructure.TaskAggregate.Persistence;
+namespace MyTodos.Services.TodoService.Infrastructure.Persistence.Tasks.Configs;
 
 public sealed class TaskConfig : MultiTenantAggregateRootConfig<TaskEntity, Guid>
 {
