@@ -156,30 +156,6 @@ public static class Permissions
     }
 
     /// <summary>
-    /// User invitation permissions.
-    /// Controls access to the invitation system for onboarding new users.
-    /// </summary>
-    public static class Invitations
-    {
-        public const string Resource = "invitations";
-        public const string All = $"{Resource}/*";
-
-        // Entity-level operations
-        public const string Create = $"{Resource}/invitation/create";
-
-        // List operations
-        public const string ViewList = $"{Resource}/list/view";
-        public const string ExportList = $"{Resource}/list/export";
-
-        // Details operations
-        public const string ViewDetails = $"{Resource}/details/view";
-        public const string Cancel = $"{Resource}/details/cancel";
-
-        // Special operations
-        public const string Accept = $"{Resource}/accept";
-    }
-
-    /// <summary>
     /// Authentication and self-service permissions.
     /// Note: These permissions apply to the current user's own resources.
     /// Access to other users' profiles/passwords requires Users.* permissions.
@@ -208,5 +184,75 @@ public static class Permissions
 
         // Password operations (own password)
         public const string ChangePassword = $"{Resource}/password/change";
+    }
+
+    /// <summary>
+    /// Project management permissions (App scope).
+    /// Controls access to project creation, editing, archiving, and member management.
+    /// </summary>
+    public static class Projects
+    {
+        public const string Resource = "projects";
+        public const string All = $"{Resource}/*";
+
+        // Entity-level operations
+        public const string Create = $"{Resource}/project/create";
+        public const string Delete = $"{Resource}/project/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
+
+        // Settings operations
+        public const string ViewSettings = $"{Resource}/settings/view";
+        public const string ManageSettings = $"{Resource}/settings/manage";
+
+        // Member management
+        public const string ViewMembers = $"{Resource}/members/view";
+        public const string AddMember = $"{Resource}/members/add";
+        public const string RemoveMember = $"{Resource}/members/remove";
+
+        // Status operations
+        public const string Archive = $"{Resource}/status/archive";
+        public const string Restore = $"{Resource}/status/restore";
+    }
+
+    /// <summary>
+    /// Task management permissions (App scope).
+    /// Controls access to task creation, editing, assignment, and status changes.
+    /// </summary>
+    public static class Tasks
+    {
+        public const string Resource = "tasks";
+        public const string All = $"{Resource}/*";
+
+        // Entity-level operations
+        public const string Create = $"{Resource}/task/create";
+        public const string Delete = $"{Resource}/task/delete";
+
+        // List operations
+        public const string ViewList = $"{Resource}/list/view";
+        public const string ExportList = $"{Resource}/list/export";
+
+        // Details operations
+        public const string ViewDetails = $"{Resource}/details/view";
+        public const string ManageDetails = $"{Resource}/details/manage";
+
+        // Assignment operations
+        public const string Assign = $"{Resource}/assign";
+        public const string Unassign = $"{Resource}/unassign";
+
+        // Status operations
+        public const string Complete = $"{Resource}/status/complete";
+        public const string Reopen = $"{Resource}/status/reopen";
+
+        // Comment operations
+        public const string ViewComments = $"{Resource}/comments/view";
+        public const string AddComment = $"{Resource}/comments/add";
+        public const string DeleteComment = $"{Resource}/comments/delete";
     }
 }

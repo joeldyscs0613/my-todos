@@ -169,23 +169,6 @@ public static class PermissionRegistry
             new(Permissions.Tenants.Activate, "Activate Tenant", "Activate tenant organizations to enable access", "Tenant Management", "tenants", "status", "activate"),
             new(Permissions.Tenants.Deactivate, "Deactivate Tenant", "Deactivate tenant organizations to suspend access", "Tenant Management", "tenants", "status", "deactivate"),
 
-            // ==================== Invitations ====================
-            new(Permissions.Invitations.All, "All Invitation Permissions", "Complete access to all invitation management features", "Invitation Management", "invitations", "*", "*"),
-
-            // Entity-level
-            new(Permissions.Invitations.Create, "Create Invitation", "Send invitations to new users", "Invitation Management", "invitations", "invitation", "create"),
-
-            // List operations
-            new(Permissions.Invitations.ViewList, "View Invitation List", "View and browse the list of all invitations", "Invitation Management", "invitations", "list", "view"),
-            new(Permissions.Invitations.ExportList, "Export Invitation List", "Export invitation list to various formats", "Invitation Management", "invitations", "list", "export"),
-
-            // Details operations
-            new(Permissions.Invitations.ViewDetails, "View Invitation Details", "View detailed information about individual invitations", "Invitation Management", "invitations", "details", "view"),
-            new(Permissions.Invitations.Cancel, "Cancel Invitation", "Cancel pending invitations", "Invitation Management", "invitations", "details", "cancel"),
-
-            // Special operations
-            new(Permissions.Invitations.Accept, "Accept Invitation", "Accept an invitation to join the system", "Invitation Management", "invitations", "accept", "accept"),
-
             // ==================== Auth ====================
             new(Permissions.Auth.All, "All Auth Permissions", "Complete access to all authentication features", "Authentication", "auth", "*", "*"),
 
