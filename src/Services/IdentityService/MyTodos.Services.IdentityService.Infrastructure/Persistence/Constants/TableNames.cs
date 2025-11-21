@@ -15,5 +15,4 @@ public static class TableNames
     // Entity Tables (within aggregates or standalone)
     public const string UserRole = nameof(UserRole);
     public const string RolePermission = nameof(RolePermission);
-    public const string UserInvitation = nameof(UserInvitation);
 }

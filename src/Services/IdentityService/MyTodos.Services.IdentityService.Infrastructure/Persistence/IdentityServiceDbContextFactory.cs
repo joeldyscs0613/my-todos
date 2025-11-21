@@ -37,5 +37,10 @@ public sealed class IdentityServiceDbContextFactory : IDesignTimeDbContextFactor
         public string? Username => null;
         public Guid? TenantId => null;
         public bool IsAuthenticated => false;
+
+        public List<string> GetRoles() => new();
+        public List<string> GetPermissions() => new();
+        public bool IsGlobalAdmin() => false;
+        public bool IsTenantAdmin() => false;
     }
 }

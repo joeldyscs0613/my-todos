@@ -11,8 +11,8 @@ using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityServiceDbContext))]
-    [Migration("20251118142506_UpdateEnumsToIncrementOfTen")]
-    partial class UpdateEnumsToIncrementOfTen
+    [Migration("20251121152938_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,10 +33,10 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Error")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("OccurredOn")
+                    b.Property<DateTimeOffset>("OccurredOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("ProcessedOn")
+                    b.Property<DateTimeOffset?>("ProcessedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("RetryCount")
@@ -135,9 +135,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("RoleType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Scope")
                         .HasColumnType("INTEGER");
 
@@ -200,9 +197,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MaxUsers")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -212,12 +206,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Plan")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("SubscriptionExpiresAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -253,7 +241,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("LastLoginAt")
+                    b.Property<DateTimeOffset?>("LastLoginAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
@@ -285,71 +273,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("User", (string)null);
-                });
-
-            modelBuilder.Entity("MyTodos.Services.IdentityService.Domain.UserAggregate.UserInvitation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("AcceptedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InvitationToken")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("InvitedByUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset?>("ModifiedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email");
-
-                    b.HasIndex("InvitationToken")
-                        .IsUnique();
-
-                    b.HasIndex("InvitedByUserId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("Email", "Status");
-
-                    b.ToTable("UserInvitation", (string)null);
                 });
 
             modelBuilder.Entity("MyTodos.Services.IdentityService.Domain.UserAggregate.UserRole", b =>
@@ -409,32 +332,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("MyTodos.Services.IdentityService.Domain.UserAggregate.UserInvitation", b =>
-                {
-                    b.HasOne("MyTodos.Services.IdentityService.Domain.UserAggregate.User", "InvitedByUser")
-                        .WithMany()
-                        .HasForeignKey("InvitedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyTodos.Services.IdentityService.Domain.RoleAggregate.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyTodos.Services.IdentityService.Domain.TenantAggregate.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("InvitedByUser");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("MyTodos.Services.IdentityService.Domain.UserAggregate.UserRole", b =>

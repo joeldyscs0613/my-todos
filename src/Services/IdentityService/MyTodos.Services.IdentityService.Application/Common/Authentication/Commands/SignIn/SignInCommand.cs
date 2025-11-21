@@ -104,9 +104,9 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
             .Select(ur => ur.TenantId!.Value)
             .FirstOrDefault();
 
-        // Get role names for JWT claims
+        // Get role codes for JWT claims (matching WellKnownRoles constants)
         var roleNames = user.UserRoles
-            .Select(ur => ur.Role.Name)
+            .Select(ur => ur.Role.Code)
             .Distinct()
             .ToList();
 

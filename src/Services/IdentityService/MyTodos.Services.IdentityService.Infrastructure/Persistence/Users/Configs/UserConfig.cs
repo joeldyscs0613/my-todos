@@ -5,7 +5,7 @@ using MyTodos.Services.IdentityService.Domain.UserAggregate;
 using MyTodos.Services.IdentityService.Domain.UserAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Persistence;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Users.Configs;
 
 /// <summary>
 /// Entity configuration for User aggregate root.

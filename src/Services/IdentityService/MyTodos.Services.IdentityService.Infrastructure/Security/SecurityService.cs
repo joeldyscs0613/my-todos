@@ -108,4 +108,24 @@ public sealed class SecurityService : ISecurityService
         var permissionClaims = _httpContextAccessor.HttpContext?.User?.FindAll("permission");
         return permissionClaims?.Select(c => c.Value).ToList() ?? new List<string>();
     }
+
+    public List<string> GetRoles()
+    {
+        return Roles.ToList();
+    }
+
+    public List<string> GetPermissions()
+    {
+        return _permissions.Value.ToList();
+    }
+
+    public bool IsGlobalAdmin()
+    {
+        return IsInRole("Global.Admin");
+    }
+
+    public bool IsTenantAdmin()
+    {
+        return IsInRole("Tenant.Admin");
+    }
 }

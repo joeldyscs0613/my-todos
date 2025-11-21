@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,8 +18,8 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Type = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    OccurredOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ProcessedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    OccurredOn = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    ProcessedOn = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     Error = table.Column<string>(type: "TEXT", nullable: true),
                     RetryCount = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0)
                 },
@@ -37,9 +37,9 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    CreatedBy = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "TEXT", nullable: true)
+                    ModifiedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,8 +51,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    RoleType = table.Column<int>(type: "INTEGER", nullable: false),
-                    Code = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Code = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     Scope = table.Column<int>(type: "INTEGER", nullable: false),
@@ -72,10 +71,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Plan = table.Column<int>(type: "INTEGER", nullable: false),
-                    MaxUsers = table.Column<int>(type: "INTEGER", nullable: false),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    SubscriptionExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
@@ -87,7 +83,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -97,7 +93,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                     FirstName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LastLoginAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LastLoginAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
@@ -105,7 +101,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -138,47 +134,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInvitation",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    InvitationToken = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    InvitedByUserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    TenantId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    RoleId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AcceptedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    CreatedBy = table.Column<string>(type: "TEXT", nullable: false),
-                    ModifiedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserInvitation", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserInvitation_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserInvitation_Tenant_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "Tenant",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserInvitation_Users_InvitedByUserId",
-                        column: x => x.InvitedByUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserRole",
                 columns: table => new
                 {
@@ -207,9 +162,9 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserRole_Users_UserId",
+                        name: "FK_UserRole_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -254,35 +209,16 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_Email",
-                table: "UserInvitation",
-                column: "Email");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_Email_Status",
-                table: "UserInvitation",
-                columns: new[] { "Email", "Status" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_InvitationToken",
-                table: "UserInvitation",
-                column: "InvitationToken",
+                name: "IX_User_Email",
+                table: "User",
+                column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_InvitedByUserId",
-                table: "UserInvitation",
-                column: "InvitedByUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_RoleId",
-                table: "UserInvitation",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserInvitation_TenantId",
-                table: "UserInvitation",
-                column: "TenantId");
+                name: "IX_User_Username",
+                table: "User",
+                column: "Username",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
@@ -299,18 +235,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 table: "UserRole",
                 columns: new[] { "UserId", "RoleId", "TenantId" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Username",
-                table: "Users",
-                column: "Username",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -321,9 +245,6 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermission");
-
-            migrationBuilder.DropTable(
-                name: "UserInvitation");
 
             migrationBuilder.DropTable(
                 name: "UserRole");
@@ -338,7 +259,7 @@ namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Migrations
                 name: "Tenant");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "User");
         }
     }
 }

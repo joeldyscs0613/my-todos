@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\MyTodos.Services.IdentityService.Domain\MyTodos.Services.IdentityService.Domain.csproj" />
       <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
+      <ProjectReference Include="..\MyTodos.Services.IdentityService.Contracts\MyTodos.Services.IdentityService.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>
