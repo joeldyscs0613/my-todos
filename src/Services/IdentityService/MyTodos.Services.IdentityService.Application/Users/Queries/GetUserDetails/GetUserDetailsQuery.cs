@@ -1,4 +1,5 @@
 using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.SharedKernel.Helpers;
 
@@ -41,10 +42,14 @@ public sealed record UserRoleResponseDto
 public sealed class GetUserDetailsQueryHandler : QueryHandler<GetUserDetailsQuery, UserDetailsResponseDto>
 {
     private readonly IUserPagedListReadRepository _userPagedListReadRepository;
+    private readonly ICurrentUserService _currentUserService;
 
-    public GetUserDetailsQueryHandler(IUserPagedListReadRepository userPagedListReadRepository)
+    public GetUserDetailsQueryHandler(
+        IUserPagedListReadRepository userPagedListReadRepository,
+        ICurrentUserService currentUserService)
     {
         _userPagedListReadRepository = userPagedListReadRepository;
+        _currentUserService = currentUserService;
     }
 
     public override async Task<Result<UserDetailsResponseDto>> Handle(GetUserDetailsQuery request, CancellationToken ct)
@@ -53,6 +58,23 @@ public sealed class GetUserDetailsQueryHandler : QueryHandler<GetUserDetailsQuer
         if (user == null)
         {
             return NotFound("User not found");
+        }
+
+        // Authorization: Check if current user can view this user
+        if (!_currentUserService.IsGlobalAdmin())
+        {
+            var currentTenantId = _currentUserService.TenantId;
+            if (!currentTenantId.HasValue)
+            {
+                return Forbidden("No tenant context found");
+            }
+
+            // Check if the requested user belongs to the current user's tenant
+            var userBelongsToTenant = user.UserRoles.Any(ur => ur.TenantId == currentTenantId.Value);
+            if (!userBelongsToTenant)
+            {
+                return Forbidden("You can only view users within your own tenant");
+            }
         }
 
         var dto = new UserDetailsResponseDto

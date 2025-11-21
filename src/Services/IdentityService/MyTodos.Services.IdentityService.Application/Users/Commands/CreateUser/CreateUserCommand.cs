@@ -1,11 +1,13 @@
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using MyTodos.BuildingBlocks.Application.Abstractions.Commands;
+using MyTodos.BuildingBlocks.Application.Constants;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
 using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.Services.IdentityService.Application.Roles.Contracts;
 using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
+using MyTodos.Services.IdentityService.Contracts;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 using MyTodos.Services.IdentityService.Domain.UserAggregate.Constants;
 using MyTodos.SharedKernel.Helpers;
@@ -80,6 +82,7 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
     private readonly IRoleReadRepository _roleReadRepository;
     private readonly ITenantPagedListReadRepository _tenantPagedListReadRepository;
     private readonly IPasswordHashingService _passwordHashingService;
+    private readonly ICurrentUserService _currentUserService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreateUserCommandHandler> _logger;
 
@@ -89,6 +92,7 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
         IRoleReadRepository roleReadRepository,
         ITenantPagedListReadRepository tenantPagedListReadRepository,
         IPasswordHashingService passwordHashingService,
+        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ILogger<CreateUserCommandHandler> logger)
     {
@@ -97,6 +101,7 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
         _roleReadRepository = roleReadRepository;
         _tenantPagedListReadRepository = tenantPagedListReadRepository;
         _passwordHashingService = passwordHashingService;
+        _currentUserService = currentUserService;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -105,6 +110,34 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
         CreateUserCommand request,
         CancellationToken ct)
     {
+        // Authorization: Only Tenant.Admin or Global.Admin can create users
+        var isGlobalAdmin = _currentUserService.IsGlobalAdmin();
+        var isTenantAdmin = _currentUserService.IsTenantAdmin();
+
+        if (!isGlobalAdmin && !isTenantAdmin)
+        {
+            _logger.LogWarning("User creation failed: Current user does not have permission to create users");
+            return Forbidden("You do not have permission to create users");
+        }
+
+        // If current user is Tenant.Admin, they can only create users within their tenant
+        if (isTenantAdmin && !isGlobalAdmin)
+        {
+            var currentUserTenantId = _currentUserService.TenantId;
+
+            if (!currentUserTenantId.HasValue)
+            {
+                _logger.LogWarning("User creation failed: Tenant admin has no tenant ID in claims");
+                return Forbidden("Cannot create users: No tenant context found");
+            }
+
+            if (request.TenantId != currentUserTenantId)
+            {
+                _logger.LogWarning("User creation failed: Tenant admin attempting to create user in different tenant");
+                return Forbidden("You can only create users within your own tenant");
+            }
+        }
+
         // Extract username from email (part before @)
         var username = ExtractUsernameFromEmail(request.Email);
 
@@ -130,6 +163,13 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
         {
             _logger.LogWarning("User creation failed: Role {RoleId} not found", request.RoleId);
             return NotFound("Role not found");
+        }
+
+        // Authorization: Only Global.Admin can assign Global scope roles
+        if (role.Scope == Domain.RoleAggregate.Enums.AccessScope.Global && !isGlobalAdmin)
+        {
+            _logger.LogWarning("User creation failed: Non-global admin attempting to assign global role {RoleCode}", role.Code);
+            return Forbidden("Only Global Administrators can assign Global scope roles");
         }
 
         // If tenant-scoped, validate tenant exists
@@ -181,7 +221,8 @@ public sealed class CreateUserCommandHandler : ResponseCommandHandler<CreateUser
 
         // Save to database
         await _userWriteRepository.AddAsync(user, ct);
-        await _unitOfWork.CommitAsync(ct);
+
+         await _unitOfWork.CommitAsync(ct);
 
         _logger.LogInformation("User created successfully: {UserId} with username {Username} and email {Email}",
             user.Id, username, request.Email);

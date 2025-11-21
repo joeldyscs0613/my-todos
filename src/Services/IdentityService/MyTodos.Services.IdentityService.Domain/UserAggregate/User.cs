@@ -88,7 +88,13 @@ public sealed class User : AggregateRoot<Guid>
             IsActive = true
         };
 
-        user.AddDomainEvent(new UserRegisteredDomainEvent(user.Id, user.Username, user.Email));
+        // Raise domain event for internal handlers
+        user.AddDomainEvent(new UserCreatedDomainEvent(
+            user.Id,
+            user.Username,
+            user.Email,
+            user.FirstName ?? string.Empty,
+            user.LastName ?? string.Empty));
 
         return Result.Success(user);
     }
