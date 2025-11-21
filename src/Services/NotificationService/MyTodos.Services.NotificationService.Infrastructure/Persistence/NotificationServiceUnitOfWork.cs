@@ -4,10 +4,10 @@ using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 
 namespace MyTodos.Services.NotificationService.Infrastructure.Persistence;
 
-public sealed class NotificationServiceUnitOfWork : UnitOfWork<NotificationServiceDbContext>
+public sealed class NotificationServiceUnitOfWork : UnitOfWork<NotificationDbContext>
 {
     public NotificationServiceUnitOfWork(
-        NotificationServiceDbContext dbContext,
+        NotificationDbContext dbContext,
         ICurrentUserService currentUserService,
         IDomainEventDispatcher domainEventDispatcher)
         : base(dbContext, currentUserService, domainEventDispatcher)

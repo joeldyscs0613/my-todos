@@ -4,9 +4,9 @@ using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions;
 
 namespace MyTodos.Services.NotificationService.Infrastructure.Persistence;
 
-public sealed class NotificationServiceDbContext : BaseDbContext
+public sealed class NotificationDbContext : BaseDbContext
 {
-    public NotificationServiceDbContext(DbContextOptions options, ICurrentUserService currentUserService)
+    public NotificationDbContext(DbContextOptions options, ICurrentUserService currentUserService)
         : base(options, currentUserService)
     {
     }
@@ -15,7 +15,7 @@ public sealed class NotificationServiceDbContext : BaseDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Apply all configurations from this assembly
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(NotificationServiceDbContext).Assembly);
+        // No entities configured yet for NotificationService
+        // This is a minimal stub to allow the service to compile
     }
 }
