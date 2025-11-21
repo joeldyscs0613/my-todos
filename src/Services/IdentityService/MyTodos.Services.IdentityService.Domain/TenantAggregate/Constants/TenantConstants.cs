@@ -9,7 +9,6 @@ public static class TenantConstants
 
     public static class Invariants
     {
-        public const int MaxNumberOfUsersAllowed = 10000;
     }
 
     public static class ErrorMessages

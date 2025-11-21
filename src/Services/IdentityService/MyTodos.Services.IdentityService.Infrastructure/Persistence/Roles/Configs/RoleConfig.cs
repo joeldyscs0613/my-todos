@@ -5,7 +5,7 @@ using MyTodos.Services.IdentityService.Domain.RoleAggregate;
 using MyTodos.Services.IdentityService.Domain.RoleAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Persistence;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Roles.Configs;
 
 /// <summary>
 /// Entity configuration for Role aggregate root.
@@ -15,10 +15,6 @@ public sealed class RoleConfig : AggregateRootWithGuidIdConfig<Role>
     public override void Configure(EntityTypeBuilder<Role> builder)
     {
         builder.ToTable(TableNames.Role);
-
-        builder.Property(r => r.RoleType)
-            .IsRequired()
-            .HasConversion<int>();
 
         builder.Property(r => r.Code)
             .IsRequired()

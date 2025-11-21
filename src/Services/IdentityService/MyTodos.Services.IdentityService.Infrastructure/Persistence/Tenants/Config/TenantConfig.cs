@@ -5,7 +5,7 @@ using MyTodos.Services.IdentityService.Domain.TenantAggregate;
 using MyTodos.Services.IdentityService.Domain.TenantAggregate.Constants;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Constants;
 
-namespace MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Persistence;
+namespace MyTodos.Services.IdentityService.Infrastructure.Persistence.Tenants.Config;
 
 /// <summary>
 /// Entity configuration for Tenant aggregate root.
@@ -22,17 +22,8 @@ public sealed class TenantConfig : AggregateRootWithGuidIdConfig<Tenant>
             .IsRequired()
             .HasMaxLength(TenantConstants.FieldLengths.NameMaxLength);
 
-        builder.Property(t => t.Plan)
-            .IsRequired()
-            .HasConversion<int>();
-
-        builder.Property(t => t.MaxUsers)
-            .IsRequired();
-
         builder.Property(t => t.IsActive)
             .IsRequired();
-
-        builder.Property(t => t.SubscriptionExpiresAt);
 
         // Indexes
         builder.HasIndex(t => t.Name)

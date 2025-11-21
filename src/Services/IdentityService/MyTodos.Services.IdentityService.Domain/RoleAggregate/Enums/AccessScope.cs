@@ -6,12 +6,20 @@ namespace MyTodos.Services.IdentityService.Domain.RoleAggregate.Enums;
 public enum AccessScope
 {
     /// <summary>
-    /// System-wide access across all tenants (e.g., GlobalAdmin role)
+    /// Platform-level administration (manages tenants, system config, billing).
+    /// Examples: Platform admins who manage the SaaS platform itself.
     /// </summary>
     Global = 10,
 
     /// <summary>
-    /// Tenant-scoped access within specific tenant context (e.g., TenantAdmin, TenantUser roles)
+    /// Organization-level permissions within a tenant boundary.
+    /// Examples: Tenant admins who manage users, settings within their organization.
     /// </summary>
-    Tenant = 20
+    Tenant = 20,
+
+    /// <summary>
+    /// Application/workspace-level permissions for regular app usage.
+    /// Examples: Users creating projects, tasks, collaborating on work.
+    /// </summary>
+    App = 30
 }

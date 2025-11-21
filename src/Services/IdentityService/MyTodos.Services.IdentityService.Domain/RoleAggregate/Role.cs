@@ -7,23 +7,18 @@ using MyTodos.SharedKernel.Helpers;
 namespace MyTodos.Services.IdentityService.Domain.RoleAggregate;
 
 /// <summary>
-/// Represents a role in the system (e.g., GlobalAdmin, TenantAdmin, TenantUser).
-/// Roles are shared across all tenants.
+/// Represents a role in the system (e.g., Global.Admin, Tenant.Admin, App.Contributor).
+/// Roles define a set of permissions that can be assigned to users.
 /// </summary>
 public sealed class Role : AggregateRoot<Guid>
 {
     /// <summary>
-    /// Role type for type-safe identification
-    /// </summary>
-    public RoleType RoleType { get; private set; }
-
-    /// <summary>
-    /// Unique code for this role (e.g., "global-admin", "tenant-admin")
+    /// Unique code for this role (e.g., "Global.Admin", "Tenant.Admin", "App.Contributor")
     /// </summary>
     public string Code { get; private set; } = string.Empty;
 
     /// <summary>
-    /// Display name for the role (e.g., "Global Administrator")
+    /// Display name for the role (e.g., "Global Administrator", "Application Contributor")
     /// </summary>
     public string Name { get; private set; } = string.Empty;
 
@@ -33,7 +28,7 @@ public sealed class Role : AggregateRoot<Guid>
     public string? Description { get; private set; }
 
     /// <summary>
-    /// Scope at which this role can be assigned (Global or Tenant)
+    /// Scope at which this role applies (Global, Tenant, or App)
     /// </summary>
     public AccessScope Scope { get; private set; }
 
@@ -55,13 +50,11 @@ public sealed class Role : AggregateRoot<Guid>
     /// <summary>
     /// Create a new role
     /// </summary>
-    /// <param name="roleType">The role type</param>
-    /// <param name="code">Unique role code</param>
+    /// <param name="code">Unique role code (e.g., "Global.Admin", "Tenant.Admin")</param>
     /// <param name="name">Display name</param>
-    /// <param name="scope">Access scope (Global or Tenant)</param>
+    /// <param name="scope">Access scope (Global, Tenant, or App)</param>
     /// <param name="description">Optional description</param>
     public static Result<Role> Create(
-        RoleType roleType,
         string code,
         string name,
         AccessScope scope,
@@ -76,7 +69,6 @@ public sealed class Role : AggregateRoot<Guid>
         var roleId = Guid.NewGuid();
         var role = new Role(roleId)
         {
-            RoleType = roleType,
             Code = code,
             Name = name,
             Scope = scope,

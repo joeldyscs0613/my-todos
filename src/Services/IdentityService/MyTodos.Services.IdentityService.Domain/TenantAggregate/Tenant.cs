@@ -1,5 +1,4 @@
 using MyTodos.Services.IdentityService.Domain.TenantAggregate.DomainEvents;
-using MyTodos.Services.IdentityService.Domain.TenantAggregate.Enums;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 using MyTodos.SharedKernel;
 using MyTodos.SharedKernel.Abstractions;
@@ -18,24 +17,9 @@ public sealed class Tenant : AggregateRoot<Guid>
     public string Name { get; private set; } = string.Empty;
 
     /// <summary>
-    /// Subscription plan tier
-    /// </summary>
-    public TenantPlan Plan { get; private set; }
-
-    /// <summary>
-    /// Maximum number of users allowed for this tenant
-    /// </summary>
-    public int MaxUsers { get; private set; }
-
-    /// <summary>
     /// Whether the tenant is active or suspended
     /// </summary>
     public bool IsActive { get; private set; }
-
-    /// <summary>
-    /// When the tenant's subscription expires
-    /// </summary>
-    public DateTimeOffset? SubscriptionExpiresAt { get; private set; }
 
     // Navigation property for queries (read-only in domain)
     public ICollection<UserRole> UserRoles { get; private set; } = new List<UserRole>();
@@ -51,10 +35,7 @@ public sealed class Tenant : AggregateRoot<Guid>
     /// <summary>
     /// Create a new tenant
     /// </summary>
-    public static Result<Tenant> Create(
-        string name,
-        TenantPlan plan = TenantPlan.Free,
-        int maxUsers = 5)
+    public static Result<Tenant> Create(string name, bool isActive)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Result.BadRequest<Tenant>("Tenant name cannot be empty");
@@ -63,31 +44,23 @@ public sealed class Tenant : AggregateRoot<Guid>
         var tenant = new Tenant(tenantId)
         {
             Name = name,
-            Plan = plan,
-            MaxUsers = maxUsers,
-            IsActive = true
+            IsActive = isActive
         };
 
-        tenant.AddDomainEvent(new TenantCreatedDomainEvent(tenant.Id, tenant.Name, tenant.Plan));
+        tenant.AddDomainEvent(new TenantCreatedDomainEvent(tenant.Id, tenant.Name));
 
         return Result.Success(tenant);
     }
 
     /// <summary>
-    /// Upgrade tenant's subscription plan
+    /// Update tenant general information (name, etc.)
     /// </summary>
-    public Result UpgradePlan(TenantPlan newPlan, int newMaxUsers, DateTimeOffset? expiresAt = null)
+    public Result UpdateGeneralInfo(string name)
     {
-        // Business rule: New plan must be higher tier than current plan
-        if (newPlan <= Plan)
-        {
-            return Result.BadRequest("New plan must be a higher tier than current plan");
-        }
+        if (string.IsNullOrWhiteSpace(name))
+            return Result.BadRequest("Tenant name cannot be empty");
 
-        Plan = newPlan;
-        MaxUsers = newMaxUsers;
-        SubscriptionExpiresAt = expiresAt;
-
+        Name = name;
         return Result.Success();
     }
 
@@ -105,6 +78,17 @@ public sealed class Tenant : AggregateRoot<Guid>
     public void Activate()
     {
         IsActive = true;
+    }
+
+    /// <summary>
+    /// Mark tenant for deletion and raise domain event.
+    /// This allows business logic to execute before actual deletion (e.g., delete users, clean up resources).
+    /// </summary>
+    public void Delete()
+    {
+        // Raise domain event for other parts of the system to react
+        // (e.g., delete associated users, notify other services, etc.)
+        AddDomainEvent(new TenantDeletedDomainEvent(Id, Name));
     }
 
     /// <summary>
