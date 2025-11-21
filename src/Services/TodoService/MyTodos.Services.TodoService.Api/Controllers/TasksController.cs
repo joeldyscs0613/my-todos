@@ -25,7 +25,7 @@ public sealed class TasksController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetTasksList([FromQuery] TaskPagedListFilter filter, CancellationToken ct)
     {
-        var query = new TaskPagedListQuery(filter);
+        var query = new TaskGetPagedListQuery(filter);
         var result = await Sender.Send(query, ct);
 
         return result.ToActionResult();

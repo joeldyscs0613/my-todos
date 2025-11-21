@@ -20,6 +20,19 @@ services:
       - infra
       - full
 
+  # MailHog Email Testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mytodos-mailhog
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI
+    networks:
+      - mytodos-network
+    profiles:
+      - infra
+      - full
+
   # Identity Service
   identity-service:
     build:
@@ -104,6 +117,10 @@ services:
       - RabbitMQ__Host=rabbitmq
       - RabbitMQ__Username=guest
       - RabbitMQ__Password=guest
+      - Email__SmtpHost=mailhog
+      - Email__SmtpPort=1025
+      - Email__FromAddress=noreply@mytodos.com
+      - Email__FromName=MyTodos
     ports:
       - "5250:5250"
     volumes:
