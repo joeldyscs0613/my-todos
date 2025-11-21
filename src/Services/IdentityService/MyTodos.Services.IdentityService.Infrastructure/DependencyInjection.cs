@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,11 +9,10 @@ using MyTodos.Services.IdentityService.Application.Tenants.Contracts;
 using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence;
 using MyTodos.Services.IdentityService.Infrastructure.Persistence.Permissions.Repositories;
-using MyTodos.Services.IdentityService.Infrastructure.RoleAggregate.Repositories;
+using MyTodos.Services.IdentityService.Infrastructure.Persistence.Roles.Repositories;
+using MyTodos.Services.IdentityService.Infrastructure.Persistence.Tenants.Repositories;
+using MyTodos.Services.IdentityService.Infrastructure.Persistence.Users.Repositories;
 using MyTodos.Services.IdentityService.Infrastructure.Security;
-using MyTodos.Services.IdentityService.Infrastructure.Seeding;
-using MyTodos.Services.IdentityService.Infrastructure.TenantAggregate.Repositories;
-using MyTodos.Services.IdentityService.Infrastructure.UserAggregate.Repositories;
 
 namespace MyTodos.Services.IdentityService.Infrastructure;
 
@@ -70,6 +68,7 @@ public static class DependencyInjection
         // Role repositories
         services.AddScoped<IRoleReadRepository, RoleReadRepository>();
         services.AddScoped<IRoleWriteRepository, RoleWriteRepository>();
+        services.AddScoped<IRolePagedListReadRepository, RolePagedListReadRepository>();
 
         // Tenant repositories
         services.AddScoped<ITenantPagedListReadRepository, TenantPagedListReadRepository>();
@@ -78,6 +77,7 @@ public static class DependencyInjection
         // Permission repositories
         services.AddScoped<IPermissionReadRepository, PermissionReadRepository>();
         services.AddScoped<IPermissionWriteRepository, PermissionWriteRepository>();
+        services.AddScoped<IPermissionPagedListReadRepository, PermissionPagedListReadRepository>();
     }
 
     private static void RegisterSecurityServices(IServiceCollection services, IConfiguration configuration)
@@ -85,12 +85,10 @@ public static class DependencyInjection
         // Configure JWT settings
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
-        // Register HttpContextAccessor (required for user context)
-        services.AddHttpContextAccessor();
+        // CurrentUserService and HttpContextAccessor provided by BuildingBlocks
 
-        // Register security services
+        // Register IdentityService-specific security services
         services.AddScoped<IPasswordHashingService, PasswordHashingService>();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ISecurityService, SecurityService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<ITenantService, TenantService>();

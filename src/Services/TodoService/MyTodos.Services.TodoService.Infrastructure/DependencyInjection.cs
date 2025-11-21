@@ -8,11 +8,10 @@ using MyTodos.Services.TodoService.Application.Projects.Contracts;
 using MyTodos.Services.TodoService.Application.Shared.Contracts;
 using MyTodos.Services.TodoService.Application.Tasks.Contracts;
 using MyTodos.Services.TodoService.Infrastructure.Persistence;
+using MyTodos.Services.TodoService.Infrastructure.Persistence.Projects.Repositories;
 using MyTodos.Services.TodoService.Infrastructure.Persistence.Shared;
-using MyTodos.Services.TodoService.Infrastructure.ProjectAggregate.Repositories;
+using MyTodos.Services.TodoService.Infrastructure.Persistence.Tasks.Repositories;
 using MyTodos.Services.TodoService.Infrastructure.Security;
-using MyTodos.Services.TodoService.Infrastructure.Seeding;
-using MyTodos.Services.TodoService.Infrastructure.TaskAggregate.Repositories;
 
 namespace MyTodos.Services.TodoService.Infrastructure;
 
@@ -29,9 +28,9 @@ public static class DependencyInjection
         services.AddDbContext<TodoServiceDbContext>(options =>
             options.UseSqlite(connectionString));
 
-        // 2. Security services (must be registered before repositories that depend on it)
-        services.AddHttpContextAccessor();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        // 2. CurrentUserService - Register extended version BEFORE calling AddBuildingBlocksInfrastructure
+        // This allows us to use TodoServiceCurrentUserService instead of the base CurrentUserService
+        services.AddScoped<ICurrentUserService, TodoServiceCurrentUserService>();
 
         // 3. UnitOfWork
         services.AddScoped<IUnitOfWork, TodoServiceUnitOfWork>();

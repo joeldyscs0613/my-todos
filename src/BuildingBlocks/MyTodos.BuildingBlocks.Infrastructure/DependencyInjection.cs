@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MyTodos.BuildingBlocks.Application.Contracts.DomainEvents;
 using MyTodos.BuildingBlocks.Application.Contracts.Messaging;
 using MyTodos.BuildingBlocks.Application.Contracts.Persistence;
+using MyTodos.BuildingBlocks.Application.Contracts.Security;
 using MyTodos.BuildingBlocks.Infrastructure.Http.Configuration;
 using MyTodos.BuildingBlocks.Infrastructure.Http.Handlers;
 using MyTodos.BuildingBlocks.Infrastructure.Http.Resilience.Extensions;
@@ -11,6 +13,7 @@ using MyTodos.BuildingBlocks.Infrastructure.Messaging.Configuration;
 using MyTodos.BuildingBlocks.Infrastructure.Messaging.DomainEvents;
 using MyTodos.BuildingBlocks.Infrastructure.Messaging.Outbox;
 using MyTodos.BuildingBlocks.Infrastructure.Persistence.Abstractions.Repositories;
+using MyTodos.BuildingBlocks.Infrastructure.Security;
 
 namespace MyTodos.BuildingBlocks.Infrastructure;
 
@@ -33,6 +36,11 @@ public static class DependencyInjection
 
         var outboxSection = configuration.GetSection("OutboxProcessor");
         services.Configure<OutboxProcessorSettings>(outboxSection);
+
+        // Register security services
+        services.AddHttpContextAccessor();
+        // Use TryAddScoped so services can override with their own implementation
+        services.TryAddScoped<ICurrentUserService, CurrentUserService>();
 
         // Register domain event dispatcher
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
