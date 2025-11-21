@@ -1,36 +1,8 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using MyTodos.BuildingBlocks.Application.Abstractions.Filters;
-using MyTodos.BuildingBlocks.Application.Abstractions.Queries;
 using MyTodos.BuildingBlocks.Application.Abstractions.Specifications;
-using MyTodos.BuildingBlocks.Application.Contracts.Queries;
-using MyTodos.Services.IdentityService.Application.Users.Contracts;
 using MyTodos.Services.IdentityService.Domain.UserAggregate;
 
 namespace MyTodos.Services.IdentityService.Application.Users.Queries.GetPagedList;
-
-public sealed class UserPagedListQuery
-    : PagedListQuery<UserPagedListSpecification, UserPagedListFilter, UserPagedListResponseDto>
-{
-    public UserPagedListQuery(UserPagedListFilter filter) : base(filter)
-    {
-    }
-}
-
-public sealed record UserPagedListResponseDto(
-    Guid Id, string FirstName, string LastName, string Username, string Email, bool IsActive);
-
-public sealed class UserPagedListFilter : Filter
-{
-    public Guid? UserId { get; set; }
-    public string? Username { get; set; }
-    public string? Email { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public Guid? TenantId { get; set; }
-
-    public bool? IsActive { get; set; }
-}
 
 public sealed class UserPagedListSpecification(UserPagedListFilter filter)
     : Specification<User, Guid, UserPagedListFilter>(filter)
@@ -97,30 +69,5 @@ public sealed class UserPagedListSpecification(UserPagedListFilter filter)
             { nameof(Filter.FirstName), u => u.FirstName },
             { nameof(Filter.LastName), u => u.LastName }
         };
-    }
-}
-
-public sealed class UserQueryConfiguration : IEntityQueryConfiguration<User>
-{
-    public IQueryable<User> ConfigureAggregate(IQueryable<User> query)
-    {
-        return query
-            .Include(u => u.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .ThenInclude(r => r.RolePermissions)
-            .ThenInclude(rp => rp.Permission);
-    }
-}
-
-public sealed class UserPagedListQueryHandler(IUserPagedListReadRepository readRepository)
-    : PagedListQueryHandler<User, Guid, UserPagedListSpecification, UserPagedListFilter,
-        UserPagedListQuery, UserPagedListResponseDto>(readRepository)
-{
-    protected override List<UserPagedListResponseDto> GetResultList(
-        UserPagedListQuery request, IReadOnlyList<User> list)
-    {
-        return list.Select(u
-            => new UserPagedListResponseDto(u.Id, u.FirstName, u.LastName, u.Username, u.Email, u.IsActive))
-            .ToList();
     }
 }
