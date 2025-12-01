@@ -12,7 +12,7 @@ public static class DependencyInjection
     {
         var assembly = typeof(DependencyInjection).Assembly;
 
-        // BuildingBlocks handles MediatR, validators, behaviors
+        // BuildingBlocks handles MediatR, validators, behaviors, and domain event handlers
         services.AddBuildingBlocksApplication(assembly);
 
         // Register integration event handlers

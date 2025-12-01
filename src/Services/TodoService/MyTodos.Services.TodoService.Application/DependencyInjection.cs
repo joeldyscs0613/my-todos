@@ -9,7 +9,7 @@ public static class DependencyInjection
     {
         var assembly = typeof(DependencyInjection).Assembly;
 
-        // BuildingBlocks handles MediatR, validators, and behaviors
+        // BuildingBlocks handles MediatR, validators, behaviors, and domain event handlers
         services.AddBuildingBlocksApplication(assembly);
 
         // Future: Register TodoService-specific application services here

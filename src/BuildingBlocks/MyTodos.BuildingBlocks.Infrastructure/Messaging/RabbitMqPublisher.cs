@@ -107,10 +107,10 @@ public class RabbitMqPublisher : IRabbitMqPublisher, IAsyncDisposable
 
             var exchange = _settings.Exchange;
 
-            // Declare exchange (idempotent)
+            // Declare exchange (idempotent) - Using Topic for flexible routing
             await _channel.ExchangeDeclareAsync(
                 exchange: exchange,
-                type: ExchangeType.Direct,
+                type: ExchangeType.Topic,
                 durable: true,
                 autoDelete: false,
                 arguments: null,
