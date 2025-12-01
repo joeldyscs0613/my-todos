@@ -1,5 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using MyTodos.BuildingBlocks.Application;
+using MyTodos.BuildingBlocks.Application.Contracts.IntegrationEvents;
+using MyTodos.Services.IdentityService.Contracts.IntegrationEvents;
+using MyTodos.Services.NotificationService.Application.Users.IntegrationEventHandlers;
 
 namespace MyTodos.Services.NotificationService.Application;
 
@@ -12,7 +15,8 @@ public static class DependencyInjection
         // BuildingBlocks handles MediatR, validators, behaviors
         services.AddBuildingBlocksApplication(assembly);
 
-        // Register service-specific services if needed
+        // Register integration event handlers
+        services.AddScoped<IIntegrationEventHandler<UserCreatedIntegrationEvent>, UserCreatedIntegrationEventHandler>();
 
         return services;
     }

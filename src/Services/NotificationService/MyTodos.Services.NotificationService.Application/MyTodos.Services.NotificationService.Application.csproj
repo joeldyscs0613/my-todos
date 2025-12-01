@@ -3,6 +3,12 @@
   <ItemGroup>
     <ProjectReference Include="..\MyTodos.Services.NotificationService.Domain\MyTodos.Services.NotificationService.Domain.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\MyTodos.BuildingBlocks.Application\MyTodos.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\IdentityService\MyTodos.Services.IdentityService.Contracts\MyTodos.Services.IdentityService.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Users\" />
   </ItemGroup>
 
   <PropertyGroup>

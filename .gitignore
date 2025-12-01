@@ -535,4 +535,10 @@ httpRequests/
 .idea/**/modules.xml
 .idea/**/vcs.xml
 
+# Docker Compose local development overrides
+docker-compose.override.yml
+
+# Local development database files (bind-mounted volumes)
+data/
+
 
