@@ -268,7 +268,7 @@ public sealed class RabbitMqConsumerService : BackgroundService
         // Route to appropriate handler based on event type
         switch (eventType)
         {
-            case "MyTodos.Services.IdentityService.Contracts.IntegrationEvents.UserCreatedIntegrationEvent":
+            case MyTodos.Services.IdentityService.Contracts.IntegrationEvents.UserCreatedIntegrationEvent.EventName:
             {
                 var integrationEvent = JsonSerializer.Deserialize<
                     MyTodos.Services.IdentityService.Contracts.IntegrationEvents.UserCreatedIntegrationEvent>(

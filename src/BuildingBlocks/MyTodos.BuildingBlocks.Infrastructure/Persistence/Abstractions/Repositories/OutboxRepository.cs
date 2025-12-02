@@ -24,7 +24,7 @@ public class OutboxRepository : IOutboxRepository
         var outboxMessage = new OutboxMessage
         {
             Id = Guid.NewGuid(),
-            Type = integrationEvent.GetType().Name,
+            Type = integrationEvent.GetEventName(),
             Content = JsonSerializer.Serialize(integrationEvent, integrationEvent.GetType()),
             OccurredOn = integrationEvent.OccurredOn,
             ProcessedOn = null,

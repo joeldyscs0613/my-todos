@@ -36,7 +36,7 @@ public abstract class DomainEventToOutboxHandler<TDomainEvent> : IDomainEventHan
 
         _logger.LogDebug(
             "Added integration event {EventType} to outbox",
-            integrationEvent.EventType);
+            integrationEvent.GetEventName());
     }
 
     /// <summary>

@@ -8,6 +8,12 @@ namespace MyTodos.Services.IdentityService.Contracts.IntegrationEvents;
 /// </summary>
 public sealed record UserCreatedIntegrationEvent : IntegrationEvent
 {
+    /// <summary>
+    /// The static event name used for message routing.
+    /// This provides a stable contract for consumers to reference.
+    /// </summary>
+    public const string EventName = nameof(UserCreatedIntegrationEvent);
+
     public Guid UserId { get; init; }
     public string Username { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;

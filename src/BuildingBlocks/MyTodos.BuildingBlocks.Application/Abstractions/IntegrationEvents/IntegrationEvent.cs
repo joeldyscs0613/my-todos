@@ -20,7 +20,9 @@ public abstract record IntegrationEvent
     public DateTimeOffset OccurredOn { get; init; } = DateTimeOffsetHelper.UtcNow;
 
     /// <summary>
-    /// The type name of the event (used for deserialization routing)
+    /// Gets the event type name for message routing.
+    /// By default, returns the derived class name.
+    /// Override this if you want a custom event name different from the class name.
     /// </summary>
-    public string EventType { get; init; } = string.Empty;
+    public virtual string GetEventName() => GetType().Name;
 }

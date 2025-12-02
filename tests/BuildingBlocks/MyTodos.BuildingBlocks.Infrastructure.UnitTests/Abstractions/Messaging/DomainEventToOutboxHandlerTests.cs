@@ -42,7 +42,7 @@ public class DomainEventToOutboxHandlerTests
             Times.Once);
 
         Assert.NotNull(capturedIntegrationEvent);
-        Assert.Equal("TestIntegrationEvent", capturedIntegrationEvent.EventType);
+        Assert.Equal("TestIntegrationEvent", capturedIntegrationEvent.GetEventName());
         Assert.NotEqual(Guid.Empty, capturedIntegrationEvent.EventId);
     }
 
@@ -64,7 +64,7 @@ public class DomainEventToOutboxHandlerTests
         // Assert
         Assert.NotNull(capturedIntegrationEvent);
         var testEvent = Assert.IsType<TestIntegrationEvent>(capturedIntegrationEvent);
-        Assert.Equal("TestIntegrationEvent", testEvent.EventType);
+        Assert.Equal("TestIntegrationEvent", testEvent.GetEventName());
         Assert.Equal("123", testEvent.AggregateId);
     }
 
@@ -165,7 +165,6 @@ public sealed record TestIntegrationEvent : IntegrationEvent
 
     public TestIntegrationEvent(string aggregateId)
     {
-        EventType = "TestIntegrationEvent";
         AggregateId = aggregateId;
     }
 }
