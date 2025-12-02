@@ -101,7 +101,7 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
         // Get primary tenant ID (first tenant-scoped role, or null for global users)
         var primaryTenantId = user.UserRoles
             .Where(ur => ur.TenantId.HasValue)
-            .Select(ur => ur.TenantId!.Value)
+            .Select(ur => ur.TenantId)
             .FirstOrDefault();
 
         // Get role codes for JWT claims (matching WellKnownRoles constants)
@@ -118,12 +118,11 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
             .ToList();
 
         // Generate JWT token with roles and permissions
-        // For global admins (no tenant), use a default system tenant ID for the token
-        var tokenTenantId = primaryTenantId != Guid.Empty ? primaryTenantId : Guid.Empty;
+        // Pass nullable tenant ID directly (null for global admins)
         var token = _jwtTokenService.GenerateUserToken(
             user.Id,
             user.Email,
-            tokenTenantId,
+            primaryTenantId,
             roleNames,
             permissions
         );
@@ -144,7 +143,7 @@ public sealed class SignInCommandHandler : ResponseCommandHandler<SignInCommand,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                TenantId = primaryTenantId != Guid.Empty ? primaryTenantId : null,
+                TenantId = primaryTenantId,
                 Roles = roleNames
             },
             ExpiresAt = DateTimeOffsetHelper.UtcNow.AddHours(1) // Should match JWT settings

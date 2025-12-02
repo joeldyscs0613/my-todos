@@ -10,11 +10,11 @@ public interface IJwtTokenService
     /// </summary>
     /// <param name="userId">The user's unique identifier</param>
     /// <param name="email">The user's email address</param>
-    /// <param name="tenantId">The tenant the user belongs to</param>
+    /// <param name="tenantId">The tenant the user belongs to (null for global users)</param>
     /// <param name="roles">The roles assigned to the user</param>
     /// <param name="permissions">The permissions granted to the user (aggregated from roles)</param>
     /// <returns>A JWT token string</returns>
-    string GenerateUserToken(Guid userId, string email, Guid tenantId, IEnumerable<string> roles, IEnumerable<string>? permissions = null);
+    string GenerateUserToken(Guid userId, string email, Guid? tenantId, IEnumerable<string> roles, IEnumerable<string>? permissions = null);
 
     /// <summary>
     /// Generate a JWT token for service-to-service communication.

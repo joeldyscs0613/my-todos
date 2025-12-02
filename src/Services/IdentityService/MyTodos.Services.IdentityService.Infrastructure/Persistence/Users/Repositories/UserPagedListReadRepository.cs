@@ -24,14 +24,18 @@ public sealed class UserPagedListReadRepository(IdentityServiceDbContext context
     {
         var query = base.GetInitialQueryForList();
 
-        // If current user is a tenant admin (has a tenant ID), filter to only that tenant
-        var currentUserTenantId = _currentUserService.TenantId;
-        if (currentUserTenantId.HasValue)
+        // Only apply tenant filtering if user is NOT a Global Admin
+        // Global Admins have access to all users/data across all tenants
+        if (!_currentUserService.IsGlobalAdmin())
         {
-            // Tenant admins can only see users that have at least one role in their tenant
-            query = query.Where(u => u.UserRoles.Any(ur => ur.TenantId == currentUserTenantId.Value));
+            var currentUserTenantId = _currentUserService.TenantId;
+            if (currentUserTenantId.HasValue)
+            {
+                // Tenant admins can only see users that have at least one role in their tenant
+                query = query.Where(u => u.UserRoles.Any(ur => ur.TenantId == currentUserTenantId.Value));
+            }
         }
-        // Global admins (no tenant ID) can see all users
+        // Global admins (TenantId = null and IsGlobalAdmin() = true) can see all users
 
         return query;
     }

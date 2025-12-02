@@ -32,8 +32,13 @@ public class CurrentUserService : ICurrentUserService
 
             Username = _user.FindFirstValue(ClaimTypes.Name);
 
+            // Only set TenantId if claim exists and is a valid Guid
+            // Missing claim means TenantId remains null (for global admins)
             var tenantIdClaim = _user.FindFirstValue("tenant_id");
-            TenantId = Guid.TryParse(tenantIdClaim, out var tenantId) ? tenantId : null;
+            if (!string.IsNullOrWhiteSpace(tenantIdClaim) && Guid.TryParse(tenantIdClaim, out var tenantId))
+            {
+                TenantId = tenantId;
+            }
         }
     }
 

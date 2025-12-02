@@ -22,15 +22,20 @@ public sealed class JwtTokenService : IJwtTokenService
         _validationParameters = CreateValidationParameters();
     }
 
-    public string GenerateUserToken(Guid userId, string email, Guid tenantId, IEnumerable<string> roles, IEnumerable<string>? permissions = null)
+    public string GenerateUserToken(Guid userId, string email, Guid? tenantId, IEnumerable<string> roles, IEnumerable<string>? permissions = null)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.Email, email),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new("tenant_id", tenantId.ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        // Only add tenant_id claim if tenant is specified (null for global users)
+        if (tenantId.HasValue)
+        {
+            claims.Add(new Claim("tenant_id", tenantId.Value.ToString()));
+        }
 
         // Add roles as separate claims (allows multiple roles)
         foreach (var role in roles)
